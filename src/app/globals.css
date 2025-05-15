@@ -11,23 +11,23 @@
 	--sidebar-menu-active-foreground: #6f2dbd;
 	--icon-bg: #eeeeee;
 
-	--primary: #7b2cbf;
-	--primary-hover: #5a189a;
+	--primary: #d0b3ff; /* light lavender */
+	--primary-hover: #b180ff;
 
-	--secondary: #3a0ca3;
-	--secondary-hover: #2d008f;
+	--secondary: #c3caff;
+	--secondary-hover: #9aa6ff;
 
-	--success: #00b894;
-	--success-hover: #019875;
+	--success: #b9f6ca; /* light green */
+	--success-hover: #00e676;
 
-	--danger: #e5383b;
-	--danger-hover: #ba181b;
+	--danger: #ffb3b3; /* light red */
+	--danger-hover: #ff5252;
 
-	--warning: #fbbc05;
-	--warning-hover: #f9a825;
+	--warning: #ffeaa7;
+	--warning-hover: #f9ca24;
 
-	--info: #0dcaf0;
-	--info-hover: #0aa2c0;
+	--info: #a0e9f5;
+	--info-hover: #00bcd4;
 
 	--black: #212529;
 	--black-hover: #121416;
@@ -48,23 +48,23 @@
 		--sidebar-menu-active-foreground: #d6b0ff;
 		--icon-bg: #2e2e2e;
 
-		--primary: #d6b0ff;
-		--primary-hover: #b280e9;
+		--primary: #a370f7; /* lebih terang agar teks putih terbaca */
+		--primary-hover: #864fe8;
 
-		--secondary: #8f90ff;
-		--secondary-hover: #7577e3;
+		--secondary: #7b8fff;
+		--secondary-hover: #5a6bf2;
 
-		--success: #55efc4;
-		--success-hover: #2ecc71;
+		--success: #38e38e;
+		--success-hover: #27d87a;
 
-		--danger: #ff6b6b;
-		--danger-hover: #ff4d4d;
+		--danger: #ff6b81;
+		--danger-hover: #e64963;
 
-		--warning: #ffe066;
-		--warning-hover: #ffc107;
+		--warning: #f7d774;
+		--warning-hover: #f3c12e;
 
-		--info: #63e6be;
-		--info-hover: #38d9a9;
+		--info: #56e0f6;
+		--info-hover: #39c2dc;
 
 		--black: #f1f1f1;
 		--black-hover: #c9c9c9;
@@ -117,4 +117,16 @@ h6 {
 	background-color: var(--icon-bg);
 	padding: 10px;
 	border-radius: 6px;
+}
+
+.bg-primary {
+	background-color: var(--primary);
+}
+
+.bg-success {
+	background-color: var(--success);
+}
+
+.bg-danger {
+	background-color: var(--danger);
 }
