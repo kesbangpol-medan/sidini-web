@@ -19,3 +19,14 @@ interface UserVillageEntity {
 	id: number;
 	name: string;
 }
+
+export interface CreateUserEntity {
+	name: string;
+	phone: string;
+	email: string;
+	active: boolean;
+	role: number;
+	image?: string;
+	district_id: number;
+	village_id: number;
+}

@@ -180,7 +180,7 @@ const Sidebar = ({ isOpen, onClose, activeMenu = "dashboard" }: { isOpen: boolea
 					"fixed inset-y-0 left-0 w-64 border-r p-4 transform transition-transform duration-300 ease-in-out z-20",
 					"bg-[var(--surface)] text-[var(--foreground)]",
 					{
-						"-translate-x-full md:translate-x-0": !isOpen,
+						"-translate-x-full": !isOpen,
 						"translate-x-0": isOpen,
 					}
 				)}

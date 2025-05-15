@@ -11,16 +11,16 @@
 	--sidebar-menu-active-foreground: #6f2dbd;
 	--icon-bg: #eeeeee;
 
-	--primary: #d0b3ff; /* light lavender */
+	--primary: #995cfa; /* light lavender */
 	--primary-hover: #b180ff;
 
 	--secondary: #c3caff;
 	--secondary-hover: #9aa6ff;
 
-	--success: #b9f6ca; /* light green */
+	--success: #59b473; /* light green */
 	--success-hover: #00e676;
 
-	--danger: #ffb3b3; /* light red */
+	--danger: #f79090; /* light red */
 	--danger-hover: #ff5252;
 
 	--warning: #ffeaa7;
@@ -54,7 +54,7 @@
 		--secondary: #7b8fff;
 		--secondary-hover: #5a6bf2;
 
-		--success: #38e38e;
+		--success: #3e755a;
 		--success-hover: #27d87a;
 
 		--danger: #ff6b81;
