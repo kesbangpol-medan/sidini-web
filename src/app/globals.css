@@ -9,6 +9,7 @@
 	--input-bg: #fefefe;
 	--sidebar-menu-active-bg: #ca83f61a;
 	--sidebar-menu-active-foreground: #7a05b5;
+	--icon-bg: #dadada;
 }
 
 /* Dark Mode */
@@ -21,6 +22,7 @@
 		--input-bg: #000000;
 		--sidebar-menu-active-bg: #ca83f61a;
 		--sidebar-menu-active-foreground: #a995b3;
+		--icon-bg: #dadada;
 	}
 }
 
@@ -28,7 +30,7 @@ body {
 	background-color: var(--background);
 	color: var(--foreground);
 	border-color: var(--border);
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: var(--font-roboto), sans-serif;
 }
 
 .border,
@@ -53,3 +55,19 @@ body {
 input {
 	background-color: var(--input-bg);
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-poppins), sans-serif;
+}
+
+.icon-background {
+	background-color: var(--icon-bg);
+	padding: 10px;
+	border-radius: 6px;
+}
+

@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { UserEntity } from "./domain/entity/user_entity";
 import { UserUsecaseImpl } from "./domain/usecase/implementation/user_usecase_implementation";
 import { UserRepositoryImpl } from "./domain/repository/implementation/user_repository_implementation";
+import { FaCog, FaPlus, FaTrash } from "react-icons/fa";
 
 const userUsecase = new UserUsecaseImpl(new UserRepositoryImpl());
 
@@ -19,17 +20,35 @@ export default function User() {
 				<div className="flex items-center gap-4">
 					<Image src={row.image || "/avatar.jpg"} alt="" width={40} height={40} className="rounded-full object-cover" />
 					<div className="flex gap-2 flex-col">
-						<div className="text-sm font-semibold">{row.name}</div>
-						<div className="text-xs">{row.role === 3 ? "Super Admin" : row.role === 2 ? "Admin" : "Agen"}</div>
+						<div className="text-sm font-semibold">
+							<h5>{row.name}</h5>
+						</div>
+						<div className="text-xs">
+							<h5>{row.role === 3 ? "Super Admin" : row.role === 2 ? "Admin" : "Agen"}</h5>
+						</div>
 					</div>
 				</div>
 			),
 		},
-		{ header: "Email", accessor: (row) => row.email },
-		{ header: "Telepon", accessor: (row) => row.phone },
-		{ header: "Kecamatan", accessor: (row) => row.district.name },
-		{ header: "Kelurahan", accessor: (row) => row.village.name },
-		{ header: "Aktif", accessor: (row) => (row.active ? "Ya" : "Tidak"), textAlign: "center" },
+		{ header: "Email", accessor: (row) => <h5>{row.email}</h5> },
+		{ header: "Telepon", accessor: (row) => <h5>{row.phone}</h5> },
+		{ header: "Kecamatan", accessor: (row) => <h5>{row.district.name}</h5> },
+		{ header: "Kelurahan", accessor: (row) => <h5>{row.village.name}</h5> },
+		{ header: "Aktif", accessor: (row) => <h5>{row.active ? "Ya" : "Tidak"}</h5>, textAlign: "center" },
+		{
+			header: "Opsi",
+			accessor: (row) => (
+				<div className="w-full flex gap-4 justify-center items-center">
+					<div className="icon-background cursor-pointer" onClick={() => console.log(row)}>
+						<FaCog className="text-blue-400" />
+					</div>
+					<div className="icon-background cursor-pointer" onClick={() => console.log(row)}>
+						<FaTrash className="text-red-400" />
+					</div>
+				</div>
+			),
+			textAlign: "center",
+		},
 	];
 
 	const getAllData = async () => {
@@ -48,9 +67,18 @@ export default function User() {
 	return (
 		<AppDashboard
 			content={
-				<div>
-					<div className="p-4">
-						<AppTable data={users} columns={columns} tableTitle="Tabel User" />
+				<div className="w-full h-full">
+					<div>
+						<AppTable
+							data={users}
+							columns={columns}
+							tableTitle="Tabel User"
+							tools={
+								<div className="icon-background">
+									<FaPlus />
+								</div>
+							}
+						/>
 					</div>
 				</div>
 			}
