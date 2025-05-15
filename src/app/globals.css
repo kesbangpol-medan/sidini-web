@@ -2,27 +2,75 @@
 
 /* Light Mode Defaults */
 :root {
-	--background: #f9f9f9;
-	--foreground: #717171;
-	--border: #dddddd;
-	--surface: #fdfdfd;
-	--input-bg: #fefefe;
-	--sidebar-menu-active-bg: #ca83f61a;
-	--sidebar-menu-active-foreground: #7a05b5;
-	--icon-bg: #dadada;
+	--background: #fdfcff;
+	--foreground: #333333;
+	--border: #e0e0e0;
+	--surface: #ffffff;
+	--input-bg: #ffffff;
+	--sidebar-menu-active-bg: #f2e7ff;
+	--sidebar-menu-active-foreground: #6f2dbd;
+	--icon-bg: #eeeeee;
+
+	--primary: #7b2cbf;
+	--primary-hover: #5a189a;
+
+	--secondary: #3a0ca3;
+	--secondary-hover: #2d008f;
+
+	--success: #00b894;
+	--success-hover: #019875;
+
+	--danger: #e5383b;
+	--danger-hover: #ba181b;
+
+	--warning: #fbbc05;
+	--warning-hover: #f9a825;
+
+	--info: #0dcaf0;
+	--info-hover: #0aa2c0;
+
+	--black: #212529;
+	--black-hover: #121416;
+
+	--disable: #d3d3d3;
+	--disable-hover: #c2c2c2;
 }
 
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #121212;
-		--foreground: #f1f1f1;
-		--border: #444444;
-		--surface: #0a0a0a;
-		--input-bg: #000000;
-		--sidebar-menu-active-bg: #ca83f61a;
-		--sidebar-menu-active-foreground: #a995b3;
-		--icon-bg: #dadada;
+		--background: #0d0d0d;
+		--foreground: #f0f0f0;
+		--border: #2c2c2c;
+		--surface: #1a1a1a;
+		--input-bg: #121212;
+		--sidebar-menu-active-bg: #2f1847;
+		--sidebar-menu-active-foreground: #d6b0ff;
+		--icon-bg: #2e2e2e;
+
+		--primary: #d6b0ff;
+		--primary-hover: #b280e9;
+
+		--secondary: #8f90ff;
+		--secondary-hover: #7577e3;
+
+		--success: #55efc4;
+		--success-hover: #2ecc71;
+
+		--danger: #ff6b6b;
+		--danger-hover: #ff4d4d;
+
+		--warning: #ffe066;
+		--warning-hover: #ffc107;
+
+		--info: #63e6be;
+		--info-hover: #38d9a9;
+
+		--black: #f1f1f1;
+		--black-hover: #c9c9c9;
+
+		--disable: #555555;
+		--disable-hover: #444444;
 	}
 }
 
@@ -70,4 +118,3 @@ h6 {
 	padding: 10px;
 	border-radius: 6px;
 }
-

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaFile, FaList, FaSearch, FaTh, FaUsers } from "react-icons/fa";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
+import AppInput from "../inputs/AppInput";
 
 interface AppDashboardProps {
 	content: React.ReactNode;
@@ -105,11 +106,8 @@ const UserDropdown = () => {
 };
 
 const SearchBar = () => (
-	<div className="relative w-full max-w-sm shadow rounded-lg">
-		<span className="absolute inset-y-0 left-0 flex items-center pl-3">
-			<FaSearch />
-		</span>
-		<input type="text" placeholder="Cari..." className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" />
+	<div className="relative w-full max-w-sm">
+		<AppInput type="search" icon={<FaSearch />} />
 	</div>
 );
 
