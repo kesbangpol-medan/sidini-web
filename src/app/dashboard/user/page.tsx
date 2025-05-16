@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import AppDashboard from "@/components/dashboards/dashboard";
 import AppTable, { ColumnProps } from "@/components/tables/table";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { UserEntity } from "./domain/entity/user_entity";
+import { CreateUserEntity, UserDistrictEntity, UserEntity, UserVillageEntity } from "./domain/entity/user_entity";
 import { UserUsecaseImpl } from "./domain/usecase/implementation/user_usecase_implementation";
 import { UserRepositoryImpl } from "./domain/repository/implementation/user_repository_implementation";
 import { FaCog, FaPlus, FaTrash, FaUsers } from "react-icons/fa";
@@ -14,14 +15,25 @@ const userUsecase = new UserUsecaseImpl(new UserRepositoryImpl());
 
 export default function User() {
 	const [users, setUsers] = useState<UserEntity[]>([]);
+	const [selectedUser, setSelectedUser] = useState<CreateUserEntity>();
+	const [districts, setDistricts] = useState<UserDistrictEntity[]>([]);
+	const [villages, setVillages] = useState<UserVillageEntity[]>([]);
 	const [showAddUserModal, setShowAddUserModal] = useState(false);
+	const [showEditUserModal, setShowEditUserModal] = useState(false);
+	const userImg = process.env.NEXT_PUBLIC_USER_IMG;
 
 	const columns: ColumnProps<UserEntity>[] = [
 		{
 			header: "Nama",
 			accessor: (row) => (
 				<div className="flex items-center gap-4 mr-4">
-					<Image src={row.image || "/avatar.jpg"} alt="" width={40} height={40} className="rounded-full object-cover" />
+					<Image
+						src={row.image ? `${userImg}/${row.image}` : "/avatar.jpg"}
+						alt=""
+						width={40}
+						height={40}
+						className="rounded-full object-cover aspect-square"
+					/>
 					<div className="flex gap-1 flex-col">
 						<div className="text-sm font-semibold text-[var(--primary)] cursor-pointer">
 							<h5>{row.name}</h5>
@@ -48,7 +60,18 @@ export default function User() {
 			header: "Opsi",
 			accessor: (row) => (
 				<div className="w-full flex gap-3 justify-center items-center">
-					<div className="icon-background cursor-pointer flex gap-2 items-center justify-center" onClick={() => console.log(row)}>
+					<div
+						className="icon-background cursor-pointer flex gap-2 items-center justify-center"
+						onClick={() => {
+							setSelectedUser({
+								...row,
+								role: row.role.toString(),
+								district_id: row.district.id,
+								village_id: row.village.id,
+							});
+							setShowEditUserModal(true);
+						}}
+					>
 						<FaCog className="text-[var(--primary)]" /> <h5 className="text-xs">Edit</h5>
 					</div>
 					<div className="icon-background cursor-pointer flex gap-2 items-center justify-center" onClick={() => console.log(row)}>
@@ -64,14 +87,91 @@ export default function User() {
 		{ name: "name", label: "Nama", type: "text", placeholder: "Nama Pengguna" },
 		{ name: "email", label: "Email", type: "email", placeholder: "Email Pengguna" },
 		{ name: "phone", label: "Telepon", type: "text", placeholder: "Telepon Pengguna" },
+		{
+			name: "role",
+			label: "Role",
+			type: "select",
+			options: [
+				{ value: "1", label: "Agen" },
+				{ value: "2", label: "Admin" },
+			],
+		},
+		{
+			name: "district_id",
+			label: "Kecamatan",
+			type: "select",
+			options: [{ value: "-", label: "-" }, ...districts.map((val) => ({ value: val.id.toString(), label: val.name }))],
+			onChange: (val) => {
+				handleGetVillage(val);
+			},
+		},
+		{
+			name: "village_id",
+			label: "Kelurahan",
+			type: "select",
+			options: [{ value: "-", label: "-" }, ...villages.map((val) => ({ value: val.id.toString(), label: val.name }))],
+		},
+		{ name: "image", label: "Foto", type: "file", placeholder: "Foto Pengguna" },
 		{ name: "password", label: "Kata Sandi", type: "password", placeholder: "Kata Sandi Pengguna" },
 		{ name: "repassword", label: "Ulangi Kata Sandi", type: "password", placeholder: "Ulangi Kata Sandi Pengguna" },
 	];
 
+	const handleCreateUser = async (data: any) => {
+		try {
+			if (data.image instanceof File) {
+				const formData = new FormData();
+				formData.append("image", data.image);
+				const res = await userUsecase.uploadUserImage(formData);
+				if (res.success) {
+					data.image = res.image_url;
+				}
+			}
+			data.role = parseInt(data.role);
+			data.district_id = parseInt(data.district_id);
+			data.village_id = parseInt(data.village_id);
+			await userUsecase.createUser(data);
+			getAllData();
+		} catch (error) {
+			console.error("Gagal mengambil data user:", error);
+		}
+	};
+
+	const handleEditUser = async (data: any) => {
+		try {
+			if (data.image instanceof File) {
+				const formData = new FormData();
+				formData.append("image", data.image);
+				const res = await userUsecase.uploadUserImage(formData);
+				if (res.success) {
+					data.image = res.image_url;
+				}
+			}
+			data.role = parseInt(data.role);
+			data.district_id = parseInt(data.district_id);
+			data.village_id = parseInt(data.village_id);
+			await userUsecase.editUser(data);
+			getAllData();
+		} catch (error) {
+			console.error("Gagal mengambil data user:", error);
+		}
+	};
+
+	const handleGetVillage = async (district_id: string | number) => {
+		try {
+			const id = typeof district_id === "string" ? parseInt(district_id) : district_id;
+			const res = await userUsecase.getAllVillage(id);
+			setVillages(res);
+		} catch (error) {
+			console.error("Gagal mengambil data user:", error);
+		}
+	};
+
 	const getAllData = async () => {
 		try {
-			const data = await userUsecase.getAllUsers();
-			setUsers(data);
+			const users = await userUsecase.getAllUsers();
+			const districts = await userUsecase.getAllDistrict();
+			setUsers(users);
+			setDistricts(districts);
 		} catch (err) {
 			console.error("Gagal mengambil data user:", err);
 		}
@@ -81,17 +181,28 @@ export default function User() {
 		getAllData();
 	}, []);
 
+	useEffect(() => {
+		if (selectedUser?.district_id) {
+			handleGetVillage(selectedUser.district_id);
+		}
+	}, [selectedUser?.district_id]);
+
 	return (
 		<AppDashboard
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
-					<div className="grid grid-cols-4">
-						<IconCard icon={<FaUsers size={24} />} title="Total User" value="1,234" info={
-							<div className="flex flex-col gap-1">
-								<div className="bg-success px-2 py-1 rounded-full text-xs text-center">10 Aktif</div>
-								<div className="bg-danger px-2 py-1 rounded-full text-xs text-center">10 Nonaktif</div>
-							</div>
-						} />
+					<div className="grid md:grid-cols-4">
+						<IconCard
+							icon={<FaUsers size={24} />}
+							title="Total User"
+							value="1,234"
+							info={
+								<div className="flex flex-col gap-1">
+									<div className="bg-success px-2 py-1 rounded-full text-xs text-center">10 Aktif</div>
+									<div className="bg-danger px-2 py-1 rounded-full text-xs text-center">10 Nonaktif</div>
+								</div>
+							}
+						/>
 					</div>
 					<AppTable
 						data={users}
@@ -111,10 +222,25 @@ export default function User() {
 						modalConfirmLabel="Simpan"
 						modalCancelLabel="Batal"
 						fields={userFormFields}
-						onSubmit={(data) => {
-							console.log("Form submitted", data);
+						onSubmit={async (data) => {
+							await handleCreateUser(data);
 							setShowAddUserModal(false);
 						}}
+					/>
+
+					<AppForm
+						asModal
+						isOpen={showEditUserModal}
+						onClose={() => setShowEditUserModal(false)}
+						modalTitle="Edit User"
+						modalConfirmLabel="Simpan"
+						modalCancelLabel="Batal"
+						fields={userFormFields}
+						onSubmit={async (data) => {
+							await handleEditUser(data);
+							setShowAddUserModal(false);
+						}}
+						initialData={selectedUser}
 					/>
 				</div>
 			}

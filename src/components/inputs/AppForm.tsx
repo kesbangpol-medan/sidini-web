@@ -17,6 +17,7 @@ export interface FormField {
 	canCreate?: boolean;
 	onCreate?: () => void;
 	maxLength?: number;
+	onChange?: (value: any) => void;
 }
 
 interface AppFormProps {
@@ -86,7 +87,14 @@ const AppForm: React.FC<AppFormProps> = ({
 							options={field.options || []}
 							value={formValues[field.name] || ""}
 							placeholder={field.placeholder}
-							onChange={(e) => handleChange(field.name, e.target.value)}
+							// onChange={(e) => handleChange(field.name, e.target.value)}
+							onChange={(e) => {
+								const value = e.target.value;
+								handleChange(field.name, value);
+								if (field.onChange) {
+									field.onChange(value); // panggil jika ada
+								}
+							}}
 							canCreate={field.canCreate}
 							onCreate={field.onCreate}
 						/>

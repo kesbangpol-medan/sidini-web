@@ -10,12 +10,12 @@ export interface UserEntity {
 	village: UserVillageEntity;
 }
 
-interface UserDistrictEntity {
+export interface UserDistrictEntity {
 	id: number;
 	name: string;
 }
 
-interface UserVillageEntity {
+export interface UserVillageEntity {
 	id: number;
 	name: string;
 }
@@ -25,7 +25,7 @@ export interface CreateUserEntity {
 	phone: string;
 	email: string;
 	active: boolean;
-	role: number;
+	role: number | string;
 	image?: string;
 	district_id: number;
 	village_id: number;

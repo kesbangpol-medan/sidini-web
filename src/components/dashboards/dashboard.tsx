@@ -242,8 +242,8 @@ const UserDropdown = () => {
 	return (
 		<div className="relative" ref={dropdownRef}>
 			<button onClick={() => setIsOpen(!isOpen)} className="text-xl focus:outline-none flex items-center gap-2 cursor-pointer">
-				<Image src="/avatar.jpg" alt="User Avatar" width={45} height={45} className="rounded-full object-cover" />
-				<span className="text-sm font-semibold hidden sm:inline">Nama User</span>
+				<Image src="/avatar.jpg" alt="User Avatar" width={45} height={45} className="rounded-full object-cover aspect-square" />
+				<h4 className="text-sm font-semibold hidden sm:inline">Nama User</h4>
 				<FaChevronDown className="text-xs" />
 			</button>
 
