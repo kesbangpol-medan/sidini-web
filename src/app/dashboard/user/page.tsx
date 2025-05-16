@@ -25,6 +25,11 @@ export default function User() {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [dataMode, setDataMode] = useState<string>("");
 	const userImg = process.env.NEXT_PUBLIC_USER_IMG;
+	const [userCount, setUserCount] = useState({
+		active: 0,
+		inactive: 0,
+		total_user: 0
+	})
 
 	const columns: ColumnProps<UserEntity>[] = [
 		{
@@ -155,7 +160,6 @@ export default function User() {
 			data.role = parseInt(data.role);
 			data.district_id = parseInt(data.district_id);
 			data.village_id = parseInt(data.village_id);
-			data.active = data.active === "true" ? true : false;
 			await userUsecase.createUser(data);
 			getAllData();
 			setDataMode("");
@@ -210,8 +214,10 @@ export default function User() {
 		try {
 			const users = await userUsecase.getAllUsers();
 			const districts = await userUsecase.getAllDistrict();
+			const count = await userUsecase.count()
 			setUsers(users);
 			setDistricts(districts);
+			setUserCount(count);
 		} catch (err) {
 			console.error("Gagal mengambil data user:", err);
 		}
@@ -259,11 +265,11 @@ export default function User() {
 						<IconCard
 							icon={<FaUsers size={24} />}
 							title="Total User"
-							value="1,234"
+							value={userCount.total_user}
 							info={
 								<div className="flex flex-col gap-1">
-									<div className="bg-success px-2 py-1 rounded-full text-xs text-center">10 Aktif</div>
-									<div className="bg-danger px-2 py-1 rounded-full text-xs text-center">10 Nonaktif</div>
+									<div className="bg-success px-2 py-1 rounded-full text-xs text-center">{userCount.active} Aktif</div>
+									<div className="bg-danger px-2 py-1 rounded-full text-xs text-center">{userCount.inactive} Nonaktif</div>
 								</div>
 							}
 						/>

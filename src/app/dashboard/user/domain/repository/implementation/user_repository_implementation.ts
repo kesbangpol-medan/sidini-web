@@ -3,6 +3,14 @@ import { UserRepository } from "../user_repository";
 import { CreateUserEntity, UserDistrictEntity, UserEntity, UserVillageEntity } from "../../entity/user_entity";
 
 export class UserRepositoryImpl implements UserRepository {
+	async count(): Promise<{ total_user: number; active: number; inactive: number; }> {
+		const response = await http.get(`/users/count`);
+		if (response.status === 200) {
+			return response.data.users;
+		} else {
+			throw new Error("Tidak ada data ditemukan...");
+		}
+	}
 	async search(query: string): Promise<UserEntity[]> {
 		const response = await http.get(`/users/search?q=${query}`);
 		if (response.status === 200) {

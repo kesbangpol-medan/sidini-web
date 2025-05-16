@@ -9,4 +9,9 @@ export interface UserUsecase {
 	editUser(data: CreateUserEntity): Promise<UserEntity>;
 	deleteUser(id: number): Promise<{ success: boolean }>;
 	search(query: string): Promise<UserEntity[]>;
+	count(): Promise<{
+		total_user: number;
+		active: number;
+		inactive: number;
+	}>;
 }
