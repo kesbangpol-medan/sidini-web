@@ -23,6 +23,7 @@ export default function User() {
 	const [showAddUserModal, setShowAddUserModal] = useState(false);
 	const [showEditUserModal, setShowEditUserModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [dataMode, setDataMode] = useState<string>("");
 	const userImg = process.env.NEXT_PUBLIC_USER_IMG;
 
 	const columns: ColumnProps<UserEntity>[] = [
@@ -73,6 +74,7 @@ export default function User() {
 								village_id: row.village.id,
 								active: row.active ? "true" : "false",
 							});
+							setDataMode("edit");
 							setShowEditUserModal(true);
 						}}
 					>
@@ -100,15 +102,19 @@ export default function User() {
 		{ name: "phone", label: "Telepon", type: "text", placeholder: "Telepon Pengguna" },
 		{ name: "password", label: "Kata Sandi", type: "password", placeholder: "Kata Sandi Pengguna" },
 		{ name: "repassword", label: "Ulangi Kata Sandi", type: "password", placeholder: "Ulangi Kata Sandi Pengguna" },
-		{
-			name: "active",
-			label: "Aktif",
-			type: "select",
-			options: [
-				{ value: "true", label: "Aktif" },
-				{ value: "false", label: "Tidak" },
-			],
-		},
+		...(dataMode === "edit"
+			? [
+					{
+						name: "active",
+						label: "Aktif",
+						type: "select",
+						options: [
+							{ value: "true", label: "Aktif" },
+							{ value: "false", label: "Tidak" },
+						],
+					} as FormField,
+			  ]
+			: []),
 		{
 			name: "role",
 			label: "Role",
@@ -149,8 +155,10 @@ export default function User() {
 			data.role = parseInt(data.role);
 			data.district_id = parseInt(data.district_id);
 			data.village_id = parseInt(data.village_id);
+			data.active = data.active === "true" ? true : false;
 			await userUsecase.createUser(data);
 			getAllData();
+			setDataMode("");
 		} catch (error) {
 			console.error("Gagal mengambil data user:", error);
 		}
@@ -172,6 +180,7 @@ export default function User() {
 			data.active = data.active === "true" ? true : false;
 			await userUsecase.editUser(data);
 			getAllData();
+			setDataMode("");
 		} catch (error) {
 			console.error("Gagal mengambil data user:", error);
 		}
@@ -221,25 +230,25 @@ export default function User() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const handleSearch = async (query: string) => {
 		try {
-		  let users;
-		  if (query.trim() === "") {
-			users = await userUsecase.getAllUsers();
-		  } else {
-			users = await userUsecase.search(query);
-		  }
-		  setUsers(users);
+			let users;
+			if (query.trim() === "") {
+				users = await userUsecase.getAllUsers();
+			} else {
+				users = await userUsecase.search(query);
+			}
+			setUsers(users);
 		} catch (err) {
-		  console.error("Gagal mengambil data user:", err);
+			console.error("Gagal mengambil data user:", err);
 		}
-	  };
-	  
-	  useEffect(() => {
+	};
+
+	useEffect(() => {
 		const delayDebounce = setTimeout(() => {
-		  handleSearch(searchTerm);
+			handleSearch(searchTerm);
 		}, 1000);
-	  
+
 		return () => clearTimeout(delayDebounce);
-	  }, [searchTerm]);
+	}, [searchTerm]);
 
 	return (
 		<AppDashboard
@@ -264,7 +273,13 @@ export default function User() {
 						columns={columns}
 						tableTitle="Tabel User"
 						tools={
-							<div className="icon-background cursor-pointer" onClick={() => setShowAddUserModal(true)}>
+							<div
+								className="icon-background cursor-pointer"
+								onClick={() => {
+									setDataMode("create");
+									setShowAddUserModal(true);
+								}}
+							>
 								<FaPlus />
 							</div>
 						}
