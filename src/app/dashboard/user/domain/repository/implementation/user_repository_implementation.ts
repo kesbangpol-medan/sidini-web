@@ -3,9 +3,27 @@ import { UserRepository } from "../user_repository";
 import { CreateUserEntity, UserDistrictEntity, UserEntity, UserVillageEntity } from "../../entity/user_entity";
 
 export class UserRepositoryImpl implements UserRepository {
+	async search(query: string): Promise<UserEntity[]> {
+		const response = await http.get(`/users/search?q=${query}`);
+		if (response.status === 200) {
+			return response.data.users;
+		} else {
+			throw new Error("Tidak ada data ditemukan...");
+		}
+	}
+	async deleteUser(id: number): Promise<{ success: boolean }> {
+		try {
+			const response = await http.delete(`/users/${id}`)
+			return response.data
+		} catch (error) {
+			console.error("Gagal upload gambar:", error);
+			return { success: false };
+		}
+	}
+
 	async editUser(data: CreateUserEntity): Promise<UserEntity> {
 		const response = await http.put(`/users`, data);
-		if (response.status === 201 || response.status === 200) {
+		if (response.status === 200) {
 			return response.data.user;
 		} else {
 			throw new Error("Gagal membuat user...");

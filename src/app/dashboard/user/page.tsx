@@ -10,16 +10,19 @@ import { UserRepositoryImpl } from "./domain/repository/implementation/user_repo
 import { FaCog, FaPlus, FaTrash, FaUsers } from "react-icons/fa";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import IconCard from "@/components/cards/icon_card";
+import AppModal from "@/components/modal/app_modal";
 
 const userUsecase = new UserUsecaseImpl(new UserRepositoryImpl());
 
 export default function User() {
 	const [users, setUsers] = useState<UserEntity[]>([]);
 	const [selectedUser, setSelectedUser] = useState<CreateUserEntity>();
+	const [selectedDeleteUserId, setSelectedDeleteUserId] = useState<number>(0);
 	const [districts, setDistricts] = useState<UserDistrictEntity[]>([]);
 	const [villages, setVillages] = useState<UserVillageEntity[]>([]);
 	const [showAddUserModal, setShowAddUserModal] = useState(false);
 	const [showEditUserModal, setShowEditUserModal] = useState(false);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const userImg = process.env.NEXT_PUBLIC_USER_IMG;
 
 	const columns: ColumnProps<UserEntity>[] = [
@@ -74,7 +77,14 @@ export default function User() {
 					>
 						<FaCog className="text-[var(--primary)]" /> <h5 className="text-xs">Edit</h5>
 					</div>
-					<div className="icon-background cursor-pointer flex gap-2 items-center justify-center" onClick={() => console.log(row)}>
+					<div
+						className="icon-background cursor-pointer flex gap-2 items-center justify-center"
+						onClick={() => {
+							console.log("Im clicked");
+							setShowDeleteModal(true);
+							setSelectedDeleteUserId(parseInt(row.id));
+						}}
+					>
 						<FaTrash className="text-[var(--danger)]" /> <h5 className="text-xs">Hapus</h5>
 					</div>
 				</div>
@@ -156,6 +166,16 @@ export default function User() {
 		}
 	};
 
+	const handleDelete = async () => {
+		try {
+			await userUsecase.deleteUser(selectedDeleteUserId).then(() => {
+				getAllData();
+			});
+		} catch (error) {
+			console.error("Gagal mengambil data user:", error);
+		}
+	};
+
 	const handleGetVillage = async (district_id: string | number) => {
 		try {
 			const id = typeof district_id === "string" ? parseInt(district_id) : district_id;
@@ -187,8 +207,32 @@ export default function User() {
 		}
 	}, [selectedUser?.district_id]);
 
+	const [searchTerm, setSearchTerm] = useState("");
+	const handleSearch = async (query: string) => {
+		try {
+		  let users;
+		  if (query.trim() === "") {
+			users = await userUsecase.getAllUsers();
+		  } else {
+			users = await userUsecase.search(query);
+		  }
+		  setUsers(users);
+		} catch (err) {
+		  console.error("Gagal mengambil data user:", err);
+		}
+	  };
+	  
+	  useEffect(() => {
+		const delayDebounce = setTimeout(() => {
+		  handleSearch(searchTerm);
+		}, 1000);
+	  
+		return () => clearTimeout(delayDebounce);
+	  }, [searchTerm]);
+
 	return (
 		<AppDashboard
+			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
 					<div className="grid md:grid-cols-4">
@@ -238,10 +282,26 @@ export default function User() {
 						fields={userFormFields}
 						onSubmit={async (data) => {
 							await handleEditUser(data);
-							setShowAddUserModal(false);
+							setShowEditUserModal(false);
 						}}
 						initialData={selectedUser}
 					/>
+
+					<AppModal
+						isOpen={showDeleteModal}
+						onClose={() => setShowDeleteModal(false)}
+						onConfirm={async () => {
+							await handleDelete();
+							setShowDeleteModal(false);
+						}}
+						title="Yakin ingin menghapus data?"
+						confirmLabel="Ya, hapus"
+						cancelLabel="Batal"
+						width="max-w-md"
+						disableCloseOnOverlayClick={false}
+					>
+						<p>Data yang sudah dihapus tidak dapat dikembalikan. Lanjutkan?</p>
+					</AppModal>
 				</div>
 			}
 			activeKey={"user"}

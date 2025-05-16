@@ -6,6 +6,7 @@ export interface UserUsecase {
 	getAllDistrict(): Promise<UserDistrictEntity[]>;
 	getAllVillage(district_id: number): Promise<UserVillageEntity[]>;
 	uploadUserImage(file: FormData): Promise<{ image_url: string; success: boolean }>;
-	editUser(data: CreateUserEntity): Promise<UserEntity>
+	editUser(data: CreateUserEntity): Promise<UserEntity>;
+	deleteUser(id: number): Promise<{ success: boolean }>;
+	search(query: string): Promise<UserEntity[]>;
 }
-

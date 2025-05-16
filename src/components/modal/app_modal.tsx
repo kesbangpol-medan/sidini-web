@@ -51,7 +51,9 @@ const AppModal: React.FC<AppModalProps> = ({
 				</div>
 
 				{/* Body */}
-				<div className="p-4">{children}</div>
+				<div className="p-4 overflow-auto" style={{
+					maxHeight: "70vh"
+				}}>{children}</div>
 
 				{/* Footer */}
 				<div className="flex justify-end gap-2 p-4 border-t">

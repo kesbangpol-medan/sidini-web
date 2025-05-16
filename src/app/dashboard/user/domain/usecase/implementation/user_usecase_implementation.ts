@@ -4,6 +4,24 @@ import { UserUsecase } from "../user_usecase";
 
 export class UserUsecaseImpl implements UserUsecase {
 	constructor(private repo: UserRepository) {}
+	async search(query: string): Promise<UserEntity[]> {
+		try {
+			const users = await this.repo.search(query);
+			return users;
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		} catch (error) {
+			throw new Error("Tidak ada hasil ditemukan...");
+		}
+	}
+	async deleteUser(id: number): Promise<{ success: boolean; }> {
+		try {
+			const res = await this.repo.deleteUser(id);
+			return res;
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		} catch (error) {
+			throw new Error("Tidak ada hasil ditemukan...");
+		}
+	}
 	async editUser(data: CreateUserEntity): Promise<UserEntity> {
 		try {
 			const users = await this.repo.editUser(data);

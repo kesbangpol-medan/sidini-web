@@ -7,4 +7,6 @@ export interface UserRepository {
 	getAllVillage(district_id: number): Promise<UserVillageEntity[]>;
 	uploadUserImage(file: FormData): Promise<{ image_url: string; success: boolean }>;
 	editUser(data: CreateUserEntity): Promise<UserEntity>;
+	deleteUser(id: number): Promise<{ success: boolean }>;
+	search(query: string): Promise<UserEntity[]>;
 }
