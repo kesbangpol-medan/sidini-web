@@ -71,6 +71,7 @@ export default function User() {
 								role: row.role.toString(),
 								district_id: row.district.id,
 								village_id: row.village.id,
+								active: row.active ? "true" : "false",
 							});
 							setShowEditUserModal(true);
 						}}
@@ -97,6 +98,17 @@ export default function User() {
 		{ name: "name", label: "Nama", type: "text", placeholder: "Nama Pengguna" },
 		{ name: "email", label: "Email", type: "email", placeholder: "Email Pengguna" },
 		{ name: "phone", label: "Telepon", type: "text", placeholder: "Telepon Pengguna" },
+		{ name: "password", label: "Kata Sandi", type: "password", placeholder: "Kata Sandi Pengguna" },
+		{ name: "repassword", label: "Ulangi Kata Sandi", type: "password", placeholder: "Ulangi Kata Sandi Pengguna" },
+		{
+			name: "active",
+			label: "Aktif",
+			type: "select",
+			options: [
+				{ value: "true", label: "Aktif" },
+				{ value: "false", label: "Tidak" },
+			],
+		},
 		{
 			name: "role",
 			label: "Role",
@@ -122,8 +134,6 @@ export default function User() {
 			options: [{ value: "-", label: "-" }, ...villages.map((val) => ({ value: val.id.toString(), label: val.name }))],
 		},
 		{ name: "image", label: "Foto", type: "file", placeholder: "Foto Pengguna" },
-		{ name: "password", label: "Kata Sandi", type: "password", placeholder: "Kata Sandi Pengguna" },
-		{ name: "repassword", label: "Ulangi Kata Sandi", type: "password", placeholder: "Ulangi Kata Sandi Pengguna" },
 	];
 
 	const handleCreateUser = async (data: any) => {
@@ -159,6 +169,7 @@ export default function User() {
 			data.role = parseInt(data.role);
 			data.district_id = parseInt(data.district_id);
 			data.village_id = parseInt(data.village_id);
+			data.active = data.active === "true" ? true : false;
 			await userUsecase.editUser(data);
 			getAllData();
 		} catch (error) {

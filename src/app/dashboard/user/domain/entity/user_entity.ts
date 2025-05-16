@@ -24,7 +24,7 @@ export interface CreateUserEntity {
 	name: string;
 	phone: string;
 	email: string;
-	active: boolean;
+	active: boolean | string;
 	role: number | string;
 	image?: string;
 	district_id: number;
