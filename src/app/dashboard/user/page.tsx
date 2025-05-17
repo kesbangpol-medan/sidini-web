@@ -7,10 +7,11 @@ import React, { useEffect, useState } from "react";
 import { CreateUserEntity, UserDistrictEntity, UserEntity, UserVillageEntity } from "./domain/entity/user_entity";
 import { UserUsecaseImpl } from "./domain/usecase/implementation/user_usecase_implementation";
 import { UserRepositoryImpl } from "./domain/repository/implementation/user_repository_implementation";
-import { FaCog, FaPlus, FaTrash, FaUsers } from "react-icons/fa";
+import { FaCog, FaMobile, FaPlus, FaTrash, FaUsers } from "react-icons/fa";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import IconCard from "@/components/cards/icon_card";
 import AppModal from "@/components/modal/app_modal";
+import { motion } from "framer-motion";
 
 const userUsecase = new UserUsecaseImpl(new UserRepositoryImpl());
 
@@ -28,8 +29,8 @@ export default function User() {
 	const [userCount, setUserCount] = useState({
 		active: 0,
 		inactive: 0,
-		total_user: 0
-	})
+		total_user: 0,
+	});
 
 	const columns: ColumnProps<UserEntity>[] = [
 		{
@@ -44,24 +45,35 @@ export default function User() {
 						className="rounded-full object-cover aspect-square"
 					/>
 					<div className="flex gap-1 flex-col">
-						<div className="text-sm font-semibold text-[var(--primary)] cursor-pointer">
-							<h5>{row.name}</h5>
+						<div className="text-sm">
+							<span>{row.name}</span>
 						</div>
-						<div className="text-xs">
-							<h5>{row.role === 3 ? "Super Admin" : row.role === 2 ? "Admin" : "Agen"}</h5>
+						<div className="text-xs text-[var(--disable)]">
+							<span>{row.role === 3 ? "Super Admin" : row.role === 2 ? "Admin" : "Agen"}</span>
 						</div>
 					</div>
 				</div>
 			),
 		},
-		{ header: "Email", accessor: (row) => <h5>{row.email}</h5> },
-		{ header: "Telepon", accessor: (row) => <h5>{row.phone}</h5> },
-		{ header: "Kecamatan", accessor: (row) => <h5>{row.district.name}</h5> },
-		{ header: "Kelurahan", accessor: (row) => <h5>{row.village.name}</h5> },
+		{
+			header: "Kontak",
+			accessor: (row) => (
+				<div className="flex flex-col gap-1">
+					<div className="text-sm flex gap-2 items-center">
+						<FaMobile /> {row.phone}
+					</div>
+					<div className="text-xs text-[var(--disable)]">{row.email}</div>
+				</div>
+			),
+		},
+		{ header: "Kecamatan", accessor: (row) => <span className="text-sm">{row.district.name}</span> },
+		{ header: "Kelurahan", accessor: (row) => <span className="text-sm">{row.village.name}</span> },
 		{
 			header: "Aktif",
 			accessor: (row) => (
-				<h5>{row.active ? <span className="text-[var(--success)]">Ya</span> : <span className="text-[var(--disable)]">Tidak</span>}</h5>
+				<span>
+					{row.active ? <span className="text-[var(--success)] text-sm">Ya</span> : <span className="text-[var(--disable)] text-sm">Tidak</span>}
+				</span>
 			),
 			textAlign: "center",
 		},
@@ -69,7 +81,7 @@ export default function User() {
 			header: "Opsi",
 			accessor: (row) => (
 				<div className="w-full flex gap-3 justify-center items-center">
-					<div
+					<motion.div
 						className="icon-background cursor-pointer flex gap-2 items-center justify-center"
 						onClick={() => {
 							setSelectedUser({
@@ -82,19 +94,32 @@ export default function User() {
 							setDataMode("edit");
 							setShowEditUserModal(true);
 						}}
+						whileHover={{ scale: 1.05, translateY: -2 }}
+						whileTap={{ scale: 0.95 }}
+						transition={{ type: "spring", stiffness: 300 }}
 					>
-						<FaCog className="text-[var(--primary)]" /> <h5 className="text-xs">Edit</h5>
-					</div>
-					<div
+						<motion.span whileHover={{ rotate: 15 }}>
+							<FaCog className="text-[var(--primary)]" />
+						</motion.span>
+						<h5 className="text-xs">Edit</h5>
+					</motion.div>
+
+					<motion.div
 						className="icon-background cursor-pointer flex gap-2 items-center justify-center"
 						onClick={() => {
 							console.log("Im clicked");
 							setShowDeleteModal(true);
 							setSelectedDeleteUserId(parseInt(row.id));
 						}}
+						whileHover={{ scale: 1.05, translateY: -2 }}
+						whileTap={{ scale: 0.95 }}
+						transition={{ type: "spring", stiffness: 300 }}
 					>
-						<FaTrash className="text-[var(--danger)]" /> <h5 className="text-xs">Hapus</h5>
-					</div>
+						<motion.span whileHover={{ scale: 1.2 }}>
+							<FaTrash className="text-[var(--danger)]" />
+						</motion.span>
+						<h5 className="text-xs">Hapus</h5>
+					</motion.div>
 				</div>
 			),
 			textAlign: "center",
@@ -214,7 +239,7 @@ export default function User() {
 		try {
 			const users = await userUsecase.getAllUsers();
 			const districts = await userUsecase.getAllDistrict();
-			const count = await userUsecase.count()
+			const count = await userUsecase.count();
 			setUsers(users);
 			setDistricts(districts);
 			setUserCount(count);
@@ -268,8 +293,8 @@ export default function User() {
 							value={userCount.total_user}
 							info={
 								<div className="flex flex-col gap-1">
-									<div className="bg-success px-2 py-1 rounded-full text-xs text-center">{userCount.active} Aktif</div>
-									<div className="bg-danger px-2 py-1 rounded-full text-xs text-center">{userCount.inactive} Nonaktif</div>
+									<div className="bg-success px-2 py-1 rounded-full text-xs font-semibold text-center">{userCount.active} Aktif</div>
+									<div className="bg-danger px-2 py-1 rounded-full text-xs font-semibold text-center">{userCount.inactive} Nonaktif</div>
 								</div>
 							}
 						/>
@@ -279,17 +304,23 @@ export default function User() {
 						columns={columns}
 						tableTitle="Tabel User"
 						tools={
-							<div
+							<motion.div
 								className="icon-background cursor-pointer"
 								onClick={() => {
 									setDataMode("create");
 									setShowAddUserModal(true);
 								}}
+								whileHover={{ scale: 1.05, translateY: -2 }}
+								whileTap={{ scale: 0.95 }}
+								transition={{ type: "spring", stiffness: 300 }}
 							>
-								<FaPlus />
-							</div>
+								<motion.span whileHover={{ rotate: 90 }}>
+									<FaPlus className="text-[var(--primary)]" />
+								</motion.span>
+							</motion.div>
 						}
 					/>
+
 					<AppForm
 						asModal
 						isOpen={showAddUserModal}

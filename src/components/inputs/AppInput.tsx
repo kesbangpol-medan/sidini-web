@@ -54,10 +54,13 @@ const AppInput: React.FC<AppInputProps> = (props) => {
 						placeholder={props.placeHolder}
 					/>
 				)}
-				{props.icon && props.type !== "textarea" && props.type !== "search" && (
+				{/* {props.icon && props.type !== "textarea" && props.type !== "search" && (
 					<button type="button" className="text-xs absolute inset-y-0 right-3 flex items-center text-gray-600">
 						{props.icon}
 					</button>
+				)} */}
+				{props.icon && props.type !== "textarea" && props.type !== "search" && (
+					<div className="text-xs absolute inset-y-0 right-3 flex items-center">{props.icon}</div>
 				)}
 			</div>
 		</div>

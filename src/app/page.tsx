@@ -1,103 +1,108 @@
-import Image from "next/image";
+"use client";
+import AppInput from "@/components/inputs/AppInput";
+import { useState } from "react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { motion } from "framer-motion";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+const LoginPage = () => {
+	const [showPassword, setShowPassword] = useState(false);
+	const [formData, setFormData] = useState({
+		phone: "",
+		password: "",
+		remember: false,
+	});
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		console.log(formData);
+	};
+
+	// Animation variants
+	const containerVariants = {
+		hidden: { opacity: 0, y: 20 },
+		visible: { opacity: 1, y: 0 },
+	};
+
+	return (
+		<div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#f8f5ff] to-[#f0ebff] dark:from-[#0a0612] dark:to-[#1a0f2d]">
+			<motion.div
+				initial="hidden"
+				animate="visible"
+				variants={containerVariants}
+				transition={{ duration: 0.3 }}
+				className="surface rounded-2xl p-8 w-full max-w-md shadow-2xl backdrop-blur-lg border border-[var(--border)] relative overflow-hidden"
+			>
+				<div className="absolute -top-20 -right-20 w-48 h-48 bg-[var(--primary)]/20 rounded-full blur-3xl" />
+				<div className="absolute -bottom-20 -left-20 w-48 h-48 bg-[var(--secondary)]/20 rounded-full blur-3xl" />
+
+				<div className="text-center mb-8 relative z-10">
+					<h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent">
+						Selamat Datang
+					</h1>
+					<p className="text-sm text-[var(--disable)] mt-2">Silahkan login untuk melanjutkan</p>
+				</div>
+
+				<form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+					<AppInput
+						label="Nomor Telepom"
+						type="number"
+						placeHolder="0813xxxxxxxx"
+						value={formData.phone}
+						onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+					/>
+
+					<AppInput
+						label="Password"
+						type={showPassword ? "text" : "password"}
+						placeHolder="••••••••"
+						value={formData.password}
+						onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+						icon={
+							<button
+								type="button"
+								onClick={() => setShowPassword(!showPassword)}
+								className="text-[var(--disable)] hover:text-[var(--primary)] transition-colors"
+							>
+								{showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+							</button>
+						}
+					/>
+
+					<div className="flex items-center justify-between">
+						<label className="flex items-center space-x-2 text-sm cursor-pointer">
+							<input
+								type="checkbox"
+								checked={formData.remember}
+								onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
+								className="w-4 h-4 rounded border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)] transition-all"
+							/>
+							<span className="hover:text-[var(--primary)] transition-colors">Remember me</span>
+						</label>
+						<a href="#" className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors underline underline-offset-4">
+							Forgot Password?
+						</a>
+					</div>
+
+					<motion.button
+						whileHover={{ scale: 1.02 }}
+						whileTap={{ scale: 0.98 }}
+						type="submit"
+						className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all font-semibold relative overflow-hidden"
+					>
+						<span className="relative z-10">Sign In</span>
+						<div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-20 transition-opacity" />
+					</motion.button>
+				</form>
+
+				<p className="mt-8 text-center text-sm text-[var(--disable)] relative z-10">
+					Copyright 2025 By{" "}
+					<a href="#" className="text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors font-medium">
+						Dinas Kesbangpol
+					</a>
+				</p>
+			</motion.div>
+		</div>
+	);
+};
+
+export default LoginPage;
