@@ -3,8 +3,14 @@ import AppInput from "@/components/inputs/AppInput";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { AuthUsecaseImpl } from "./auth/login/domain/usecase/implementation/auth_usecase_implementation";
+import { AuthRepositoryImpl } from "./auth/login/domain/repository/implementation/auth_repository_implementation";
+import { useRouter } from 'next/navigation';
+
+const usecase = new AuthUsecaseImpl(new AuthRepositoryImpl());
 
 const LoginPage = () => {
+	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
 	const [formData, setFormData] = useState({
 		phone: "",
@@ -12,9 +18,15 @@ const LoginPage = () => {
 		remember: false,
 	});
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log(formData);
+		try {
+			const res = await usecase.login(formData.phone, formData.password);
+			localStorage.setItem("token", res.token);
+			router.push("/dashboard/report");
+		} catch (error) {
+			console.log("Terjadi kesalahan " + error);
+		}
 	};
 
 	// Animation variants
@@ -44,7 +56,7 @@ const LoginPage = () => {
 
 				<form onSubmit={handleSubmit} className="space-y-6 relative z-10">
 					<AppInput
-						label="Nomor Telepom"
+						label="Nomor Telepon"
 						type="number"
 						placeHolder="0813xxxxxxxx"
 						value={formData.phone}

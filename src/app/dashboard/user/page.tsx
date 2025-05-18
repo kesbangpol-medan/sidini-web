@@ -107,7 +107,6 @@ export default function User() {
 					<motion.div
 						className="icon-background cursor-pointer flex gap-2 items-center justify-center"
 						onClick={() => {
-							console.log("Im clicked");
 							setShowDeleteModal(true);
 							setSelectedDeleteUserId(parseInt(row.id));
 						}}
