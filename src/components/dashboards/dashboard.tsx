@@ -208,6 +208,10 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
 		try {
 			const res = await authUsecase.getMe();
 			setUser(res);
+			if (res.role < 2) {
+				localStorage.clear();
+				router.push("/");
+			}
 		} catch {
 			localStorage.clear();
 			router.push("/");

@@ -1,6 +1,6 @@
 "use client";
 import AppInput from "@/components/inputs/AppInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { AuthUsecaseImpl } from "./auth/login/domain/usecase/implementation/auth_usecase_implementation";
@@ -34,6 +34,13 @@ const LoginPage = () => {
 		hidden: { opacity: 0, y: 20 },
 		visible: { opacity: 1, y: 0 },
 	};
+
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			router.push("/dashboard/report");
+		}
+	}, [router]);
 
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#f8f5ff] to-[#f0ebff] dark:from-[#0a0612] dark:to-[#1a0f2d]">
