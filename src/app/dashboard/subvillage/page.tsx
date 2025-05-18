@@ -9,7 +9,7 @@ import AppTable, { ColumnProps } from "@/components/tables/table";
 import { motion } from "framer-motion";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import AppModal from "@/components/modal/app_modal";
-import { CreateSubVillageEntity, SubVillageEntity } from "./entity/village_entity";
+import { CreateSubVillageEntity, SubVillageEntity } from "./entity/subvillage_entity";
 import { VillageEntity } from "../village/entity/village_entity";
 import { DistrictEntity } from "../district/entity/district_entity";
 
