@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { makeCrudUseCase } from "@/utils/crud/usecase/usecase_factory";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
 import { FaCog, FaListOl, FaPlus, FaTrash } from "react-icons/fa";
@@ -25,6 +25,7 @@ const districUseCase = makeCrudUseCase<DistrictEntity, any>("districts", {
 });
 const villageUseCase = makeCrudUseCase<VillageEntity, any>("villages", {
 	read: (res: any) => res.data,
+	search: (res: any) => res.data,
 });
 
 export default function SubVillage() {
@@ -180,30 +181,42 @@ export default function SubVillage() {
 	}, []);
 
 	const [searchTerm, setSearchTerm] = useState("");
-	const handleSearch = async (query: string) => {
+
+	const handleSearch = useCallback(async (query: string) => {
 		try {
-			let data;
 			if (query.trim() === "") {
-				data = await subVillageUseCase.read();
-			} else {
-				data = await subVillageUseCase.search(`${query}&include=Village`);
+				return;
 			}
+
+			const data = await subVillageUseCase.search(`${query}&include=Village`);
 			setSubVillages(data);
 		} catch (err) {
 			console.error("Gagal mengambil data:", err);
 		}
-	};
-	
+	}, []);
+
 	useEffect(() => {
 		if (searchTerm.trim() === "") {
 			getAllSubVillages();
-		}; // tidak melakukan pencarian jika kosong
+		}
+
 		const delayDebounce = setTimeout(() => {
 			handleSearch(searchTerm);
 		}, 1000);
 
 		return () => clearTimeout(delayDebounce);
-	}, [searchTerm]);
+	}, [searchTerm, handleSearch]);
+
+	// useEffect(() => {
+	// 	if (searchTerm.trim() === "") {
+	// 		getAllSubVillages();
+	// 	}; // tidak melakukan pencarian jika kosong
+	// 	const delayDebounce = setTimeout(() => {
+	// 		handleSearch(searchTerm);
+	// 	}, 1000);
+
+	// 	return () => clearTimeout(delayDebounce);
+	// }, [searchTerm]);
 
 	return (
 		<AppDashboard
