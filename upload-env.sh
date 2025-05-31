@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REPO="celpung/sidini_web"
-ENVIRONMENT="production"
+ENVIRONMENT="main"
 
 echo "🚀 Uploading secrets to GitHub repo: $REPO"
 ENV_FILE_SECRETS=".env.github"

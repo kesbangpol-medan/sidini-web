@@ -9,7 +9,7 @@ jobs:
   environment: main
   runs-on: ubuntu-latest
   env:
-   IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/sidini_web:latest
+   IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/sidini:latest
   steps:
    - name: Checkout
      uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
   runs-on: ubuntu-latest
   env:
    CONTAINER_NAME: sidini
-   IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/sidini_web:latest
+   IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/sidini:latest
   steps:
    - name: Deploy to VPS
      uses: appleboy/ssh-action@master
