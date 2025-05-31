@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { makeCrudUseCase } from "@/utils/crud/usecase/usecase_factory";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
 import { FaAlignLeft, FaBuilding, FaCalendar, FaCamera, FaFileAlt, FaImage, FaMapMarker, FaTasks } from "react-icons/fa";
@@ -13,6 +13,7 @@ import Image from "next/image";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
+	search: (res: any) => res.data,
 });
 
 export default function ReportsPage() {
@@ -40,7 +41,7 @@ export default function ReportsPage() {
 			header: "Dokumentasi",
 			accessor: (row) => (
 				<div className="flex gap-2">
-					{row.images.length > 0 ? (
+					{row.images && row.images.length > 0 ? (
 						<motion.img
 							key={row.images[0].id}
 							src={`${imgLink}/${row.images[0].link}`}
@@ -55,6 +56,7 @@ export default function ReportsPage() {
 				</div>
 			),
 		},
+
 		{
 			header: "Detail",
 			accessor: (row) => (
@@ -100,27 +102,35 @@ export default function ReportsPage() {
 	);
 
 	const [searchTerm, setSearchTerm] = useState("");
-	const handleSearch = async (query: string) => {
+	
+	const handleSearch = useCallback(async (query: string) => {
 		try {
-			let data;
 			if (query.trim() === "") {
-				data = await reportUseCase.read();
-			} else {
-				data = await reportUseCase.search(query);
+				// Kalau kosong, bisa abaikan karena di useEffect sudah getAllReports() langsung
+				return;
 			}
+
+			const data = await reportUseCase.search(
+				`${query}&include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images`
+			);
+			console.log(data);
 			setReports(data);
 		} catch (err) {
 			console.error("Gagal mengambil data:", err);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
+		if (searchTerm.trim() === "") {
+			getAllReports();
+		}
+
 		const delayDebounce = setTimeout(() => {
 			handleSearch(searchTerm);
 		}, 1000);
 
 		return () => clearTimeout(delayDebounce);
-	}, [searchTerm]);
+	}, [searchTerm, handleSearch]);
 
 	return (
 		<AppDashboard

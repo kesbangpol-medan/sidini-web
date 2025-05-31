@@ -193,8 +193,11 @@ export default function SubVillage() {
 			console.error("Gagal mengambil data:", err);
 		}
 	};
-
+	
 	useEffect(() => {
+		if (searchTerm.trim() === "") {
+			getAllSubVillages();
+		}; // tidak melakukan pencarian jika kosong
 		const delayDebounce = setTimeout(() => {
 			handleSearch(searchTerm);
 		}, 1000);

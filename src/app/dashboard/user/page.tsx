@@ -67,7 +67,7 @@ export default function User() {
 			),
 		},
 		{ header: "Kecamatan", accessor: (row) => <span className="text-sm">{row.district.name}</span> },
-		{ header: "Kelurahan", accessor: (row) => <span className="text-sm">{row.village.name}</span> },
+		{ header: "Kelurahan", accessor: (row) => <span className="text-sm">{row.village && row.village.name && row.village.name || "-"}</span> },
 		{
 			header: "Aktif",
 			accessor: (row) => (
@@ -272,7 +272,17 @@ export default function User() {
 		}
 	};
 
+	// useEffect(() => {
+	// 	const delayDebounce = setTimeout(() => {
+	// 		handleSearch(searchTerm);
+	// 	}, 1000);
+
+	// 	return () => clearTimeout(delayDebounce);
+	// }, [searchTerm]);
 	useEffect(() => {
+		if (searchTerm.trim() === "") {
+			getAllData();
+		}; // tidak melakukan pencarian jika kosong
 		const delayDebounce = setTimeout(() => {
 			handleSearch(searchTerm);
 		}, 1000);
