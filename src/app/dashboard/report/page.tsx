@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { makeCrudUseCase } from "@/utils/crud/usecase/usecase_factory";
@@ -102,7 +103,7 @@ export default function ReportsPage() {
 	);
 
 	const [searchTerm, setSearchTerm] = useState("");
-	
+
 	const handleSearch = useCallback(async (query: string) => {
 		try {
 			if (query.trim() === "") {
@@ -242,12 +243,12 @@ export default function ReportsPage() {
 													style={{ borderColor: "var(--border)" }}
 													whileHover={{ scale: 1.02 }}
 												>
-													<Image
+													<img
 														src={`${imgLink}/${image.link}`}
 														alt="Dokumentasi laporan"
-														fill
-														className="object-cover cursor-pointer"
+														className="object-cover cursor-pointer w-full h-full"
 														onClick={() => setSelectedImage(image.link)}
+														style={{ objectFit: "cover" }}
 													/>
 												</motion.div>
 											))
