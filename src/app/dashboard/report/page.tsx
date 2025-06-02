@@ -10,7 +10,6 @@ import AppTable, { ColumnProps } from "@/components/tables/table";
 import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
 import { ReportEntity } from "./entity/report_entity";
-import Image from "next/image";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
@@ -266,7 +265,7 @@ export default function ReportsPage() {
 
 					<AppModal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)} title="Pratinjau Gambar" width="max-w-4xl">
 						{selectedImage && (
-							<Image src={`${imgLink}/${selectedImage}`} alt="Full preview" width={200} height={200} className="w-full h-auto max-h-[70vh] object-contain" />
+							<img src={`${imgLink}/${selectedImage}`} alt="Full preview" className="w-full h-auto max-h-[70vh] object-contain" />
 						)}
 					</AppModal>
 				</div>
