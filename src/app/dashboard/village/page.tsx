@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import AppModal from "@/components/modal/app_modal";
 import { DistrictEntity } from "../district/entity/district_entity";
-import AppLoading from "@/components/loading/AppLoading";
 
 const villageUseCase = makeCrudUseCase<VillageEntity, CreateVillageEntity>("villages", {
 	read: (res: any) => res.data,
@@ -201,10 +200,10 @@ export default function Village() {
 
 	return (
 		<AppDashboard
+		isLoading={isLoading}
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
-					{isLoading && <AppLoading />}
 					<div className="grid md:grid-cols-4">
 						<IconCard icon={<FaListOl size={24} />} title="Total Desa/Kelurahan" value={villages.length} info={<></>} />
 					</div>

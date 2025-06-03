@@ -12,7 +12,6 @@ import AppForm, { FormField } from "@/components/inputs/AppForm";
 import IconCard from "@/components/cards/icon_card";
 import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
-import AppLoading from "@/components/loading/AppLoading";
 
 const userUsecase = new UserUsecaseImpl(new UserRepositoryImpl());
 
@@ -309,10 +308,10 @@ export default function User() {
 
 	return (
 		<AppDashboard
+		isLoading={isLoading}
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
-					{isLoading && <AppLoading />}
 					<div className="grid md:grid-cols-4">
 						<IconCard
 							icon={<FaUsers size={24} />}

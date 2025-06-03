@@ -13,6 +13,7 @@ import { MdAssessment, MdLocationCity } from "react-icons/md";
 import { RiHome2Line } from "react-icons/ri";
 import { TbTrees } from "react-icons/tb";
 import { BiCategory } from "react-icons/bi";
+import AppLoading from "../loading/AppLoading";
 
 const authUsecase = new AuthUsecaseImpl(new AuthRepositoryImpl());
 
@@ -20,6 +21,7 @@ interface AppDashboardProps {
 	content: React.ReactNode;
 	activeKey: string;
 	onSearchChange?: (val: string) => void;
+	isLoading: boolean;
 }
 
 interface SearchBarProps {
@@ -191,7 +193,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => {
 	);
 };
 
-const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearchChange }) => {
+const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearchChange, isLoading }) => {
 	const router = useRouter();
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [searchValue, setSearchValue] = useState("");
@@ -230,6 +232,7 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
 
 	return (
 		<div className="flex min-h-screen bg-gradient-to-br from-[var(--background)] to-[var(--surface)/50]">
+			{isLoading && <AppLoading />}
 			<Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeMenu={activeKey} />
 
 			<main

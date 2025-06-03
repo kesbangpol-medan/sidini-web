@@ -10,7 +10,6 @@ import AppTable, { ColumnProps } from "@/components/tables/table";
 import { motion } from "framer-motion";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import AppModal from "@/components/modal/app_modal";
-import AppLoading from "@/components/loading/AppLoading";
 
 const districtUseCase = makeCrudUseCase<DistrictEntity, CreateDistrictEntity>("districts", {
 	read: (res: any) => res.data,
@@ -160,10 +159,10 @@ export default function District() {
 
 	return (
 		<AppDashboard
+		isLoading={isLoading}
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
-					{isLoading && <AppLoading />}
 					<div className="grid md:grid-cols-4">
 						<IconCard icon={<FaListOl size={24} />} title="Total Kecamatan" value={districts.length} info={<></>} />
 					</div>

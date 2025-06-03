@@ -22,6 +22,7 @@ export default function ReportsPage() {
 	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const imgLink = process.env.NEXT_PUBLIC_IMG;
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const columns: ColumnProps<ReportEntity>[] = [
 		{ header: "Judul", accessor: (row) => <span className="text-sm">{row.title}</span>, wrap: true },
@@ -76,6 +77,7 @@ export default function ReportsPage() {
 	];
 
 	const getAllReports = async () => {
+		setIsLoading(true)
 		try {
 			const res = await reportUseCase.read(
 				"reports?include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images"
@@ -83,6 +85,8 @@ export default function ReportsPage() {
 			setReports(res);
 		} catch (error) {
 			console.error("Error fetching reports:", error);
+		} finally {
+			setIsLoading(false)
 		}
 	};
 
@@ -134,6 +138,7 @@ export default function ReportsPage() {
 
 	return (
 		<AppDashboard
+		isLoading={isLoading}
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
