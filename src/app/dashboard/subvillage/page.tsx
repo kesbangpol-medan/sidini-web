@@ -12,6 +12,7 @@ import AppModal from "@/components/modal/app_modal";
 import { CreateSubVillageEntity, SubVillageEntity } from "./entity/subvillage_entity";
 import { VillageEntity } from "../village/entity/village_entity";
 import { DistrictEntity } from "../district/entity/district_entity";
+import AppLoading from "@/components/loading/AppLoading";
 
 const subVillageUseCase = makeCrudUseCase<SubVillageEntity, CreateSubVillageEntity>("sub-villages", {
 	read: (res: any) => res.data,
@@ -37,6 +38,7 @@ export default function SubVillage() {
 	const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 	const [showEditModal, setShowEditModal] = useState<boolean>(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const columns: ColumnProps<SubVillageEntity>[] = [
 		{
@@ -117,6 +119,7 @@ export default function SubVillage() {
 	];
 
 	const handleCreateNewSubVillage = async (data: any) => {
+		setIsLoading(true);
 		const dataToSubmit: CreateSubVillageEntity = {
 			name: data.name,
 			village_id: Number(data.village_id),
@@ -124,53 +127,73 @@ export default function SubVillage() {
 
 		try {
 			await subVillageUseCase.create(dataToSubmit);
+		} catch {
+			console.log("Error");
 		} finally {
 			getAllSubVillages();
+			setIsLoading(false);
 		}
 	};
 
 	const getAllSubVillages = async () => {
+		setIsLoading(true);
 		try {
 			const res = await subVillageUseCase.read("sub-villages?include=Village");
 			setSubVillages(res);
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const getVillages = async (district_id: number) => {
+		setIsLoading(true);
 		try {
 			const res = await villageUseCase.read(`villages?district_id=${district_id}`);
 			setVillages(res);
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const getDistricts = async () => {
+		setIsLoading(true);
 		try {
 			const res = await districUseCase.read();
 			setDistricts(res);
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleUpdateSubVillage = async (data: any) => {
+		setIsLoading(true);
 		try {
 			await subVillageUseCase.update({
 				...data,
 				village_id: Number(data.village_id),
 			});
+		} catch (error) {
+			console.log(error);
 		} finally {
+			setIsLoading(false);
 			getAllSubVillages();
 		}
 	};
 
 	const handleDeleteSubVillage = async () => {
+		setIsLoading(true);
 		try {
 			await subVillageUseCase.delete(selectedToDeleteId);
+		} catch (error) {
+			console.log(error);
 		} finally {
+			setIsLoading(false);
 			getAllSubVillages();
 		}
 	};
@@ -223,6 +246,7 @@ export default function SubVillage() {
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
+					{isLoading && <AppLoading />}
 					<div className="grid md:grid-cols-4">
 						<IconCard icon={<FaListOl size={24} />} title="Total Dusun/Lingkungan" value={subVillages.length} info={<></>} />
 					</div>

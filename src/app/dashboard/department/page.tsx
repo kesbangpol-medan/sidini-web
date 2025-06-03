@@ -10,6 +10,7 @@ import AppTable, { ColumnProps } from "@/components/tables/table";
 import { motion } from "framer-motion";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import AppModal from "@/components/modal/app_modal";
+import AppLoading from "@/components/loading/AppLoading";
 
 const departmentUseCase = makeCrudUseCase<DepartmentEntity, CreateDepartmentEntity>("departments", {
 	read: (res: any) => res.data,
@@ -27,6 +28,7 @@ export default function Department() {
 	const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 	const [showEditModal, setShowEditModal] = useState<boolean>(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const columns: ColumnProps<DepartmentEntity>[] = [
 		{ header: "Nama", accessor: (row) => <span className="text-sm">{row.name}</span> },
@@ -74,6 +76,7 @@ export default function Department() {
 	const formFields: FormField[] = [{ name: "name", label: "Nama", type: "text", placeholder: "Nama Departemen / Kategori" }];
 
 	const handleCreateNewDepartment = async (data: any) => {
+		setIsLoading(true);
 		const dataToSubmit: CreateDepartmentEntity = {
 			name: data.name,
 		};
@@ -82,35 +85,43 @@ export default function Department() {
 		} catch (error) {
 			console.log(error);
 		} finally {
+			setIsLoading(false);
 			getAllDepartments();
 		}
 	};
 
 	const getAllDepartments = async () => {
+		setIsLoading(true);
 		try {
 			const res = await departmentUseCase.read();
 			setDepartments(res);
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleUpdateDepartment = async (data: any) => {
+		setIsLoading(true);
 		try {
 			await departmentUseCase.update(data);
 		} catch (error) {
 			console.log(error);
 		} finally {
+			setIsLoading(false);
 			getAllDepartments();
 		}
 	};
 
 	const handleDeleteDepartment = async () => {
+		setIsLoading(true);
 		try {
 			await departmentUseCase.delete(selectedToDeleteId);
 		} catch (error) {
 			console.log(error);
 		} finally {
+			setIsLoading(false);
 			getAllDepartments();
 		}
 	};
@@ -147,6 +158,7 @@ export default function Department() {
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
+					{isLoading && <AppLoading />}
 					<div className="grid md:grid-cols-4">
 						<IconCard icon={<FaListOl size={24} />} title="Total Departemen / Kategori" value={departments.length} info={<></>} />
 					</div>

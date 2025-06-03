@@ -5,12 +5,14 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { AuthUsecaseImpl } from "./auth/login/domain/usecase/implementation/auth_usecase_implementation";
 import { AuthRepositoryImpl } from "./auth/login/domain/repository/implementation/auth_repository_implementation";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import AppLoading from "@/components/loading/AppLoading";
 
 const usecase = new AuthUsecaseImpl(new AuthRepositoryImpl());
 
 const LoginPage = () => {
 	const router = useRouter();
+	const [isLoading, setIsloading] = useState<boolean>(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [formData, setFormData] = useState({
 		phone: "",
@@ -19,6 +21,7 @@ const LoginPage = () => {
 	});
 
 	const handleSubmit = async (e: React.FormEvent) => {
+		setIsloading(true);
 		e.preventDefault();
 		try {
 			const res = await usecase.login(formData.phone, formData.password);
@@ -26,6 +29,8 @@ const LoginPage = () => {
 			router.push("/dashboard/report");
 		} catch (error) {
 			console.log("Terjadi kesalahan " + error);
+		} finally {
+			setIsloading(false);
 		}
 	};
 
@@ -44,6 +49,7 @@ const LoginPage = () => {
 
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#f8f5ff] to-[#f0ebff] dark:from-[#0a0612] dark:to-[#1a0f2d]">
+			{isLoading && <AppLoading />}
 			<motion.div
 				initial="hidden"
 				animate="visible"

@@ -10,6 +10,7 @@ import AppTable, { ColumnProps } from "@/components/tables/table";
 import { motion } from "framer-motion";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import AppModal from "@/components/modal/app_modal";
+import AppLoading from "@/components/loading/AppLoading";
 
 const districtUseCase = makeCrudUseCase<DistrictEntity, CreateDistrictEntity>("districts", {
 	read: (res: any) => res.data,
@@ -21,6 +22,7 @@ const districtUseCase = makeCrudUseCase<DistrictEntity, CreateDistrictEntity>("d
 });
 
 export default function District() {
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [districts, setDistricts] = useState<DistrictEntity[]>([]);
 	const [selectedDistrict, setSelectedDistrict] = useState<CreateDistrictEntity>();
 	const [selectedToDeleteId, setSelectedToDeleteId] = useState<number>(0);
@@ -81,30 +83,39 @@ export default function District() {
 	];
 
 	const handleCreateNewDistrict = async (data: any) => {
+		setIsLoading(true);
 		const dataToSubmit: CreateDistrictEntity = {
 			name: data.name,
 		};
 		try {
 			await districtUseCase.create(dataToSubmit);
 		} finally {
+			setIsLoading(false);
 			getAllDistricts();
 		}
 	};
 
 	const getAllDistricts = async () => {
+		setIsLoading(true);
 		try {
 			// const res = await districtUseCase.read("districts?page=1&limit=10");
-            const res = await districtUseCase.read();
+			const res = await districtUseCase.read();
 			setDistricts(res);
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleUpdateDistrict = async (data: any) => {
+		setIsLoading(true);
 		try {
 			await districtUseCase.update(data);
+		} catch {
+			console.log("Update gagal");
 		} finally {
+			setIsLoading(false);
 			getAllDistricts();
 		}
 	};
@@ -112,7 +123,10 @@ export default function District() {
 	const handleDeleteDistrict = async () => {
 		try {
 			await districtUseCase.delete(selectedToDeleteId);
+		} catch {
+			console.log("gagal");
 		} finally {
+			setIsLoading(false);
 			getAllDistricts();
 		}
 	};
@@ -149,6 +163,7 @@ export default function District() {
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
+					{isLoading && <AppLoading />}
 					<div className="grid md:grid-cols-4">
 						<IconCard icon={<FaListOl size={24} />} title="Total Kecamatan" value={districts.length} info={<></>} />
 					</div>

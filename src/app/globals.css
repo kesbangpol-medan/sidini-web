@@ -1,77 +1,82 @@
-/* @import "tailwindcss";
+@import "tailwindcss";
 
+/* Light Mode Defaults */
 :root {
-	--background: #fdfcff;
-	--foreground: #333333;
-	--border: #e0e0e0;
-	--surface: #ffffff;
-	--input-bg: #ffffff;
-	--sidebar-menu-active-bg: #f2e7ff;
-	--sidebar-menu-active-foreground: #6f2dbd;
-	--icon-bg: #eeeeee;
+	--background: #f8f9fc; /* Soft lavender white */
+	--foreground: #2d3748; /* Deep navy gray (softer than black) */
+	--border: #e2e8f0; /* Light slate */
+	--surface: #ffffff; /* Pure white */
+	--input-bg: #f1f5f9; /* Cool snow */
+	--sidebar-menu-active-bg: #f3e8ff;
+	--sidebar-menu-active-foreground: #7c3aed;
+	--icon-bg: #f1f5f9;
 
-	--primary: #995cfa; 
-	--primary-hover: #b180ff;
+	/* Primary Colors */
+	--primary: #8b5cf6; /* Vibrant purple */
+	--primary-hover: #7c3aed;
 
-	--secondary: #c3caff;
-	--secondary-hover: #9aa6ff;
+	/* Secondary Colors */
+	--secondary: #2dd4bf; /* Fresh teal */
+	--secondary-hover: #0d9488;
 
-	--success: #59b473;
-	--success-hover: #00e676;
+	/* Status Colors */
+	--success: #12d594; /* Emerald green */
+	--success-hover: #059669;
+	--danger: #e56060; /* Coral red */
+	--danger-hover: #dc2626;
+	--warning: #f59e0b; /* Amber gold */
+	--warning-hover: #d97706;
+	--info: #3b82f6; /* Ocean blue */
+	--info-hover: #2563eb;
 
-	--danger: #f79090;
-	--danger-hover: #ff5252;
+	/* Neutrals */
+	--black: #1e293b; /* Deep navy */
+	--black-hover: #0f172a;
+	--disable: #94a3b8; /* Soft slate */
+	--disable-hover: #64748b;
 
-	--warning: #ffeaa7;
-	--warning-hover: #f9ca24;
-
-	--info: #a0e9f5;
-	--info-hover: #00bcd4;
-
-	--black: #212529;
-	--black-hover: #121416;
-
-	--disable: #d3d3d3;
-	--disable-hover: #c2c2c2;
+	--loading-background: rgba(15, 23, 42, 0.5);
+	--loading-foreground: #f8f9fc;
 }
 
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #0d0d0d;
-		--foreground: #f0f0f0;
-		--border: #2c2c2c;
-		--surface: #1a1a1a;
-		--input-bg: #121212;
+		--background: #0f172a; /* Deep navy */
+		--foreground: #e2e8f0; /* Soft ice */
+		--border: #334155; /* Steel blue */
+		--surface: #1e293b; /* Dark slate */
+		--input-bg: #1e293b;
 		--sidebar-menu-active-bg: #2f1847;
-		--sidebar-menu-active-foreground: #d6b0ff;
-		--icon-bg: #2e2e2e;
+		--sidebar-menu-active-foreground: #c4b5fd;
+		--icon-bg: #334155;
 
-		--primary: #a370f7; 
-		--primary-hover: #864fe8;
+		/* Dark Mode Accents */
+		--primary: #9f7aea; /* Softer purple */
+		--primary-hover: #8b5cf6;
+		--secondary: #5eead4; /* Bright teal */
+		--secondary-hover: #2dd4bf;
+		--success: #298f6a; /* Glowing green */
+		--success-hover: #10b981;
+		--danger: #f5687d; /* Pink-red */
+		--danger-hover: #f43f5e;
+		--warning: #fcd34d; /* Warm yellow */
+		--warning-hover: #fbbf24;
+		--info: #60a5fa; /* Electric blue */
+		--info-hover: #3b82f6;
 
-		--secondary: #7b8fff;
-		--secondary-hover: #5a6bf2;
+		/* Dark Neutrals */
+		--black: #f1f5f9;
+		--black-hover: #cbd5e1;
+		--disable: #475569;
+		--disable-hover: #64748b;
 
-		--success: #3e755a;
-		--success-hover: #27d87a;
-
-		--danger: #ff6b81;
-		--danger-hover: #e64963;
-
-		--warning: #f7d774;
-		--warning-hover: #f3c12e;
-
-		--info: #56e0f6;
-		--info-hover: #39c2dc;
-
-		--black: #f1f1f1;
-		--black-hover: #c9c9c9;
-
-		--disable: #555555;
-		--disable-hover: #444444;
+		--loading-background: rgba(248, 249, 252, 0.5);
+		--loading-foreground: #0f172a;
 	}
 }
 
+/* Keep all existing CSS rules below exactly as they were */
 body {
 	background-color: var(--background);
 	color: var(--foreground);
@@ -127,135 +132,4 @@ h6 {
 
 .bg-danger {
 	background-color: var(--danger);
-} */
-
-@import "tailwindcss";
-
-/* Light Mode Defaults */
-:root {
-	--background: #f8f9fc;         /* Soft lavender white */
-	--foreground: #2d3748;         /* Deep navy gray (softer than black) */
-	--border: #e2e8f0;            /* Light slate */
-	--surface: #ffffff;            /* Pure white */
-	--input-bg: #f1f5f9;          /* Cool snow */
-	--sidebar-menu-active-bg: #f3e8ff; 
-	--sidebar-menu-active-foreground: #7c3aed;
-	--icon-bg: #f1f5f9;
-  
-	/* Primary Colors */
-	--primary: #8b5cf6;           /* Vibrant purple */
-	--primary-hover: #7c3aed;
-  
-	/* Secondary Colors */
-	--secondary: #2dd4bf;         /* Fresh teal */
-	--secondary-hover: #0d9488;
-  
-	/* Status Colors */
-	--success: #12d594;           /* Emerald green */
-	--success-hover: #059669;
-	--danger: #e56060;            /* Coral red */
-	--danger-hover: #dc2626;
-	--warning: #f59e0b;           /* Amber gold */
-	--warning-hover: #d97706;
-	--info: #3b82f6;              /* Ocean blue */
-	--info-hover: #2563eb;
-  
-	/* Neutrals */
-	--black: #1e293b;             /* Deep navy */
-	--black-hover: #0f172a;
-	--disable: #94a3b8;           /* Soft slate */
-	--disable-hover: #64748b;
-  }
-  
-  /* Dark Mode */
-  @media (prefers-color-scheme: dark) {
-	:root {
-	  --background: #0f172a;       /* Deep navy */
-	  --foreground: #e2e8f0;       /* Soft ice */
-	  --border: #334155;           /* Steel blue */
-	  --surface: #1e293b;          /* Dark slate */
-	  --input-bg: #1e293b;
-	  --sidebar-menu-active-bg: #2f1847;
-	  --sidebar-menu-active-foreground: #c4b5fd;
-	  --icon-bg: #334155;
-  
-	  /* Dark Mode Accents */
-	  --primary: #9f7aea;          /* Softer purple */
-	  --primary-hover: #8b5cf6;
-	  --secondary: #5eead4;        /* Bright teal */
-	  --secondary-hover: #2dd4bf;
-	  --success: #298f6a;          /* Glowing green */
-	  --success-hover: #10b981;
-	  --danger: #f5687d;           /* Pink-red */
-	  --danger-hover: #f43f5e;
-	  --warning: #fcd34d;          /* Warm yellow */
-	  --warning-hover: #fbbf24;
-	  --info: #60a5fa;             /* Electric blue */
-	  --info-hover: #3b82f6;
-  
-	  /* Dark Neutrals */
-	  --black: #f1f5f9;
-	  --black-hover: #cbd5e1;
-	  --disable: #475569;
-	  --disable-hover: #64748b;
-	}
-  }
-
-/* Keep all existing CSS rules below exactly as they were */
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  border-color: var(--border);
-  font-family: var(--font-roboto), sans-serif;
 }
-
-.border,
-.border-r,
-.border-l,
-.border-t,
-.border-b,
-.border-x,
-.border-y {
-  border-color: var(--border);
-}
-
-.surface {
-  background-color: var(--surface);
-}
-
-.sidebar .active {
-  background-color: var(--sidebar-menu-active-bg);
-  color: var(--sidebar-menu-active-foreground);
-}
-
-input {
-  background-color: var(--input-bg);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-poppins), sans-serif;
-}
-
-.icon-background {
-  background-color: var(--icon-bg);
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.bg-primary {
-  background-color: var(--primary);
-}
-
-.bg-success {
-  background-color: var(--success);
-}
-
-.bg-danger {
-  background-color: var(--danger);
-}
-  

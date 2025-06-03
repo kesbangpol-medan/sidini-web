@@ -12,6 +12,7 @@ import AppForm, { FormField } from "@/components/inputs/AppForm";
 import IconCard from "@/components/cards/icon_card";
 import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
+import AppLoading from "@/components/loading/AppLoading";
 
 const userUsecase = new UserUsecaseImpl(new UserRepositoryImpl());
 
@@ -31,6 +32,7 @@ export default function User() {
 		inactive: 0,
 		total_user: 0,
 	});
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const columns: ColumnProps<UserEntity>[] = [
 		{
@@ -67,7 +69,7 @@ export default function User() {
 			),
 		},
 		{ header: "Kecamatan", accessor: (row) => <span className="text-sm">{row.district.name}</span> },
-		{ header: "Kelurahan", accessor: (row) => <span className="text-sm">{row.village && row.village.name && row.village.name || "-"}</span> },
+		{ header: "Kelurahan", accessor: (row) => <span className="text-sm">{(row.village && row.village.name && row.village.name) || "-"}</span> },
 		{
 			header: "Aktif",
 			accessor: (row) => (
@@ -172,6 +174,7 @@ export default function User() {
 	];
 
 	const handleCreateUser = async (data: any) => {
+		setIsLoading(true);
 		try {
 			if (data.image instanceof File) {
 				const formData = new FormData();
@@ -189,10 +192,13 @@ export default function User() {
 			setDataMode("");
 		} catch (error) {
 			console.error("Gagal mengambil data user:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleEditUser = async (data: any) => {
+		setIsLoading(true);
 		try {
 			if (data.image instanceof File) {
 				const formData = new FormData();
@@ -211,30 +217,39 @@ export default function User() {
 			setDataMode("");
 		} catch (error) {
 			console.error("Gagal mengambil data user:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleDelete = async () => {
+		setIsLoading(true);
 		try {
 			await userUsecase.deleteUser(selectedDeleteUserId).then(() => {
 				getAllData();
 			});
 		} catch (error) {
 			console.error("Gagal mengambil data user:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleGetVillage = async (district_id: string | number) => {
+		setIsLoading(true);
 		try {
 			const id = typeof district_id === "string" ? parseInt(district_id) : district_id;
 			const res = await userUsecase.getAllVillage(id);
 			setVillages(res);
 		} catch (error) {
 			console.error("Gagal mengambil data user:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const getAllData = async () => {
+		setIsLoading(true);
 		try {
 			const users = await userUsecase.getAllUsers();
 			const districts = await userUsecase.getAllDistrict();
@@ -244,6 +259,8 @@ export default function User() {
 			setUserCount(count);
 		} catch (err) {
 			console.error("Gagal mengambil data user:", err);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -282,7 +299,7 @@ export default function User() {
 	useEffect(() => {
 		if (searchTerm.trim() === "") {
 			getAllData();
-		}; // tidak melakukan pencarian jika kosong
+		} // tidak melakukan pencarian jika kosong
 		const delayDebounce = setTimeout(() => {
 			handleSearch(searchTerm);
 		}, 1000);
@@ -295,6 +312,7 @@ export default function User() {
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
+					{isLoading && <AppLoading />}
 					<div className="grid md:grid-cols-4">
 						<IconCard
 							icon={<FaUsers size={24} />}

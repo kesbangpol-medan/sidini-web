@@ -1,10 +1,6 @@
-import AppDashboard from '@/components/dashboards/dashboard'
-import React from 'react'
+import AppDashboard from "@/components/dashboards/dashboard";
+import React from "react";
 
 export default function Dashboard() {
-  return (
-    <AppDashboard content={<div>
-        ini konten dashboard
-    </div>} activeKey={'dashboard'} />
-  )
+	return <AppDashboard content={<div></div>} activeKey={"dashboard"} />;
 }
