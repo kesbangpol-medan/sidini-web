@@ -1,4 +1,4 @@
-import http from "@/app/configs/http";
+import http from "@/configs/http";
 import { AuthRepository } from "../auth_repository";
 import { UserEntity } from "@/app/dashboard/user/domain/entity/user_entity";
 

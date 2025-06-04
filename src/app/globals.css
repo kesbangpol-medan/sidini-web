@@ -2,37 +2,33 @@
 
 /* Light Mode Defaults */
 :root {
-	--background: #f8f9fc; /* Soft lavender white */
-	--foreground: #2d3748; /* Deep navy gray (softer than black) */
-	--border: #e2e8f0; /* Light slate */
-	--surface: #ffffff; /* Pure white */
-	--input-bg: #f1f5f9; /* Cool snow */
+	--background: #f8f9fc;
+	--foreground: #2d3748;
+	--border: #e2e8f0;
+	--surface: #ffffff;
+	--input-bg: #f1f5f9;
 	--sidebar-menu-active-bg: #f3e8ff;
 	--sidebar-menu-active-foreground: #7c3aed;
 	--icon-bg: #f1f5f9;
 
-	/* Primary Colors */
-	--primary: #8b5cf6; /* Vibrant purple */
+	--primary: #8b5cf6;
 	--primary-hover: #7c3aed;
 
-	/* Secondary Colors */
-	--secondary: #2dd4bf; /* Fresh teal */
+	--secondary: #2dd4bf;
 	--secondary-hover: #0d9488;
 
-	/* Status Colors */
-	--success: #12d594; /* Emerald green */
+	--success: #12d594;
 	--success-hover: #059669;
-	--danger: #e56060; /* Coral red */
+	--danger: #e56060;
 	--danger-hover: #dc2626;
-	--warning: #f59e0b; /* Amber gold */
+	--warning: #f59e0b;
 	--warning-hover: #d97706;
-	--info: #3b82f6; /* Ocean blue */
+	--info: #3b82f6;
 	--info-hover: #2563eb;
 
-	/* Neutrals */
-	--black: #1e293b; /* Deep navy */
+	--black: #1e293b;
 	--black-hover: #0f172a;
-	--disable: #94a3b8; /* Soft slate */
+	--disable: #94a3b8;
 	--disable-hover: #64748b;
 
 	--loading-background: rgba(15, 23, 42, 0.5);
@@ -42,30 +38,28 @@
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #0f172a; /* Deep navy */
-		--foreground: #e2e8f0; /* Soft ice */
-		--border: #334155; /* Steel blue */
-		--surface: #1e293b; /* Dark slate */
+		--background: #0f172a;
+		--foreground: #e2e8f0;
+		--border: #334155;
+		--surface: #1e293b;
 		--input-bg: #1e293b;
 		--sidebar-menu-active-bg: #2f1847;
 		--sidebar-menu-active-foreground: #c4b5fd;
 		--icon-bg: #334155;
 
-		/* Dark Mode Accents */
-		--primary: #9f7aea; /* Softer purple */
+		--primary: #9f7aea;
 		--primary-hover: #8b5cf6;
-		--secondary: #5eead4; /* Bright teal */
+		--secondary: #5eead4;
 		--secondary-hover: #2dd4bf;
-		--success: #298f6a; /* Glowing green */
+		--success: #298f6a;
 		--success-hover: #10b981;
-		--danger: #f5687d; /* Pink-red */
+		--danger: #f5687d;
 		--danger-hover: #f43f5e;
-		--warning: #fcd34d; /* Warm yellow */
+		--warning: #fcd34d;
 		--warning-hover: #fbbf24;
-		--info: #60a5fa; /* Electric blue */
+		--info: #60a5fa;
 		--info-hover: #3b82f6;
 
-		/* Dark Neutrals */
 		--black: #f1f5f9;
 		--black-hover: #cbd5e1;
 		--disable: #475569;
@@ -76,7 +70,6 @@
 	}
 }
 
-/* Keep all existing CSS rules below exactly as they were */
 body {
 	background-color: var(--background);
 	color: var(--foreground);

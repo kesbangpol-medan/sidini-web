@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { makeCrudUseCase } from "@/utils/crud/usecase/usecase_factory";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CreateVillageEntity, VillageEntity } from "./entity/village_entity";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
@@ -18,6 +18,7 @@ const villageUseCase = makeCrudUseCase<VillageEntity, CreateVillageEntity>("vill
 	update: (res: any) => res.data,
 	delete: (res: any) => ({ success: res.success }),
 	search: (res: any) => res.data,
+	count: (res: any) => res,
 });
 
 const districtUseCase = makeCrudUseCase<DistrictEntity, any>("districts", {
@@ -25,7 +26,9 @@ const districtUseCase = makeCrudUseCase<DistrictEntity, any>("districts", {
 });
 
 export default function Village() {
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [villages, setVillages] = useState<VillageEntity[]>([]);
+	const [totalVillage, setTotalVillage] = useState(0);
 	const [districts, setDistricts] = useState<DistrictEntity[]>([]);
 	const [selectedVillage, setSelectedVillage] = useState<CreateVillageEntity>();
 	const [selectedToDeleteId, setSelectedToDeleteId] = useState<number>(0);
@@ -33,6 +36,7 @@ export default function Village() {
 	const [showEditModal, setShowEditModal] = useState<boolean>(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [searchTerm, setSearchTerm] = useState("");
 
 	const columns: ColumnProps<VillageEntity>[] = [
 		{
@@ -117,19 +121,7 @@ export default function Village() {
 			await villageUseCase.create(dataToSubmit);
 		} finally {
 			setIsLoading(false);
-			getAllVillages();
-		}
-	};
-
-	const getAllVillages = async () => {
-		setIsLoading(true);
-		try {
-			const res = await villageUseCase.read();
-			setVillages(res);
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
+			getAllVillages(1);
 		}
 	};
 
@@ -145,6 +137,41 @@ export default function Village() {
 		}
 	};
 
+	const countVillage = async () => {
+		setIsLoading(true);
+		try {
+			const res = await villageUseCase.count();
+			setTotalVillage(res.count);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const getAllVillages = async (page: number) => {
+		if (page === 1) {
+			setIsLoading(true);
+		}
+
+		try {
+			const res = await villageUseCase.read(`villages?sort=name+ASC&page=${page}&limit=10`);
+			setVillages((prev) => [...prev, ...res]);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (searchTerm.trim() !== "") return;
+
+		countVillage();
+		getAllVillages(currentPage);
+		getDistricts();
+	}, [currentPage, searchTerm]);
+
 	const handleUpdateVillage = async (data: any) => {
 		setIsLoading(true);
 		try {
@@ -154,7 +181,7 @@ export default function Village() {
 			});
 		} finally {
 			setIsLoading(false);
-			getAllVillages();
+			getAllVillages(1);
 		}
 	};
 
@@ -166,17 +193,11 @@ export default function Village() {
 			console.log(error);
 		} finally {
 			setIsLoading(false);
-			getAllVillages();
+			getAllVillages(1);
 		}
 	};
 
-	useEffect(() => {
-		getAllVillages();
-		getDistricts();
-	}, []);
-
-	const [searchTerm, setSearchTerm] = useState("");
-	const handleSearch = async (query: string) => {
+	const handleSearch = useCallback(async (query: string) => {
 		try {
 			let data;
 			if (query.trim() === "") {
@@ -188,30 +209,42 @@ export default function Village() {
 		} catch (err) {
 			console.error("Gagal mengambil data:", err);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
+		if (searchTerm.trim() === "") return;
+
 		const delayDebounce = setTimeout(() => {
 			handleSearch(searchTerm);
 		}, 1000);
 
 		return () => clearTimeout(delayDebounce);
+	}, [searchTerm, handleSearch]);
+
+	useEffect(() => {
+		if (searchTerm.trim() === "") {
+			setVillages([]);
+			setCurrentPage(1);
+		}
 	}, [searchTerm]);
 
 	return (
 		<AppDashboard
-		isLoading={isLoading}
+			isLoading={isLoading}
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
 					<div className="grid md:grid-cols-4">
-						<IconCard icon={<FaListOl size={24} />} title="Total Desa/Kelurahan" value={villages.length} info={<></>} />
+						<IconCard icon={<FaListOl size={24} />} title="Total Desa/Kelurahan" value={totalVillage} info={<></>} />
 					</div>
 
 					<AppTable
 						data={villages}
 						columns={columns}
 						tableTitle="Tabel Desa/Kelurahan"
+						onScrollBottom={() => {
+							setCurrentPage((prev) => prev + 1);
+						}}
 						tools={
 							<motion.div
 								className="icon-background cursor-pointer"

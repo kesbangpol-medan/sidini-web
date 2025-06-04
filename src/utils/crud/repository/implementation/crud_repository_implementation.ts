@@ -12,7 +12,8 @@ export class CrudRepositoryImpl<T, CreateT> implements CrudRepository<T, CreateT
 			delete?: (data: any) => { success: boolean };
 			upload?: (data: any) => { success: boolean; image_url: string };
 			search?: (data: any) => T[];
-			count?: (data: any) => { total: number; active: number; inactive: number };
+			// count?: (data: any) => { total: number; active: number; inactive: number };
+			count?: (data: any) => T[];
 		}
 	) {}
 
@@ -68,13 +69,10 @@ export class CrudRepositoryImpl<T, CreateT> implements CrudRepository<T, CreateT
 		const res = await http.get(`${path}/search?q=${query}`);
 		return this.extract(res.data, extractor, this.defaultExtractor?.search);
 	}
-
-	async count(
-		pathOverride?: string,
-		extractor?: (data: any) => { total: number; active: number; inactive: number }
-	): Promise<{ total: number; active: number; inactive: number }> {
+	
+	async count<R = any>(pathOverride?: string, extractor?: (data: any) => R): Promise<R> {
 		const path = this.resolvePath(pathOverride ?? `${this.defaultPath}/count`);
 		const res = await http.get(path);
-		return this.extract(res.data, extractor, this.defaultExtractor?.count);
+		return this.extract(res.data, extractor, this.defaultExtractor?.count as (data: any) => R);
 	}
 }

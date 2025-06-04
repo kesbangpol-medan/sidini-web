@@ -7,5 +7,5 @@ export interface CrudUseCase<T, CreateT> {
     upload(file: FormData, uploadPathOverride?: string, extractor?: (data: any) => { success: boolean; image_url: string }): Promise<{ success: boolean; image_url: string }>;
   
     search(query: string, pathOverride?: string, extractor?: (data: any) => T[]): Promise<T[]>;
-    count(pathOverride?: string, extractor?: (data: any) => { total: number; active: number; inactive: number }): Promise<{ total: number; active: number; inactive: number }>;
+    count<R = any>(pathOverride?: string, extractor?: (data: any) => R): Promise<R>;
   }

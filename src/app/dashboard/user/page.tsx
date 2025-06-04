@@ -287,18 +287,11 @@ export default function User() {
 			console.error("Gagal mengambil data user:", err);
 		}
 	};
-
-	// useEffect(() => {
-	// 	const delayDebounce = setTimeout(() => {
-	// 		handleSearch(searchTerm);
-	// 	}, 1000);
-
-	// 	return () => clearTimeout(delayDebounce);
-	// }, [searchTerm]);
+	
 	useEffect(() => {
 		if (searchTerm.trim() === "") {
 			getAllData();
-		} // tidak melakukan pencarian jika kosong
+		}
 		const delayDebounce = setTimeout(() => {
 			handleSearch(searchTerm);
 		}, 1000);

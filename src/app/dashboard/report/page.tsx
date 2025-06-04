@@ -14,18 +14,22 @@ import { ReportEntity } from "./entity/report_entity";
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
 	search: (res: any) => res.data,
+	count: (res: any) => res,
 });
 
 export default function ReportsPage() {
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [reports, setReports] = useState<ReportEntity[]>([]);
 	const [selectedReport, setSelectedReport] = useState<ReportEntity | null>(null);
 	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const imgLink = process.env.NEXT_PUBLIC_IMG;
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [searchTerm, setSearchTerm] = useState("");
+	const [totalReport, setTotalReport] = useState<number>(0);
 
 	const columns: ColumnProps<ReportEntity>[] = [
-		{ header: "Judul", accessor: (row) => <span className="text-sm">{row.title}</span>, wrap: true },
+		{ header: "Judul", accessor: (row) => <h5 className="text-sm">{row.title}</h5>, wrap: true },
 		{
 			header: "Lokasi",
 			accessor: (row) => (
@@ -76,23 +80,90 @@ export default function ReportsPage() {
 		},
 	];
 
-	const getAllReports = async () => {
-		setIsLoading(true)
+	const countReport = async () => {
 		try {
-			const res = await reportUseCase.read(
-				"reports?include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images"
-			);
-			setReports(res);
+			const res = await reportUseCase.count();
+			setTotalReport(res.count);
 		} catch (error) {
-			console.error("Error fetching reports:", error);
-		} finally {
-			setIsLoading(false)
+			console.log(error);
 		}
 	};
 
-	useEffect(() => {
-		getAllReports();
+	// Fungsi untuk mengambil semua laporan berdasarkan halaman
+	const getAllReports = useCallback(async (page: number) => {
+		// Jika halaman pertama, tampilkan loading
+		if (page == 1) {
+			setIsLoading(true);
+		}
+		try {
+			// Ambil data laporan dari API dengan relasi-relasi yang dibutuhkan
+			const res = await reportUseCase.read(
+				`reports?include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images&page=${page}&limit=10`
+			);
+			// Tambahkan data baru ke daftar laporan yang sudah ada
+			setReports((prev) => [...prev, ...res]);
+		} catch (error) {
+			// Tampilkan error jika gagal mengambil data
+			console.error("Error fetching reports:", error);
+		} finally {
+			// Matikan loading spinner
+			setIsLoading(false);
+		}
 	}, []);
+
+	// Ambil data laporan berdasarkan halaman saat currentPage berubah,
+	// tetapi hanya jika tidak sedang dalam mode pencarian
+	useEffect(() => {
+		// Jika sedang mencari (ada search term), hentikan pemanggilan ini
+		if (searchTerm.trim() !== "") return;
+
+		// Panggil fungsi untuk mengambil data laporan
+		getAllReports(currentPage);
+		countReport();
+	}, [currentPage, getAllReports, searchTerm]);
+
+	// Fungsi untuk melakukan pencarian laporan berdasarkan kata kunci
+	const handleSearch = useCallback(async (query: string) => {
+		try {
+			// Jika input kosong, tidak usah melakukan pencarian
+			if (query.trim() === "") return;
+
+			// Panggil endpoint search dengan relasi yang dibutuhkan
+			const data = await reportUseCase.search(
+				`${query}&include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images`
+			);
+			// Ganti data laporan dengan hasil pencarian
+			setReports(data);
+		} catch (err) {
+			// Tampilkan error jika gagal
+			console.error("Gagal mengambil data:", err);
+		}
+	}, []);
+
+	// Gunakan debounce saat user mengetik input pencarian
+	useEffect(() => {
+		// Jika input pencarian kosong, jangan lakukan apa-apa
+		if (searchTerm.trim() === "") return;
+
+		// Tunggu 1 detik setelah user berhenti mengetik baru lakukan pencarian
+		const delayDebounce = setTimeout(() => {
+			handleSearch(searchTerm);
+		}, 1000);
+
+		// Bersihkan timer saat searchTerm berubah sebelum 1 detik
+		return () => clearTimeout(delayDebounce);
+	}, [searchTerm, handleSearch]);
+
+	// Reset daftar laporan dan halaman ke awal jika input pencarian dihapus
+	useEffect(() => {
+		// Jika search kosong, berarti user menghapus pencarian
+		if (searchTerm.trim() === "") {
+			// Kosongkan data laporan sebelumnya
+			setReports([]);
+			// Kembalikan currentPage ke halaman 1
+			setCurrentPage(1);
+		}
+	}, [searchTerm]);
 
 	const renderDetailRow = (label: string, value?: string) => (
 		<div className="flex gap-2 items-start">
@@ -105,48 +176,24 @@ export default function ReportsPage() {
 		</div>
 	);
 
-	const [searchTerm, setSearchTerm] = useState("");
-
-	const handleSearch = useCallback(async (query: string) => {
-		try {
-			if (query.trim() === "") {
-				// Kalau kosong, bisa abaikan karena di useEffect sudah getAllReports() langsung
-				return;
-			}
-
-			const data = await reportUseCase.search(
-				`${query}&include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images`
-			);
-			console.log(data);
-			setReports(data);
-		} catch (err) {
-			console.error("Gagal mengambil data:", err);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (searchTerm.trim() === "") {
-			getAllReports();
-		}
-
-		const delayDebounce = setTimeout(() => {
-			handleSearch(searchTerm);
-		}, 1000);
-
-		return () => clearTimeout(delayDebounce);
-	}, [searchTerm, handleSearch]);
-
 	return (
 		<AppDashboard
-		isLoading={isLoading}
+			isLoading={isLoading}
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
 					<div className="grid md:grid-cols-4">
-						<IconCard icon={<FaFileAlt size={24} />} title="Total Laporan" value={reports.length} info={<></>} />
+						<IconCard icon={<FaFileAlt size={24} />} title="Total Laporan" value={totalReport} info={<></>} />
 					</div>
 
-					<AppTable data={reports} columns={columns} tableTitle="Daftar Laporan" />
+					<AppTable
+						data={reports}
+						columns={columns}
+						tableTitle="Daftar Laporan"
+						onScrollBottom={() => {
+							setCurrentPage((prev) => prev + 1);
+						}}
+					/>
 
 					<AppModal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="Detail Laporan" width="max-w-4xl">
 						{selectedReport && (
@@ -269,9 +316,7 @@ export default function ReportsPage() {
 					</AppModal>
 
 					<AppModal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)} title="Pratinjau Gambar" width="max-w-4xl">
-						{selectedImage && (
-							<img src={`${imgLink}/${selectedImage}`} alt="Full preview" className="w-full h-auto max-h-[70vh] object-contain" />
-						)}
+						{selectedImage && <img src={`${imgLink}/${selectedImage}`} alt="Full preview" className="w-full h-auto max-h-[70vh] object-contain" />}
 					</AppModal>
 				</div>
 			}

@@ -1,4 +1,4 @@
-import http from "@/app/configs/http";
+import http from "@/configs/http";
 import { UserRepository } from "../user_repository";
 import { CreateUserEntity, UserDistrictEntity, UserEntity, UserVillageEntity } from "../../entity/user_entity";
 

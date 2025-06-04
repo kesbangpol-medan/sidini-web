@@ -12,7 +12,7 @@ export function makeCrudUseCase<T, CreateT>(
     delete?: (data: any) => { success: boolean };
     upload?: (data: any) => { success: boolean; image_url: string };
     search?: (data: any) => T[];
-    count?: (data: any) => { total: number; active: number; inactive: number };
+    count?: (data: any) => any;
   }
 ): CrudUseCase<T, CreateT> {
   const repo = new CrudRepositoryImpl<T, CreateT>(path, defaultExtractor);
