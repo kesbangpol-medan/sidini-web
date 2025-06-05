@@ -19,6 +19,7 @@ const subVillageUseCase = makeCrudUseCase<SubVillageEntity, CreateSubVillageEnti
 	update: (res: any) => res.data,
 	delete: (res: any) => ({ success: res.success }),
 	search: (res: any) => res.data,
+	count: (res: any) => res,
 });
 const districUseCase = makeCrudUseCase<DistrictEntity, any>("districts", {
 	read: (res: any) => res.data,
@@ -38,6 +39,9 @@ export default function SubVillage() {
 	const [showEditModal, setShowEditModal] = useState<boolean>(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [totalSubVillage, setTotalSubVillage] = useState<number>(0);
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [searchTerm, setSearchTerm] = useState("");
 
 	const columns: ColumnProps<SubVillageEntity>[] = [
 		{
@@ -117,143 +121,277 @@ export default function SubVillage() {
 		},
 	];
 
-	const handleCreateNewSubVillage = async (data: any) => {
-		setIsLoading(true);
-		const dataToSubmit: CreateSubVillageEntity = {
-			name: data.name,
-			village_id: Number(data.village_id),
-		};
+	// const handleCreateNewSubVillage = async (data: any) => {
+	// 	setIsLoading(true);
+	// 	const dataToSubmit: CreateSubVillageEntity = {
+	// 		name: data.name,
+	// 		village_id: Number(data.village_id),
+	// 	};
 
-		try {
-			await subVillageUseCase.create(dataToSubmit);
-		} catch {
-			console.log("Error");
-		} finally {
-			getAllSubVillages();
-			setIsLoading(false);
-		}
-	};
+	// 	try {
+	// 		await subVillageUseCase.create(dataToSubmit);
+	// 	} catch {
+	// 		console.log("Error");
+	// 	} finally {
+	// 		getAllSubVillages(1);
+	// 		setIsLoading(false);
+	// 	}
+	// };
 
-	const getAllSubVillages = async () => {
-		setIsLoading(true);
-		try {
-			const res = await subVillageUseCase.read("sub-villages?include=Village");
-			setSubVillages(res);
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	// const countSubVillage = async () => {
+	// 	try {
+	// 		const res = await subVillageUseCase.count();
+	// 		setTotalSubVillage(res.count);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	}
+	// };
 
-	const getVillages = async (district_id: number) => {
-		setIsLoading(true);
-		try {
-			const res = await villageUseCase.read(`villages?district_id=${district_id}`);
-			setVillages(res);
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	// const getAllSubVillages = async (page: number) => {
+	// 	if (page == 1) {
+	// 		setIsLoading(true);
+	// 	}
+	// 	try {
+	// 		const res = await subVillageUseCase.read(`sub-villages?include=Village&page=${page}&limit=10`);
+	// 		setSubVillages((prev) => [...prev, ...res]);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 	}
+	// };
 
-	const getDistricts = async () => {
-		setIsLoading(true);
-		try {
-			const res = await districUseCase.read();
-			setDistricts(res);
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	// const getVillages = async (district_id: number) => {
+	// 	try {
+	// 		const res = await villageUseCase.read(`villages?district_id=${district_id}`);
+	// 		setVillages(res);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 	}
+	// };
 
-	const handleUpdateSubVillage = async (data: any) => {
-		setIsLoading(true);
-		try {
-			await subVillageUseCase.update({
-				...data,
-				village_id: Number(data.village_id),
-			});
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
-			getAllSubVillages();
-		}
-	};
+	// const getDistricts = async () => {
+	// 	try {
+	// 		const res = await districUseCase.read();
+	// 		setDistricts(res);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 	}
+	// };
 
-	const handleDeleteSubVillage = async () => {
-		setIsLoading(true);
-		try {
-			await subVillageUseCase.delete(selectedToDeleteId);
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
-			getAllSubVillages();
-		}
-	};
+	// const handleUpdateSubVillage = async (data: any) => {
+	// 	setIsLoading(true);
+	// 	try {
+	// 		await subVillageUseCase.update({
+	// 			...data,
+	// 			village_id: Number(data.village_id),
+	// 		});
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 		getAllSubVillages(1);
+	// 	}
+	// };
 
-	useEffect(() => {
-		getDistricts();
-		getAllSubVillages();
-	}, []);
-
-	const [searchTerm, setSearchTerm] = useState("");
-
-	const handleSearch = useCallback(async (query: string) => {
-		try {
-			if (query.trim() === "") {
-				return;
-			}
-
-			const data = await subVillageUseCase.search(`${query}&include=Village`);
-			setSubVillages(data);
-		} catch (err) {
-			console.error("Gagal mengambil data:", err);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (searchTerm.trim() === "") {
-			getAllSubVillages();
-		}
-
-		const delayDebounce = setTimeout(() => {
-			handleSearch(searchTerm);
-		}, 1000);
-
-		return () => clearTimeout(delayDebounce);
-	}, [searchTerm, handleSearch]);
+	// const handleDeleteSubVillage = async () => {
+	// 	setIsLoading(true);
+	// 	try {
+	// 		await subVillageUseCase.delete(selectedToDeleteId);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 		getAllSubVillages(1);
+	// 	}
+	// };
 
 	// useEffect(() => {
-	// 	if (searchTerm.trim() === "") {
-	// 		getAllSubVillages();
-	// 	}; // tidak melakukan pencarian jika kosong
+	// 	if (searchTerm.trim() !== "") return;
+
+	// 	countSubVillage();
+	// 	getDistricts();
+	// 	getAllSubVillages(currentPage);
+	// }, [currentPage, searchTerm]);
+
+	// const handleSearch = useCallback(async (query: string) => {
+	// 	try {
+	// 		if (query.trim() === "") {
+	// 			return;
+	// 		}
+
+	// 		const data = await subVillageUseCase.search(`${query}&include=Village`);
+	// 		setSubVillages(data);
+	// 	} catch (err) {
+	// 		console.error("Gagal mengambil data:", err);
+	// 	}
+	// }, []);
+
+	// useEffect(() => {
+	// 	if (searchTerm.trim() === "") return;
+
 	// 	const delayDebounce = setTimeout(() => {
 	// 		handleSearch(searchTerm);
 	// 	}, 1000);
 
 	// 	return () => clearTimeout(delayDebounce);
+	// }, [searchTerm, handleSearch]);
+
+	// useEffect(() => {
+	// 	if (searchTerm.trim() === "") {
+	// 		setVillages([]);
+	// 		setCurrentPage(1);
+	// 	}
 	// }, [searchTerm]);
+	// --- Data Fetching ---
+const countSubVillage = async () => {
+	try {
+		const res = await subVillageUseCase.count();
+		setTotalSubVillage(res.count);
+	} catch (error) {
+		console.error("Failed to count sub-villages:", error);
+	}
+};
+
+const getAllSubVillages = async (page: number) => {
+	if (page === 1) setIsLoading(true);
+	try {
+		const res = await subVillageUseCase.read(`sub-villages?include=Village&page=${page}&limit=10`);
+		setSubVillages((prev) => [...prev, ...res]);
+	} catch (error) {
+		console.error("Failed to fetch sub-villages:", error);
+	} finally {
+		setIsLoading(false);
+	}
+};
+
+const getVillages = async (district_id: number) => {
+	try {
+		const res = await villageUseCase.read(`villages?district_id=${district_id}`);
+		setVillages(res);
+	} catch (error) {
+		console.error("Failed to fetch villages:", error);
+	} finally {
+		setIsLoading(false);
+	}
+};
+
+const getDistricts = async () => {
+	try {
+		const res = await districUseCase.read();
+		setDistricts(res);
+	} catch (error) {
+		console.error("Failed to fetch districts:", error);
+	} finally {
+		setIsLoading(false);
+	}
+};
+
+// --- CRUD Operations ---
+const handleCreateNewSubVillage = async (data: any) => {
+	setIsLoading(true);
+	const dataToSubmit: CreateSubVillageEntity = {
+		name: data.name,
+		village_id: Number(data.village_id),
+	};
+
+	try {
+		await subVillageUseCase.create(dataToSubmit);
+	} catch (error) {
+		console.error("Failed to create sub-village:", error);
+	} finally {
+		getAllSubVillages(1);
+		setIsLoading(false);
+	}
+};
+
+const handleUpdateSubVillage = async (data: any) => {
+	setIsLoading(true);
+	try {
+		await subVillageUseCase.update({
+			...data,
+			village_id: Number(data.village_id),
+		});
+	} catch (error) {
+		console.error("Failed to update sub-village:", error);
+	} finally {
+		getAllSubVillages(1);
+		setIsLoading(false);
+	}
+};
+
+const handleDeleteSubVillage = async () => {
+	setIsLoading(true);
+	try {
+		await subVillageUseCase.delete(selectedToDeleteId);
+	} catch (error) {
+		console.error("Failed to delete sub-village:", error);
+	} finally {
+		getAllSubVillages(1);
+		setIsLoading(false);
+	}
+};
+
+// --- Search ---
+const handleSearch = useCallback(async (query: string) => {
+	if (query.trim() === "") return;
+
+	try {
+		const data = await subVillageUseCase.search(`${query}&include=Village`);
+		setSubVillages(data);
+	} catch (err) {
+		console.error("Failed to search sub-villages:", err);
+	}
+}, []);
+
+useEffect(() => {
+	if (searchTerm.trim() === "") return;
+
+	const delayDebounce = setTimeout(() => {
+		handleSearch(searchTerm);
+	}, 1000);
+
+	return () => clearTimeout(delayDebounce);
+}, [searchTerm, handleSearch]);
+
+// --- Initialization ---
+useEffect(() => {
+	if (searchTerm.trim() !== "") return;
+
+	countSubVillage();
+	getDistricts();
+	getAllSubVillages(currentPage);
+}, [currentPage, searchTerm]);
+
+// --- Reset Villages on Empty Search ---
+useEffect(() => {
+	if (searchTerm.trim() === "") {
+		setVillages([]);
+		setCurrentPage(1);
+	}
+}, [searchTerm]);
 
 	return (
 		<AppDashboard
-		isLoading={isLoading}
+			isLoading={isLoading}
 			onSearchChange={(data) => setSearchTerm(data)}
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
 					<div className="grid md:grid-cols-4">
-						<IconCard icon={<FaListOl size={24} />} title="Total Dusun/Lingkungan" value={subVillages.length} info={<></>} />
+						<IconCard icon={<FaListOl size={24} />} title="Total Dusun/Lingkungan" value={totalSubVillage} info={<></>} />
 					</div>
 
 					<AppTable
 						data={subVillages}
 						columns={columns}
 						tableTitle="Tabel Dusun/Lingkungan"
+						onScrollBottom={() => {
+							setCurrentPage((prev) => prev + 1);
+						}}
 						tools={
 							<motion.div
 								className="icon-background cursor-pointer"

@@ -126,7 +126,6 @@ export default function Village() {
 	};
 
 	const getDistricts = async () => {
-		setIsLoading(true);
 		try {
 			const res = await districtUseCase.read();
 			setDistricts(res);
@@ -138,7 +137,6 @@ export default function Village() {
 	};
 
 	const countVillage = async () => {
-		setIsLoading(true);
 		try {
 			const res = await villageUseCase.count();
 			setTotalVillage(res.count);
@@ -150,7 +148,7 @@ export default function Village() {
 	};
 
 	const getAllVillages = async (page: number) => {
-		if (page === 1) {
+		if (page == 1) {
 			setIsLoading(true);
 		}
 
