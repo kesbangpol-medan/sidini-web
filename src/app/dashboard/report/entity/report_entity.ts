@@ -1,29 +1,3 @@
-// import { DepartmentEntity } from "@/app/dashboard/department/entity/department_entity";
-// import { SubVillageEntity } from "@/app/dashboard/subvillage/entity/village_entity";
-
-// export interface ReportEntity {
-// 	id: number;
-// 	user_id: number;
-// 	department_id: number;
-// 	department: DepartmentEntity;
-// 	sub_village_id: number;
-// 	sub_village: SubVillageEntity;
-// 	address: string;
-// 	title: string;
-// 	subject: string;
-// 	background: string;
-// 	description: string;
-// 	handling_step: string;
-// 	images: ReportImage[];
-// 	date_time: string;
-// }
-
-// export interface ReportImage {
-// 	id: number;
-// 	link: string;
-// 	report_id: number;
-// }
-
 export interface ReportEntity {
 	id: number;
 	user_id: number;

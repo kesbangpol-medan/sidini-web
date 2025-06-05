@@ -2,14 +2,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { makeCrudUseCase } from "@/utils/crud/usecase/usecase_factory";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
-import { FaAlignLeft, FaBuilding, FaCalendar, FaCamera, FaFileAlt, FaImage, FaMapMarker, FaTasks } from "react-icons/fa";
+import { FaFileAlt, FaImage } from "react-icons/fa";
 import AppTable, { ColumnProps } from "@/components/tables/table";
 import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
 import { ReportEntity } from "./entity/report_entity";
+import html2pdf from "html2pdf.js";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
@@ -27,6 +28,150 @@ export default function ReportsPage() {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [totalReport, setTotalReport] = useState<number>(0);
+	const reportRef = useRef<HTMLTableElement>(null);
+
+	// const handleExportPDF = async () => {
+	// 	if (!reportRef.current) return;
+
+	// 	// Simpan style lama elemen utama
+	// 	const originalBackground = reportRef.current.style.backgroundColor;
+	// 	const originalColor = reportRef.current.style.color;
+
+	// 	// Set style baru
+	// 	reportRef.current.style.backgroundColor = "#ffffff"; // putih
+	// 	reportRef.current.style.color = "#000000"; // hitam
+
+	// 	// Simpan dan ubah warna teks tiap elemen di dalam reportRef
+	// 	const elements = reportRef.current.querySelectorAll<HTMLElement>("*");
+	// 	const originalStyles: { el: HTMLElement; color: string }[] = [];
+
+	// 	elements.forEach((el) => {
+	// 		// Simpan warna yang ada di style inline supaya bisa dikembalikan nanti
+	// 		originalStyles.push({ el, color: el.style.color });
+	// 		el.style.color = "#000000"; // ubah sementara jadi hitam
+	// 	});
+
+	// 	// Log semua URL gambar sebelum ekspor
+	// 	const images = reportRef.current.querySelectorAll("img");
+	// 	console.log("Gambar yang akan di-export:");
+	// 	images.forEach((img, index) => {
+	// 		console.log(`Gambar ${index + 1}:`, img.src);
+	// 	});
+
+	// 	const opt = {
+	// 		margin: 0.5,
+	// 		filename: `${selectedReport!.title || "laporan"}.pdf`,
+	// 		image: { type: "jpeg", quality: 0.98 },
+	// 		html2canvas: { scale: 2 },
+	// 		jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+	// 	};
+
+	// 	html2pdf()
+	// 		.set(opt)
+	// 		.from(reportRef.current)
+	// 		.save()
+	// 		.then(() => {
+	// 			// Kembalikan style lama
+	// 			reportRef.current!.style.backgroundColor = originalBackground;
+	// 			reportRef.current!.style.color = originalColor;
+
+	// 			originalStyles.forEach(({ el, color }) => {
+	// 				el.style.color = color;
+	// 			});
+	// 		});
+	// };
+	const handleExportPDF = async () => {
+		if (!reportRef.current) return;
+
+		// Simpan style lama
+		const originalBackground = reportRef.current.style.backgroundColor;
+		const originalColor = reportRef.current.style.color;
+
+		reportRef.current.style.backgroundColor = "#ffffff";
+		reportRef.current.style.color = "#000000";
+
+		// Simpan warna teks tiap elemen
+		const elements = reportRef.current.querySelectorAll<HTMLElement>("*");
+		const originalStyles: { el: HTMLElement; color: string }[] = [];
+		elements.forEach((el) => {
+			originalStyles.push({ el, color: el.style.color });
+			el.style.color = "#000000";
+		});
+
+		// Temukan row dokumentasi gambar dengan cara yang lebih kompatibel
+		let imageRow: HTMLTableRowElement | null = null;
+		const rows = reportRef.current.querySelectorAll("tr");
+
+		rows.forEach((row) => {
+			const firstTd = row.querySelector("td");
+			if (firstTd?.textContent?.includes("Dokumentasi Gambar")) {
+				imageRow = row;
+			}
+		});
+
+		if (imageRow && selectedReport!.images.length > 0) {
+			// Buat row baru untuk link gambar
+			const newRow = document.createElement("tr");
+			newRow.className = "border-b";
+			newRow.style.borderColor = "var(--border)";
+
+			// Buat cell untuk label
+			const labelCell = document.createElement("td");
+			labelCell.className = "p-2 font-semibold border-r align-top";
+			labelCell.style.borderColor = "var(--border)";
+			labelCell.textContent = "Link Gambar";
+			newRow.appendChild(labelCell);
+
+			// Buat cell untuk link
+			const linkCell = document.createElement("td");
+			linkCell.className = "p-2";
+
+			// Buat container untuk link
+			const linksContainer = document.createElement("div");
+
+			// Buat list link URL gambar
+			const ul = document.createElement("ul");
+			selectedReport!.images.forEach((image) => {
+				const li = document.createElement("li");
+				const a = document.createElement("a");
+				a.href = `${imgLink}/${image.link}`;
+				a.textContent = `${imgLink}/${image.link}`;
+				a.style.color = "#007bff";
+				a.style.textDecoration = "underline";
+				a.target = "_blank";
+				li.appendChild(a);
+				ul.appendChild(li);
+			});
+			linksContainer.appendChild(ul);
+			linkCell.appendChild(linksContainer);
+			newRow.appendChild(linkCell);
+
+			// Ganti row lama dengan row baru
+			(imageRow as HTMLTableRowElement).parentNode?.replaceChild(newRow, imageRow as HTMLTableRowElement);
+		}
+
+		// Setup opsi html2pdf
+		const opt = {
+			margin: 0.5,
+			filename: `${selectedReport!.title || "laporan"}.pdf`,
+			image: { type: "jpeg", quality: 0.98 },
+			html2canvas: { scale: 2 },
+			jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+		};
+
+		try {
+			await html2pdf().set(opt).from(reportRef.current).save();
+		} catch (error) {
+			console.error("Gagal export PDF:", error);
+		} finally {
+			// Restore style
+			reportRef.current.style.backgroundColor = originalBackground;
+			reportRef.current.style.color = originalColor;
+			originalStyles.forEach(({ el, color }) => {
+				el.style.color = color;
+			});
+		}
+	};
 
 	const columns: ColumnProps<ReportEntity>[] = [
 		{ header: "Judul", accessor: (row) => <h5 className="text-sm">{row.title}</h5>, wrap: true },
@@ -45,7 +190,7 @@ export default function ReportsPage() {
 		{
 			header: "Dokumentasi",
 			accessor: (row) => (
-				<div className="flex gap-2">
+				<div className="flex gap-2 justify-center">
 					{row.images && row.images.length > 0 ? (
 						<motion.img
 							key={row.images[0].id}
@@ -165,17 +310,6 @@ export default function ReportsPage() {
 		}
 	}, [searchTerm]);
 
-	const renderDetailRow = (label: string, value?: string) => (
-		<div className="flex gap-2 items-start">
-			<span className="w-24" style={{ color: "var(--disable)" }}>
-				{label}:
-			</span>
-			<span className="flex-1" style={{ color: "var(--foreground)" }}>
-				{value || "Tidak ada data"}
-			</span>
-		</div>
-	);
-
 	return (
 		<AppDashboard
 			isLoading={isLoading}
@@ -195,123 +329,126 @@ export default function ReportsPage() {
 						}}
 					/>
 
-					<AppModal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="Detail Laporan" width="max-w-4xl">
+					<AppModal
+						isOpen={showDetailModal}
+						confirmLabel="EXPORT"
+						onConfirm={async () => {
+							await handleExportPDF();
+							setShowDetailModal(false);
+						}}
+						onClose={() => setShowDetailModal(false)}
+						title="Detail Laporan"
+						width="max-w-4xl"
+					>
 						{selectedReport && (
-							<div className="space-y-6" style={{ color: "var(--foreground)" }}>
-								{/* Header Section */}
-								<div className="flex items-center gap-4 p-4 border-b" style={{ borderColor: "var(--border)" }}>
-									<div className="p-2 rounded-lg" style={{ backgroundColor: "var(--icon-bg)" }}>
-										<FaFileAlt className="text-xl" style={{ color: "var(--primary)" }} />
-									</div>
-									<div>
-										<h2 className="text-xl font-semibold" style={{ color: "var(--foreground)" }}>
-											{selectedReport.title}
-										</h2>
-										<div className="flex items-center gap-2 mt-1 text-sm" style={{ color: "var(--disable)" }}>
-											<FaCalendar className="flex-shrink-0" />
-											<span>
-												{new Date(selectedReport.date_time).toLocaleDateString("id-ID", {
-													weekday: "long",
-													year: "numeric",
-													month: "long",
-													day: "numeric",
-												})}
-											</span>
-										</div>
-									</div>
-								</div>
+							<table ref={reportRef} className="w-full table-fixed border-collapse">
+								<tbody>
+									{/* Judul */}
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold w-1/3 border-r" style={{ borderColor: "var(--border)" }}>
+											Judul Laporan
+										</td>
+										<td className="p-2">{selectedReport.title}</td>
+									</tr>
 
-								{/* Main Content Grid */}
-								<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-									{/* Left Column */}
-									<div className="space-y-4">
-										{/* Location Card */}
-										<div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
-											<div className="flex items-center gap-2 mb-3">
-												<FaMapMarker className="text-primary" style={{ color: "var(--primary)" }} />
-												<h3 className="font-semibold">Lokasi Kejadian</h3>
-											</div>
-											<div className="space-y-2 text-sm">
-												{renderDetailRow("Kecamatan", selectedReport.sub_village?.village?.district?.name)}
-												{renderDetailRow("Kelurahan", selectedReport.sub_village?.village?.name)}
-												{renderDetailRow("Lingkungan", selectedReport.sub_village?.name)}
-												{renderDetailRow("Alamat", selectedReport.address)}
-											</div>
-										</div>
+									{/* Tanggal */}
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r" style={{ borderColor: "var(--border)" }}>
+											Tanggal
+										</td>
+										<td className="p-2">
+											{new Date(selectedReport.date_time).toLocaleDateString("id-ID", {
+												weekday: "long",
+												year: "numeric",
+												month: "long",
+												day: "numeric",
+											})}
+										</td>
+									</tr>
 
-										{/* Department Card */}
-										<div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
-											<div className="flex items-center gap-2 mb-3">
-												<FaBuilding style={{ color: "var(--primary)" }} />
-												<h3 className="font-semibold">Departemen Penanggung Jawab</h3>
-											</div>
-											<span className="text-sm" style={{ color: "var(--foreground)" }}>
-												{selectedReport.department?.name || "Belum ditentukan"}
-											</span>
-										</div>
-									</div>
+									{/* Lokasi */}
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r" style={{ borderColor: "var(--border)" }}>
+											Kecamatan
+										</td>
+										<td className="p-2">{selectedReport.sub_village?.village?.district?.name || "-"}</td>
+									</tr>
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r" style={{ borderColor: "var(--border)" }}>
+											Kelurahan
+										</td>
+										<td className="p-2">{selectedReport.sub_village?.village?.name || "-"}</td>
+									</tr>
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r" style={{ borderColor: "var(--border)" }}>
+											Lingkungan
+										</td>
+										<td className="p-2">{selectedReport.sub_village?.name || "-"}</td>
+									</tr>
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r" style={{ borderColor: "var(--border)" }}>
+											Alamat
+										</td>
+										<td className="p-2">{selectedReport.address || "-"}</td>
+									</tr>
 
-									{/* Right Column */}
-									<div className="space-y-4">
-										{/* Description Card */}
-										<div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
-											<div className="flex items-center gap-2 mb-3">
-												<FaAlignLeft style={{ color: "var(--primary)" }} />
-												<h3 className="font-semibold">Deskripsi Lengkap</h3>
-											</div>
-											<p className="text-sm whitespace-pre-line" style={{ color: "var(--foreground)" }}>
-												{selectedReport.description || "Tidak ada deskripsi"}
-											</p>
-										</div>
+									{/* Departemen */}
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r" style={{ borderColor: "var(--border)" }}>
+											Departemen Penanggung Jawab
+										</td>
+										<td className="p-2">{selectedReport.department?.name || "Belum ditentukan"}</td>
+									</tr>
 
-										{/* Handling Steps Card */}
-										{selectedReport.handling_step && (
-											<div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
-												<div className="flex items-center gap-2 mb-3">
-													<FaTasks style={{ color: "var(--primary)" }} />
-													<h3 className="font-semibold">Langkah Penanganan</h3>
+									{/* Deskripsi */}
+									<tr className="border-b align-top" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r align-top" style={{ borderColor: "var(--border)" }}>
+											Deskripsi Lengkap
+										</td>
+										<td className="p-2 whitespace-pre-line">{selectedReport.description || "Tidak ada deskripsi"}</td>
+									</tr>
+
+									{/* Penanganan */}
+									{selectedReport.handling_step && (
+										<tr className="border-b align-top" style={{ borderColor: "var(--border)" }}>
+											<td className="p-2 font-semibold border-r align-top" style={{ borderColor: "var(--border)" }}>
+												Langkah Penanganan
+											</td>
+											<td className="p-2 whitespace-pre-line">{selectedReport.handling_step}</td>
+										</tr>
+									)}
+
+									{/* Dokumentasi */}
+									<tr className="align-top" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold border-r align-top" style={{ borderColor: "var(--border)" }}>
+											Dokumentasi Gambar
+										</td>
+										<td className="p-2">
+											{selectedReport.images.length > 0 ? (
+												<div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+													{selectedReport.images.map((image) => (
+														<motion.div
+															key={image.id}
+															className="aspect-square rounded-md overflow-hidden border hover:border-primary transition-colors cursor-pointer"
+															style={{ borderColor: "var(--border)" }}
+															whileHover={{ scale: 1.03 }}
+														>
+															<img
+																src={`${imgLink}/${image.link}`}
+																alt="Dokumentasi"
+																className="w-full h-full object-cover"
+																onClick={() => setSelectedImage(image.link)}
+															/>
+														</motion.div>
+													))}
 												</div>
-												<div className="text-sm whitespace-pre-line" style={{ color: "var(--foreground)" }}>
-													{selectedReport.handling_step}
-												</div>
-											</div>
-										)}
-									</div>
-								</div>
-
-								{/* Documentation Section */}
-								<div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
-									<div className="flex items-center gap-2 mb-4">
-										<FaCamera style={{ color: "var(--primary)" }} />
-										<h3 className="font-semibold">Dokumentasi</h3>
-									</div>
-									<div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-										{selectedReport.images.length > 0 ? (
-											selectedReport.images.map((image) => (
-												<motion.div
-													key={image.id}
-													className="relative aspect-square rounded-lg overflow-hidden border hover:border-primary transition-colors"
-													style={{ borderColor: "var(--border)" }}
-													whileHover={{ scale: 1.02 }}
-												>
-													<img
-														src={`${imgLink}/${image.link}`}
-														alt="Dokumentasi laporan"
-														className="object-cover cursor-pointer w-full h-full"
-														onClick={() => setSelectedImage(image.link)}
-														style={{ objectFit: "cover" }}
-													/>
-												</motion.div>
-											))
-										) : (
-											<div className="col-span-full text-center py-6" style={{ color: "var(--disable)" }}>
-												<FaImage className="text-3xl mx-auto mb-2" />
-												<p className="text-sm">Tidak ada dokumentasi</p>
-											</div>
-										)}
-									</div>
-								</div>
-							</div>
+											) : (
+												<div className="text-sm text-center text-gray-400">Tidak ada dokumentasi</div>
+											)}
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						)}
 					</AppModal>
 
