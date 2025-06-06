@@ -10,7 +10,7 @@ import AppTable, { ColumnProps } from "@/components/tables/table";
 import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
 import { ReportEntity } from "./entity/report_entity";
-import html2pdf from "html2pdf.js";
+// import html2pdf from "html2pdf.js";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
@@ -29,59 +29,11 @@ export default function ReportsPage() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [totalReport, setTotalReport] = useState<number>(0);
 	const reportRef = useRef<HTMLTableElement>(null);
-
-	// const handleExportPDF = async () => {
-	// 	if (!reportRef.current) return;
-
-	// 	// Simpan style lama elemen utama
-	// 	const originalBackground = reportRef.current.style.backgroundColor;
-	// 	const originalColor = reportRef.current.style.color;
-
-	// 	// Set style baru
-	// 	reportRef.current.style.backgroundColor = "#ffffff"; // putih
-	// 	reportRef.current.style.color = "#000000"; // hitam
-
-	// 	// Simpan dan ubah warna teks tiap elemen di dalam reportRef
-	// 	const elements = reportRef.current.querySelectorAll<HTMLElement>("*");
-	// 	const originalStyles: { el: HTMLElement; color: string }[] = [];
-
-	// 	elements.forEach((el) => {
-	// 		// Simpan warna yang ada di style inline supaya bisa dikembalikan nanti
-	// 		originalStyles.push({ el, color: el.style.color });
-	// 		el.style.color = "#000000"; // ubah sementara jadi hitam
-	// 	});
-
-	// 	// Log semua URL gambar sebelum ekspor
-	// 	const images = reportRef.current.querySelectorAll("img");
-	// 	console.log("Gambar yang akan di-export:");
-	// 	images.forEach((img, index) => {
-	// 		console.log(`Gambar ${index + 1}:`, img.src);
-	// 	});
-
-	// 	const opt = {
-	// 		margin: 0.5,
-	// 		filename: `${selectedReport!.title || "laporan"}.pdf`,
-	// 		image: { type: "jpeg", quality: 0.98 },
-	// 		html2canvas: { scale: 2 },
-	// 		jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
-	// 	};
-
-	// 	html2pdf()
-	// 		.set(opt)
-	// 		.from(reportRef.current)
-	// 		.save()
-	// 		.then(() => {
-	// 			// Kembalikan style lama
-	// 			reportRef.current!.style.backgroundColor = originalBackground;
-	// 			reportRef.current!.style.color = originalColor;
-
-	// 			originalStyles.forEach(({ el, color }) => {
-	// 				el.style.color = color;
-	// 			});
-	// 		});
-	// };
+	
 	const handleExportPDF = async () => {
 		if (!reportRef.current) return;
+
+		const html2pdf = (await import('html2pdf.js')).default;
 
 		// Simpan style lama
 		const originalBackground = reportRef.current.style.backgroundColor;
