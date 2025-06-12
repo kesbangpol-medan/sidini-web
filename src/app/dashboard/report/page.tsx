@@ -5,12 +5,12 @@ import { makeCrudUseCase } from "@/utils/crud/usecase/usecase_factory";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
-import { FaFileAlt, FaImage } from "react-icons/fa";
+import { FaDownload, FaFileAlt, FaImage } from "react-icons/fa";
 import AppTable, { ColumnProps } from "@/components/tables/table";
 import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
 import { ReportEntity } from "./entity/report_entity";
-// import html2pdf from "html2pdf.js";
+import AppButton from "@/components/buttons/AppButton";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
@@ -29,11 +29,11 @@ export default function ReportsPage() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [totalReport, setTotalReport] = useState<number>(0);
 	const reportRef = useRef<HTMLTableElement>(null);
-	
+
 	const handleExportPDF = async () => {
 		if (!reportRef.current) return;
 
-		const html2pdf = (await import('html2pdf.js')).default;
+		const html2pdf = (await import("html2pdf.js")).default;
 
 		// Simpan style lama
 		const originalBackground = reportRef.current.style.backgroundColor;
@@ -99,7 +99,10 @@ export default function ReportsPage() {
 			newRow.appendChild(linkCell);
 
 			// Ganti row lama dengan row baru
-			(imageRow as HTMLTableRowElement).parentNode?.replaceChild(newRow, imageRow as HTMLTableRowElement);
+			(imageRow as HTMLTableRowElement).parentNode?.replaceChild(
+				newRow,
+				imageRow as HTMLTableRowElement
+			);
 		}
 
 		// Setup opsi html2pdf
@@ -137,8 +140,16 @@ export default function ReportsPage() {
 			),
 			wrap: true,
 		},
-		{ header: "Departemen", accessor: (row) => <span className="text-sm">{row.department?.name}</span> },
-		{ header: "Tanggal", accessor: (row) => <span className="text-sm">{new Date(row.date_time).toLocaleDateString()}</span> },
+		{
+			header: "Departemen",
+			accessor: (row) => <span className="text-sm">{row.department?.name}</span>,
+		},
+		{
+			header: "Tanggal",
+			accessor: (row) => (
+				<span className="text-sm">{new Date(row.date_time).toLocaleDateString()}</span>
+			),
+		},
 		{
 			header: "Dokumentasi",
 			accessor: (row) => (
@@ -208,6 +219,8 @@ export default function ReportsPage() {
 		}
 	}, []);
 
+	const exportreport = async () => {}
+
 	// Ambil data laporan berdasarkan halaman saat currentPage berubah,
 	// tetapi hanya jika tidak sedang dalam mode pencarian
 	useEffect(() => {
@@ -269,10 +282,20 @@ export default function ReportsPage() {
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
 					<div className="grid md:grid-cols-4">
-						<IconCard icon={<FaFileAlt size={24} />} title="Total Laporan" value={totalReport} info={<></>} />
+						<IconCard
+							icon={<FaFileAlt size={24} />}
+							title="Total Laporan"
+							value={totalReport}
+							info={<></>}
+						/>
 					</div>
 
 					<AppTable
+						tools={
+							<>
+								<AppButton label="Export" icon={<FaDownload />} />
+							</>
+						}
 						data={reports}
 						columns={columns}
 						tableTitle="Daftar Laporan"
@@ -301,6 +324,12 @@ export default function ReportsPage() {
 											Judul Laporan
 										</td>
 										<td className="p-2">{selectedReport.title}</td>
+									</tr>
+									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
+										<td className="p-2 font-semibold w-1/3 border-r" style={{ borderColor: "var(--border)" }}>
+											Subjek
+										</td>
+										<td className="p-2">{selectedReport.subject}</td>
 									</tr>
 
 									{/* Tanggal */}
@@ -347,23 +376,43 @@ export default function ReportsPage() {
 									{/* Departemen */}
 									<tr className="border-b" style={{ borderColor: "var(--border)" }}>
 										<td className="p-2 font-semibold border-r" style={{ borderColor: "var(--border)" }}>
-											Departemen Penanggung Jawab
+											Kategori
 										</td>
 										<td className="p-2">{selectedReport.department?.name || "Belum ditentukan"}</td>
 									</tr>
 
 									{/* Deskripsi */}
 									<tr className="border-b align-top" style={{ borderColor: "var(--border)" }}>
-										<td className="p-2 font-semibold border-r align-top" style={{ borderColor: "var(--border)" }}>
+										<td
+											className="p-2 font-semibold border-r align-top"
+											style={{ borderColor: "var(--border)" }}
+										>
 											Deskripsi Lengkap
 										</td>
-										<td className="p-2 whitespace-pre-line">{selectedReport.description || "Tidak ada deskripsi"}</td>
+										<td className="p-2 whitespace-pre-line">
+											{selectedReport.description || "Tidak ada deskripsi"}
+										</td>
+									</tr>
+
+									<tr className="border-b align-top" style={{ borderColor: "var(--border)" }}>
+										<td
+											className="p-2 font-semibold border-r align-top"
+											style={{ borderColor: "var(--border)" }}
+										>
+											Latar Belakang
+										</td>
+										<td className="p-2 whitespace-pre-line">
+											{selectedReport.background || "Tidak ada deskripsi"}
+										</td>
 									</tr>
 
 									{/* Penanganan */}
 									{selectedReport.handling_step && (
 										<tr className="border-b align-top" style={{ borderColor: "var(--border)" }}>
-											<td className="p-2 font-semibold border-r align-top" style={{ borderColor: "var(--border)" }}>
+											<td
+												className="p-2 font-semibold border-r align-top"
+												style={{ borderColor: "var(--border)" }}
+											>
 												Langkah Penanganan
 											</td>
 											<td className="p-2 whitespace-pre-line">{selectedReport.handling_step}</td>
@@ -372,7 +421,10 @@ export default function ReportsPage() {
 
 									{/* Dokumentasi */}
 									<tr className="align-top" style={{ borderColor: "var(--border)" }}>
-										<td className="p-2 font-semibold border-r align-top" style={{ borderColor: "var(--border)" }}>
+										<td
+											className="p-2 font-semibold border-r align-top"
+											style={{ borderColor: "var(--border)" }}
+										>
 											Dokumentasi Gambar
 										</td>
 										<td className="p-2">
@@ -404,8 +456,19 @@ export default function ReportsPage() {
 						)}
 					</AppModal>
 
-					<AppModal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)} title="Pratinjau Gambar" width="max-w-4xl">
-						{selectedImage && <img src={`${imgLink}/${selectedImage}`} alt="Full preview" className="w-full h-auto max-h-[70vh] object-contain" />}
+					<AppModal
+						isOpen={!!selectedImage}
+						onClose={() => setSelectedImage(null)}
+						title="Pratinjau Gambar"
+						width="max-w-4xl"
+					>
+						{selectedImage && (
+							<img
+								src={`${imgLink}/${selectedImage}`}
+								alt="Full preview"
+								className="w-full h-auto max-h-[70vh] object-contain"
+							/>
+						)}
 					</AppModal>
 				</div>
 			}

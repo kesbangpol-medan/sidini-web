@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu = "" }) =
 				)}
 			>
 				<div className="flex justify-center items-center mb-8">
-					<Image src="/icon.png" alt="sidini icon" width={120} height={60} className="rounded-full object-cover" />
+					<Image src="/icon.png" alt="sidini icon" width={120} height={60} className="object-cover" />
 				</div>
 
 				<div className="mb-4 text-sm font-medium text-[var(--disable)]">
