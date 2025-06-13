@@ -11,11 +11,25 @@ import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
 import { ReportEntity } from "./entity/report_entity";
 import AppButton from "@/components/buttons/AppButton";
+import { DistrictEntity } from "../district/entity/district_entity";
+import AppForm, { FormField } from "@/components/inputs/AppForm";
+import { DepartmentEntity } from "../department/entity/department_entity";
+import http from "@/configs/http";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
 	search: (res: any) => res.data,
 	count: (res: any) => res,
+});
+
+const districUseCase = makeCrudUseCase<DistrictEntity, any>("districts", {
+	read: (res: any) => res.data,
+});
+
+const departmentUseCase = makeCrudUseCase<DepartmentEntity, any>("departments", {
+	read: (res: any) => res.data,
 });
 
 export default function ReportsPage() {
@@ -29,6 +43,9 @@ export default function ReportsPage() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [totalReport, setTotalReport] = useState<number>(0);
 	const reportRef = useRef<HTMLTableElement>(null);
+	const [districts, setDistricts] = useState<DistrictEntity[]>([]);
+	const [departments, setDepartments] = useState<DepartmentEntity[]>([]);
+	const [showExportModal, setShowExportModal] = useState<boolean>(false);
 
 	const handleExportPDF = async () => {
 		if (!reportRef.current) return;
@@ -219,7 +236,55 @@ export default function ReportsPage() {
 		}
 	}, []);
 
-	const exportreport = async () => {}
+	// const exportreport = async () => {}
+	const getAllDistricts = async () => {
+		try {
+			const res = await districUseCase.read();
+			setDistricts(res);
+		} catch (error) {
+			console.error("Error fetching reports:", error);
+		}
+	};
+
+	const getAllCategorie = async () => {
+		try {
+			const res = await departmentUseCase.read();
+			setDepartments(res);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const exportFormFields: FormField[] = [
+		{
+			name: "district_id",
+			label: "Kecamatan",
+			type: "select",
+			options: [
+				{ value: "-", label: "Semua Kecamatan" },
+				...districts.map((val) => ({ value: val.id.toString(), label: val.name })),
+			],
+		},
+		{
+			name: "department_id",
+			label: "Kategori",
+			type: "select",
+			options: [
+				{ value: "-", label: "Semua Kategori" },
+				...departments.map((val) => ({ value: val.id.toString(), label: val.name })),
+			],
+		},
+		{
+			name: "start_date",
+			label: "Dari Tanggal",
+			type: "date",
+		},
+		{
+			name: "end_date",
+			label: "Sampai Tanggal",
+			type: "date",
+		},
+	];
 
 	// Ambil data laporan berdasarkan halaman saat currentPage berubah,
 	// tetapi hanya jika tidak sedang dalam mode pencarian
@@ -229,6 +294,8 @@ export default function ReportsPage() {
 
 		// Panggil fungsi untuk mengambil data laporan
 		getAllReports(currentPage);
+		getAllDistricts();
+		getAllCategorie();
 		countReport();
 	}, [currentPage, getAllReports, searchTerm]);
 
@@ -275,6 +342,116 @@ export default function ReportsPage() {
 		}
 	}, [searchTerm]);
 
+	// const toDateString = (isoString: string) => {
+	// 	const date = new Date(isoString);
+	// 	if (isNaN(date.getTime())) return ""; // Cek jika bukan tanggal valid
+	// 	const year = date.getFullYear();
+	// 	const month = String(date.getMonth() + 1).padStart(2, "0");
+	// 	const day = String(date.getDate()).padStart(2, "0");
+	// 	return `${year}-${month}-${day}`;
+	// };
+
+	// const handleExport = async (data: any) => {
+	// 	const params = new URLSearchParams();
+
+	// 	if (data.district_id > 0) {
+	// 		params.append("district_id", data.district_id);
+	// 	}
+
+	// 	if (data.department_id > 0) {
+	// 		params.append("department_id", data.department_id);
+	// 	}
+
+	// 	if (data.start_date) {
+	// 		const startDate = toDateString(data.start_date);
+	// 		if (startDate) params.append("start_date", startDate);
+	// 	}
+
+	// 	if (data.end_date) {
+	// 		const endDate = toDateString(data.end_date);
+	// 		if (endDate) params.append("end_date", endDate);
+	// 	}
+
+	// 	// Bangun URL hanya jika ada query
+	// 	const queryString = params.toString();
+	// 	const url = queryString ? `/reporting/filter?${queryString}` : `/reporting/filter`;
+
+	// 	try {
+	// 		const res = await http.get(url);
+	// 		console.log(res.data.data);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	}
+	// };
+	const toDateString = (isoString: string) => {
+		const date = new Date(isoString);
+		if (isNaN(date.getTime())) return "";
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	};
+
+	const handleExport = async (data: any) => {
+		const params = new URLSearchParams();
+
+		if (data.district_id > 0) {
+			params.append("district_id", data.district_id);
+		}
+
+		if (data.department_id > 0) {
+			params.append("department_id", data.department_id);
+		}
+
+		if (data.start_date) {
+			const startDate = toDateString(data.start_date);
+			if (startDate) params.append("start_date", startDate);
+		}
+
+		if (data.end_date) {
+			const endDate = toDateString(data.end_date);
+			if (endDate) params.append("end_date", endDate);
+		}
+
+		const queryString = params.toString();
+		const url = queryString ? `/reporting/filter?${queryString}` : `/reporting/filter`;
+
+		try {
+			const res = await http.get(url);
+			const jsonData = res.data.data;
+
+			if (!jsonData || jsonData.length === 0) {
+				alert("Data tidak ditemukan untuk diekspor.");
+				return;
+			}
+
+			// Format data sesuai kolom Excel yang diinginkan
+			const formattedData = jsonData.map((item: any) => ({
+				ID: item.id,
+				Tanggal: toDateString(item.date_time),
+				Judul: item.title,
+				Subjek: item.subject,
+				Alamat: item.address,
+				Departemen: item.department?.name || "-",
+				Kelurahan: item.sub_village?.village?.name || "-",
+				Lingkungan: item.sub_village?.name || "-",
+				Kecamatan: item.sub_village?.village?.district?.name || "-",
+			}));
+
+			const worksheet = XLSX.utils.json_to_sheet(formattedData);
+			const workbook = XLSX.utils.book_new();
+			XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan");
+
+			const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+			const blob = new Blob([excelBuffer], {
+				type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			});
+			saveAs(blob, "laporan-export.xlsx");
+		} catch (error) {
+			console.error("Gagal mengekspor data:", error);
+		}
+	};
+
 	return (
 		<AppDashboard
 			isLoading={isLoading}
@@ -293,7 +470,7 @@ export default function ReportsPage() {
 					<AppTable
 						tools={
 							<>
-								<AppButton label="Export" icon={<FaDownload />} />
+								<AppButton label="Export" icon={<FaDownload />} onClick={() => setShowExportModal(true)} />
 							</>
 						}
 						data={reports}
@@ -470,6 +647,30 @@ export default function ReportsPage() {
 							/>
 						)}
 					</AppModal>
+
+					{/* <AppModal
+						title="Export Data"
+						onConfirm={handleExport}
+						confirmLabel="Export"
+						isOpen={showExportModal}
+						onClose={() => setShowExportModal(false)}
+					>
+						<AppForm fields={exportFormFields} onSubmit={() => console.log("first")} />
+					</AppModal> */}
+					<AppForm
+						asModal
+						isOpen={showExportModal}
+						onClose={() => setShowExportModal(false)}
+						modalTitle="Export Data"
+						modalConfirmLabel="Export"
+						modalCancelLabel="Batal"
+						fields={exportFormFields}
+						onSubmit={async (data) => {
+							await handleExport(data);
+							setShowExportModal(false);
+						}}
+						// initialData={selectedUser}
+					/>
 				</div>
 			}
 			activeKey={"report"}

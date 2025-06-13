@@ -12,7 +12,7 @@ interface AppDatePickerProps {
 const AppDatePicker: React.FC<AppDatePickerProps> = ({ label, value, onChange, placeholder }) => {
 	return (
 		<div className="flex flex-col gap-1 w-full">
-			{label && <label className="text-xs font-medium text-gray-700">{label}</label>}
+			{label && <label className="text-xs font-medium">{label.toUpperCase()}</label>}
 			<DatePicker
 				selected={value}
 				onChange={onChange}
