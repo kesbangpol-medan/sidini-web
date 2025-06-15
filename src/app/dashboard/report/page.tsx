@@ -343,199 +343,95 @@ export default function ReportsPage() {
 		}
 	}, [searchTerm]);
 
-	// const toDateString = (isoString: string) => {
-	// 	const date = new Date(isoString);
-	// 	if (isNaN(date.getTime())) return ""; // Cek jika bukan tanggal valid
-	// 	const year = date.getFullYear();
-	// 	const month = String(date.getMonth() + 1).padStart(2, "0");
-	// 	const day = String(date.getDate()).padStart(2, "0");
-	// 	return `${year}-${month}-${day}`;
-	// };
-
-	// const handleExport = async (data: any) => {
-	// 	const params = new URLSearchParams();
-
-	// 	if (data.district_id > 0) {
-	// 		params.append("district_id", data.district_id);
-	// 	}
-
-	// 	if (data.department_id > 0) {
-	// 		params.append("department_id", data.department_id);
-	// 	}
-
-	// 	if (data.start_date) {
-	// 		const startDate = toDateString(data.start_date);
-	// 		if (startDate) params.append("start_date", startDate);
-	// 	}
-
-	// 	if (data.end_date) {
-	// 		const endDate = toDateString(data.end_date);
-	// 		if (endDate) params.append("end_date", endDate);
-	// 	}
-
-	// 	// Bangun URL hanya jika ada query
-	// 	const queryString = params.toString();
-	// 	const url = queryString ? `/reporting/filter?${queryString}` : `/reporting/filter`;
-
-	// 	try {
-	// 		const res = await http.get(url);
-	// 		console.log(res.data.data);
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
-
-	// const toDateString = (isoString: string) => {
-	// 	const date = new Date(isoString);
-	// 	if (isNaN(date.getTime())) return "";
-	// 	const year = date.getFullYear();
-	// 	const month = String(date.getMonth() + 1).padStart(2, "0");
-	// 	const day = String(date.getDate()).padStart(2, "0");
-	// 	return `${year}-${month}-${day}`;
-	// };
-
-	// const handleExport = async (data: any) => {
-	// 	const params = new URLSearchParams();
-
-	// 	if (data.district_id > 0) {
-	// 		params.append("district_id", data.district_id);
-	// 	}
-
-	// 	if (data.department_id > 0) {
-	// 		params.append("department_id", data.department_id);
-	// 	}
-
-	// 	if (data.start_date) {
-	// 		const startDate = toDateString(data.start_date);
-	// 		if (startDate) params.append("start_date", startDate);
-	// 	}
-
-	// 	if (data.end_date) {
-	// 		const endDate = toDateString(data.end_date);
-	// 		if (endDate) params.append("end_date", endDate);
-	// 	}
-
-	// 	const queryString = params.toString();
-	// 	const url = queryString ? `/reporting/filter?${queryString}` : `/reporting/filter`;
-
-	// 	try {
-	// 		const res = await http.get(url);
-	// 		const jsonData = res.data.data;
-
-	// 		if (!jsonData || jsonData.length === 0) {
-	// 			alert("Data tidak ditemukan untuk diekspor.");
-	// 			return;
-	// 		}
-
-	// 		// Format data sesuai kolom Excel yang diinginkan
-	// 		const formattedData = jsonData.map((item: any) => ({
-	// 			ID: item.id,
-	// 			Tanggal: toDateString(item.date_time),
-	// 			Judul: item.title,
-	// 			Subjek: item.subject,
-	// 			Alamat: item.address,
-	// 			Departemen: item.department?.name || "-",
-	// 			Kelurahan: item.sub_village?.village?.name || "-",
-	// 			Lingkungan: item.sub_village?.name || "-",
-	// 			Kecamatan: item.sub_village?.village?.district?.name || "-",
-	// 		}));
-
-	// 		const worksheet = XLSX.utils.json_to_sheet(formattedData);
-	// 		const workbook = XLSX.utils.book_new();
-	// 		XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan");
-
-	// 		const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-	// 		const blob = new Blob([excelBuffer], {
-	// 			type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-	// 		});
-	// 		saveAs(blob, "laporan-export.xlsx");
-	// 	} catch (error) {
-	// 		console.error("Gagal mengekspor data:", error);
-	// 	}
-	// };
 	const toDateString = (isoString: string) => {
-	const date = new Date(isoString);
-	if (isNaN(date.getTime())) return "";
-	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, "0");
-	const day = String(date.getDate()).padStart(2, "0");
-	return `${year}-${month}-${day}`;
-};
+		const date = new Date(isoString);
+		if (isNaN(date.getTime())) return "";
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	};
 
-const handleExport = async (data: any) => {
-	const params = new URLSearchParams();
+	const handleExport = async (data: any) => {
+		const params = new URLSearchParams();
 
-	if (data.district_id > 0) {
-		params.append("district_id", data.district_id);
-	}
-
-	if (data.department_id > 0) {
-		params.append("department_id", data.department_id);
-	}
-
-	if (data.start_date) {
-		const startDate = toDateString(data.start_date);
-		if (startDate) params.append("start_date", startDate);
-	}
-
-	if (data.end_date) {
-		const endDate = toDateString(data.end_date);
-		if (endDate) params.append("end_date", endDate);
-	}
-
-	const queryString = params.toString();
-	const url = queryString ? `/reporting/filter?${queryString}` : `/reporting/filter`;
-
-	try {
-		const res = await http.get(url);
-		const jsonData = res.data.data;
-
-		if (!jsonData || jsonData.length === 0) {
-			alert("Data tidak ditemukan untuk diekspor.");
-			return;
+		if (data.district_id > 0) {
+			params.append("district_id", data.district_id);
 		}
 
-		const workbook = new ExcelJS.Workbook();
-		const worksheet = workbook.addWorksheet("Laporan");
+		if (data.department_id > 0) {
+			params.append("department_id", data.department_id);
+		}
 
-		// Definisikan header
-		worksheet.columns = [
-			{ header: "ID", key: "id", width: 10 },
-			{ header: "Tanggal", key: "tanggal", width: 15 },
-			{ header: "Judul", key: "judul", width: 30 },
-			{ header: "Subjek", key: "subjek", width: 30 },
-			{ header: "Alamat", key: "alamat", width: 30 },
-			{ header: "Departemen", key: "departemen", width: 25 },
-			{ header: "Kelurahan", key: "kelurahan", width: 25 },
-			{ header: "Lingkungan", key: "lingkungan", width: 20 },
-			{ header: "Kecamatan", key: "kecamatan", width: 25 },
-		];
+		if (data.start_date) {
+			const startDate = toDateString(data.start_date);
+			if (startDate) params.append("start_date", startDate);
+		}
 
-		// Isi baris data
-		jsonData.forEach((item: any) => {
-			worksheet.addRow({
-				id: item.id,
-				tanggal: toDateString(item.date_time),
-				judul: item.title,
-				subjek: item.subject,
-				alamat: item.address,
-				departemen: item.department?.name || "-",
-				kelurahan: item.sub_village?.village?.name || "-",
-				lingkungan: item.sub_village?.name || "-",
-				kecamatan: item.sub_village?.village?.district?.name || "-",
+		if (data.end_date) {
+			const endDate = toDateString(data.end_date);
+			if (endDate) params.append("end_date", endDate);
+		}
+
+		const queryString = params.toString();
+		const url = queryString ? `/reporting/filter?${queryString}` : `/reporting/filter`;
+
+		try {
+			const res = await http.get(url);
+			const jsonData = res.data.data;
+
+			if (!jsonData || jsonData.length === 0) {
+				alert("Data tidak ditemukan untuk diekspor.");
+				return;
+			}
+
+			const workbook = new ExcelJS.Workbook();
+			const worksheet = workbook.addWorksheet("Laporan");
+
+			// Definisikan header
+			worksheet.columns = [
+				{ header: "ID", key: "id", width: 10 },
+				{ header: "Tanggal", key: "tanggal", width: 15 },
+				{ header: "Judul", key: "judul", width: 30 },
+				{ header: "Subjek", key: "subjek", width: 30 },
+				{ header: "Alamat", key: "alamat", width: 30 },
+				{ header: "Kategori", key: "departemen", width: 25 },
+				{ header: "Kelurahan", key: "kelurahan", width: 25 },
+				{ header: "Lingkungan", key: "lingkungan", width: 20 },
+				{ header: "Kecamatan", key: "kecamatan", width: 25 },
+				{ header: "Latar Belakang", key: "latar_belakang", width: 25 },
+				{ header: "Deskripsi", key: "deskripsi", width: 25 },
+				{ header: "Langkah Penanganan", key: "langkah_penanganan", width: 25 },
+			];
+
+			// Isi baris data
+			jsonData.forEach((item: any) => {
+				worksheet.addRow({
+					id: item.id,
+					tanggal: toDateString(item.date_time),
+					judul: item.title,
+					subjek: item.subject,
+					alamat: item.address,
+					departemen: item.department?.name || "-",
+					kelurahan: item.sub_village?.village?.name || "-",
+					lingkungan: item.sub_village?.name || "-",
+					kecamatan: item.sub_village?.village?.district?.name || "-",
+					latar_belakang: item.background || "-",
+					deskripsi: item.description || "-",
+					langkah_penanganan: item.handling_step || "-",
+				});
 			});
-		});
 
-		// Generate file dan download
-		const buffer = await workbook.xlsx.writeBuffer();
-		const blob = new Blob([buffer], {
-			type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-		});
-		saveAs(blob, "laporan-export.xlsx");
-	} catch (error) {
-		console.error("Gagal mengekspor data:", error);
-	}
-};
+			// Generate file dan download
+			const buffer = await workbook.xlsx.writeBuffer();
+			const blob = new Blob([buffer], {
+				type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			});
+			saveAs(blob, "laporan-export.xlsx");
+		} catch (error) {
+			console.error("Gagal mengekspor data:", error);
+		}
+	};
 
 	return (
 		<AppDashboard
