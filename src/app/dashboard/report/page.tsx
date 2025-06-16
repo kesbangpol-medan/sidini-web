@@ -15,19 +15,10 @@ import { DistrictEntity } from "../district/entity/district_entity";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import { DepartmentEntity } from "../department/entity/department_entity";
 import http from "@/configs/http";
-// import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
-import {
-	LineChart,
-	Line,
-	CartesianGrid,
-	XAxis,
-	YAxis,
-	ResponsiveContainer,
-	Tooltip,
-	Legend,
-} from "recharts";
+import LineReportChart from "./components/LineChart";
+import BarReportChart from "./components/BarChart";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
@@ -58,75 +49,41 @@ export default function ReportsPage() {
 	const [departments, setDepartments] = useState<DepartmentEntity[]>([]);
 	const [showExportModal, setShowExportModal] = useState<boolean>(false);
 
-	// const data = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }, { name: "Page B", uv: 400, pv: 2400, amt: 2400 }];
 	const data = [
+		{ month: "Jan", kesehatan: 4200, sosial: 3100, politik: 2500 },
+		{ month: "Feb", kesehatan: 3900, sosial: 2200, politik: 2900 },
+		{ month: "Mar", kesehatan: 2800, sosial: 8700, politik: 3100 },
+		{ month: "Apr", kesehatan: 3100, sosial: 4200, politik: 1800 },
+		{ month: "Mei", kesehatan: 2300, sosial: 5100, politik: 2600 },
+		{ month: "Jun", kesehatan: 2900, sosial: 3600, politik: 3300 },
+		{ month: "Jul", kesehatan: 4100, sosial: 4500, politik: 2700 },
+		{ month: "Aug", kesehatan: 3700, sosial: 4900, politik: 2900 },
+		{ month: "Sep", kesehatan: 3000, sosial: 4300, politik: 3100 },
+		{ month: "Oct", kesehatan: 3300, sosial: 4700, politik: 2800 },
+		{ month: "Nov", kesehatan: 2800, sosial: 3900, politik: 3500 },
+		{ month: "Dec", kesehatan: 3600, sosial: 5100, politik: 3200 },
+	];
+
+	const lineSettings = [
+		{ dataKey: "sosial", color: "#8884d8", label: "Sosial" },
+		{ dataKey: "kesehatan", color: "#82ca9d", label: "Kesehatan" },
+		{ dataKey: "politik", color: "#f54278", label: "Politik" },
+	];
+
+	const barData = [
 		{
-			name: "Page A",
-			uv: 4000,
-			pv: 2400,
-			amt: 2400,
-		},
-		{
-			name: "Page B",
-			uv: 3000,
-			pv: 1398,
-			amt: 2210,
-		},
-		{
-			name: "Page C",
-			uv: 2000,
-			pv: 9800,
-			amt: 2290,
-		},
-		{
-			name: "Page D",
-			uv: 2780,
-			pv: 3908,
-			amt: 2000,
-		},
-		{
-			name: "Page E",
-			uv: 1890,
-			pv: 4800,
-			amt: 2181,
-		},
-		{
-			name: "Page F",
-			uv: 2390,
-			pv: 3800,
-			amt: 2500,
-		},
-		{
-			name: "Page G",
-			uv: 3490,
-			pv: 4300,
-			amt: 2100,
+			name: "Juni 2025",
+			sosial: 3600,
+			kesehatan: 2900,
+			politik: 3300,
 		},
 	];
 
-	const renderLineChart = (
-		<ResponsiveContainer width="100%" height="100%">
-			<LineChart
-				width={500}
-				height={300}
-				data={data}
-				margin={{
-					top: 5,
-					right: 30,
-					left: 20,
-					bottom: 5,
-				}}
-			>
-				<CartesianGrid strokeDasharray="3 3" />
-				<XAxis dataKey="name" />
-				<YAxis />
-				<Tooltip />
-				<Legend />
-				<Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-				<Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-			</LineChart>
-		</ResponsiveContainer>
-	);
+	const barSettings = [
+		{ dataKey: "sosial", color: "#8884d8", label: "Sosial" },
+		{ dataKey: "kesehatan", color: "#82ca9d", label: "Kesehatan" },
+		{ dataKey: "politik", color: "#f54278", label: "Politik" },
+	];
 
 	const handleExportPDF = async () => {
 		if (!reportRef.current) return;
@@ -542,9 +499,23 @@ export default function ReportsPage() {
 						}}
 					/>
 
-					<div className="surface w-full h-100 p-4 rounded-lg flex flex-col gap-4">
-						<h1 className="text-xl font-semibold">Total Laporan</h1>
-						{renderLineChart}</div>
+					{/* <div className="surface w-full h-100 p-4 rounded-lg flex flex-col gap-4">
+						<div className="flex gap-2 items-center">
+							<FaChartArea className="text-[var(--primary)]" />
+							<h1 className="text-xl font-semibold">Grafik Laporan Tahun 2025</h1>
+						</div>
+
+						{renderLineChart}
+						
+					</div> */}
+					<div className="mb-4 w-full">
+						<LineReportChart title="Laporan Aktivitas per Bulan" data={data} lines={lineSettings} />
+					</div>
+					<div className="w-full mb-4 flex gap-2">
+						<div className="w-1/2">
+							<BarReportChart title="Statistik Kategori - Juni 2025" data={barData} bars={barSettings} />
+						</div>
+					</div>
 
 					<AppModal
 						isOpen={showDetailModal}
