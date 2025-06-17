@@ -508,10 +508,10 @@ export default function ReportsPage() {
 						{renderLineChart}
 						
 					</div> */}
-					<div className="mb-4 w-full">
-						<LineReportChart title="Laporan Aktivitas per Bulan" data={data} lines={lineSettings} />
-					</div>
-					<div className="w-full mb-4 flex gap-2">
+					<div className="w-full mb-4 flex gap-4">
+						<div className="w-1/2">
+							<LineReportChart title="Laporan Aktivitas per Bulan" data={data} lines={lineSettings} />
+						</div>
 						<div className="w-1/2">
 							<BarReportChart title="Statistik Kategori - Juni 2025" data={barData} bars={barSettings} />
 						</div>
