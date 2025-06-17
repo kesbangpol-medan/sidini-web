@@ -48,41 +48,12 @@ export default function ReportsPage() {
 	const [districts, setDistricts] = useState<DistrictEntity[]>([]);
 	const [departments, setDepartments] = useState<DepartmentEntity[]>([]);
 	const [showExportModal, setShowExportModal] = useState<boolean>(false);
-
-	const data = [
-		{ month: "Jan", kesehatan: 4200, sosial: 3100, politik: 2500 },
-		{ month: "Feb", kesehatan: 3900, sosial: 2200, politik: 2900 },
-		{ month: "Mar", kesehatan: 2800, sosial: 8700, politik: 3100 },
-		{ month: "Apr", kesehatan: 3100, sosial: 4200, politik: 1800 },
-		{ month: "Mei", kesehatan: 2300, sosial: 5100, politik: 2600 },
-		{ month: "Jun", kesehatan: 2900, sosial: 3600, politik: 3300 },
-		{ month: "Jul", kesehatan: 4100, sosial: 4500, politik: 2700 },
-		{ month: "Aug", kesehatan: 3700, sosial: 4900, politik: 2900 },
-		{ month: "Sep", kesehatan: 3000, sosial: 4300, politik: 3100 },
-		{ month: "Oct", kesehatan: 3300, sosial: 4700, politik: 2800 },
-		{ month: "Nov", kesehatan: 2800, sosial: 3900, politik: 3500 },
-		{ month: "Dec", kesehatan: 3600, sosial: 5100, politik: 3200 },
-	];
-
-	const lineSettings = [
-		{ dataKey: "sosial", color: "#8884d8", label: "Sosial" },
-		{ dataKey: "kesehatan", color: "#82ca9d", label: "Kesehatan" },
-		{ dataKey: "politik", color: "#f54278", label: "Politik" },
-	];
+	const [lineChartData, setLineChartData] = useState([]);
 
 	const barData = [
-		{
-			name: "Juni 2025",
-			sosial: 3600,
-			kesehatan: 2900,
-			politik: 3300,
-		},
-	];
-
-	const barSettings = [
-		{ dataKey: "sosial", color: "#8884d8", label: "Sosial" },
-		{ dataKey: "kesehatan", color: "#82ca9d", label: "Kesehatan" },
-		{ dataKey: "politik", color: "#f54278", label: "Politik" },
+		{ name: "Sosial", kategori: "Juni 2025", value: 3600 },
+		{ name: "Kesehatan", kategori: "Juni 2025", value: 2900 },
+		{ name: "Politik", kategori: "Juni 2025", value: 3300 },
 	];
 
 	const handleExportPDF = async () => {
@@ -243,6 +214,37 @@ export default function ReportsPage() {
 		},
 	];
 
+	const exportFormFields: FormField[] = [
+		{
+			name: "district_id",
+			label: "Kecamatan",
+			type: "select",
+			options: [
+				{ value: "-", label: "Semua Kecamatan" },
+				...districts.map((val) => ({ value: val.id.toString(), label: val.name })),
+			],
+		},
+		{
+			name: "department_id",
+			label: "Kategori",
+			type: "select",
+			options: [
+				{ value: "-", label: "Semua Kategori" },
+				...departments.map((val) => ({ value: val.id.toString(), label: val.name })),
+			],
+		},
+		{
+			name: "start_date",
+			label: "Dari Tanggal",
+			type: "date",
+		},
+		{
+			name: "end_date",
+			label: "Sampai Tanggal",
+			type: "date",
+		},
+	];
+
 	const countReport = async () => {
 		try {
 			const res = await reportUseCase.count();
@@ -293,36 +295,24 @@ export default function ReportsPage() {
 		}
 	};
 
-	const exportFormFields: FormField[] = [
-		{
-			name: "district_id",
-			label: "Kecamatan",
-			type: "select",
-			options: [
-				{ value: "-", label: "Semua Kecamatan" },
-				...districts.map((val) => ({ value: val.id.toString(), label: val.name })),
-			],
-		},
-		{
-			name: "department_id",
-			label: "Kategori",
-			type: "select",
-			options: [
-				{ value: "-", label: "Semua Kategori" },
-				...departments.map((val) => ({ value: val.id.toString(), label: val.name })),
-			],
-		},
-		{
-			name: "start_date",
-			label: "Dari Tanggal",
-			type: "date",
-		},
-		{
-			name: "end_date",
-			label: "Sampai Tanggal",
-			type: "date",
-		},
-	];
+	const getLineChartData = async () => {
+		try {
+			const res = await http.get("/reporting/chart-monthly");
+
+			const rawData = res.data.data;
+
+			// Transformasi data: gabungkan categories ke root
+			const transformed = rawData.map((item: any) => ({
+				month: item.month,
+				...item.categories, // flatten field
+			}));
+
+			setLineChartData(transformed);
+			console.log(transformed);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	// Ambil data laporan berdasarkan halaman saat currentPage berubah,
 	// tetapi hanya jika tidak sedang dalam mode pencarian
@@ -335,6 +325,7 @@ export default function ReportsPage() {
 		getAllDistricts();
 		getAllCategorie();
 		countReport();
+		getLineChartData();
 	}, [currentPage, getAllReports, searchTerm]);
 
 	// Fungsi untuk melakukan pencarian laporan berdasarkan kata kunci
@@ -499,21 +490,21 @@ export default function ReportsPage() {
 						}}
 					/>
 
-					{/* <div className="surface w-full h-100 p-4 rounded-lg flex flex-col gap-4">
-						<div className="flex gap-2 items-center">
-							<FaChartArea className="text-[var(--primary)]" />
-							<h1 className="text-xl font-semibold">Grafik Laporan Tahun 2025</h1>
-						</div>
-
-						{renderLineChart}
-						
-					</div> */}
 					<div className="w-full mb-4 flex gap-4">
 						<div className="w-1/2">
-							<LineReportChart title="Laporan Aktivitas per Bulan" data={data} lines={lineSettings} />
+							<LineReportChart
+								title={`Statistik Tahun ${new Date().getFullYear()}`}
+								data={lineChartData}
+							/>
 						</div>
 						<div className="w-1/2">
-							<BarReportChart title="Statistik Kategori - Juni 2025" data={barData} bars={barSettings} />
+							<BarReportChart
+								title={`Statistik Kategori - ${new Date().toLocaleString("id-ID", {
+									month: "long",
+									year: "numeric",
+								})}`}
+								data={barData}
+							/>
 						</div>
 					</div>
 
