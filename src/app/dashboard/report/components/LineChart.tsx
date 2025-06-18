@@ -61,7 +61,7 @@ export default function LineReportChart({ data, title }: LineReportChartProps) {
 						align="center"
 						verticalAlign="bottom"
 						wrapperStyle={{
-							paddingTop: 16,
+							// paddingTop: 0,
 							whiteSpace: "nowrap",
 							overflowX: "auto",
 							width: "100%",

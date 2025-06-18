@@ -49,12 +49,13 @@ export default function ReportsPage() {
 	const [departments, setDepartments] = useState<DepartmentEntity[]>([]);
 	const [showExportModal, setShowExportModal] = useState<boolean>(false);
 	const [lineChartData, setLineChartData] = useState([]);
+	const [barData, setBarData] = useState([])
 
-	const barData = [
-		{ name: "Sosial", kategori: "Juni 2025", value: 3600 },
-		{ name: "Kesehatan", kategori: "Juni 2025", value: 2900 },
-		{ name: "Politik", kategori: "Juni 2025", value: 3300 },
-	];
+	// const barData = [
+	// 	{ name: "Sosial", value: 3600 },
+	// 	{ name: "Kesehatan", value: 2900 },
+	// 	{ name: "Politik", value: 3300 },
+	// ];
 
 	const handleExportPDF = async () => {
 		if (!reportRef.current) return;
@@ -308,11 +309,19 @@ export default function ReportsPage() {
 			}));
 
 			setLineChartData(transformed);
-			console.log(transformed);
 		} catch (error) {
 			console.log(error);
 		}
 	};
+
+	const getBarChartData = async () => {
+		try {
+			const res = await http.get("/reporting/chart-this-month");
+			setBarData(res.data.data)
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	// Ambil data laporan berdasarkan halaman saat currentPage berubah,
 	// tetapi hanya jika tidak sedang dalam mode pencarian
@@ -326,6 +335,7 @@ export default function ReportsPage() {
 		getAllCategorie();
 		countReport();
 		getLineChartData();
+		getBarChartData();
 	}, [currentPage, getAllReports, searchTerm]);
 
 	// Fungsi untuk melakukan pencarian laporan berdasarkan kata kunci
@@ -499,7 +509,7 @@ export default function ReportsPage() {
 						</div>
 						<div className="w-1/2">
 							<BarReportChart
-								title={`Statistik Kategori - ${new Date().toLocaleString("id-ID", {
+								title={`Statistik ${new Date().toLocaleString("id-ID", {
 									month: "long",
 									year: "numeric",
 								})}`}
