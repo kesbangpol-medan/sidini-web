@@ -15,19 +15,10 @@ import { DistrictEntity } from "../district/entity/district_entity";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import { DepartmentEntity } from "../department/entity/department_entity";
 import http from "@/configs/http";
-// import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
-import {
-	LineChart,
-	Line,
-	CartesianGrid,
-	XAxis,
-	YAxis,
-	ResponsiveContainer,
-	Tooltip,
-	Legend,
-} from "recharts";
+import LineReportChart from "./components/LineChart";
+import BarReportChart from "./components/BarChart";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
 	read: (res: any) => res.data,
@@ -57,76 +48,14 @@ export default function ReportsPage() {
 	const [districts, setDistricts] = useState<DistrictEntity[]>([]);
 	const [departments, setDepartments] = useState<DepartmentEntity[]>([]);
 	const [showExportModal, setShowExportModal] = useState<boolean>(false);
+	const [lineChartData, setLineChartData] = useState([]);
+	const [barData, setBarData] = useState([])
 
-	// const data = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }, { name: "Page B", uv: 400, pv: 2400, amt: 2400 }];
-	const data = [
-		{
-			name: "Page A",
-			uv: 4000,
-			pv: 2400,
-			amt: 2400,
-		},
-		{
-			name: "Page B",
-			uv: 3000,
-			pv: 1398,
-			amt: 2210,
-		},
-		{
-			name: "Page C",
-			uv: 2000,
-			pv: 9800,
-			amt: 2290,
-		},
-		{
-			name: "Page D",
-			uv: 2780,
-			pv: 3908,
-			amt: 2000,
-		},
-		{
-			name: "Page E",
-			uv: 1890,
-			pv: 4800,
-			amt: 2181,
-		},
-		{
-			name: "Page F",
-			uv: 2390,
-			pv: 3800,
-			amt: 2500,
-		},
-		{
-			name: "Page G",
-			uv: 3490,
-			pv: 4300,
-			amt: 2100,
-		},
-	];
-
-	const renderLineChart = (
-		<ResponsiveContainer width="100%" height="100%">
-			<LineChart
-				width={500}
-				height={300}
-				data={data}
-				margin={{
-					top: 5,
-					right: 30,
-					left: 20,
-					bottom: 5,
-				}}
-			>
-				<CartesianGrid strokeDasharray="3 3" />
-				<XAxis dataKey="name" />
-				<YAxis />
-				<Tooltip />
-				<Legend />
-				<Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-				<Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-			</LineChart>
-		</ResponsiveContainer>
-	);
+	// const barData = [
+	// 	{ name: "Sosial", value: 3600 },
+	// 	{ name: "Kesehatan", value: 2900 },
+	// 	{ name: "Politik", value: 3300 },
+	// ];
 
 	const handleExportPDF = async () => {
 		if (!reportRef.current) return;
@@ -286,6 +215,37 @@ export default function ReportsPage() {
 		},
 	];
 
+	const exportFormFields: FormField[] = [
+		{
+			name: "district_id",
+			label: "Kecamatan",
+			type: "select",
+			options: [
+				{ value: "-", label: "Semua Kecamatan" },
+				...districts.map((val) => ({ value: val.id.toString(), label: val.name })),
+			],
+		},
+		{
+			name: "department_id",
+			label: "Kategori",
+			type: "select",
+			options: [
+				{ value: "-", label: "Semua Kategori" },
+				...departments.map((val) => ({ value: val.id.toString(), label: val.name })),
+			],
+		},
+		{
+			name: "start_date",
+			label: "Dari Tanggal",
+			type: "date",
+		},
+		{
+			name: "end_date",
+			label: "Sampai Tanggal",
+			type: "date",
+		},
+	];
+
 	const countReport = async () => {
 		try {
 			const res = await reportUseCase.count();
@@ -336,36 +296,32 @@ export default function ReportsPage() {
 		}
 	};
 
-	const exportFormFields: FormField[] = [
-		{
-			name: "district_id",
-			label: "Kecamatan",
-			type: "select",
-			options: [
-				{ value: "-", label: "Semua Kecamatan" },
-				...districts.map((val) => ({ value: val.id.toString(), label: val.name })),
-			],
-		},
-		{
-			name: "department_id",
-			label: "Kategori",
-			type: "select",
-			options: [
-				{ value: "-", label: "Semua Kategori" },
-				...departments.map((val) => ({ value: val.id.toString(), label: val.name })),
-			],
-		},
-		{
-			name: "start_date",
-			label: "Dari Tanggal",
-			type: "date",
-		},
-		{
-			name: "end_date",
-			label: "Sampai Tanggal",
-			type: "date",
-		},
-	];
+	const getLineChartData = async () => {
+		try {
+			const res = await http.get("/reporting/chart-monthly");
+
+			const rawData = res.data.data;
+
+			// Transformasi data: gabungkan categories ke root
+			const transformed = rawData.map((item: any) => ({
+				month: item.month,
+				...item.categories, // flatten field
+			}));
+
+			setLineChartData(transformed);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const getBarChartData = async () => {
+		try {
+			const res = await http.get("/reporting/chart-this-month");
+			setBarData(res.data.data)
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	// Ambil data laporan berdasarkan halaman saat currentPage berubah,
 	// tetapi hanya jika tidak sedang dalam mode pencarian
@@ -378,6 +334,8 @@ export default function ReportsPage() {
 		getAllDistricts();
 		getAllCategorie();
 		countReport();
+		getLineChartData();
+		getBarChartData();
 	}, [currentPage, getAllReports, searchTerm]);
 
 	// Fungsi untuk melakukan pencarian laporan berdasarkan kata kunci
@@ -542,9 +500,23 @@ export default function ReportsPage() {
 						}}
 					/>
 
-					<div className="surface w-full h-100 p-4 rounded-lg flex flex-col gap-4">
-						<h1 className="text-xl font-semibold">Total Laporan</h1>
-						{renderLineChart}</div>
+					<div className="w-full mb-4 flex gap-4">
+						<div className="w-1/2">
+							<LineReportChart
+								title={`Statistik Tahun ${new Date().getFullYear()}`}
+								data={lineChartData}
+							/>
+						</div>
+						<div className="w-1/2">
+							<BarReportChart
+								title={`Statistik ${new Date().toLocaleString("id-ID", {
+									month: "long",
+									year: "numeric",
+								})}`}
+								data={barData}
+							/>
+						</div>
+					</div>
 
 					<AppModal
 						isOpen={showDetailModal}

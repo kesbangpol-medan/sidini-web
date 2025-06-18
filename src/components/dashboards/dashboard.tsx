@@ -86,7 +86,7 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
 					</div>
 				</header>
 
-				<section className="flex-1 overflow-auto p-6">
+				<section className="flex-1 p-6">
 					<div className="max-w-7xl mx-auto space-y-6">{content}</div>
 				</section>
 			</main>
