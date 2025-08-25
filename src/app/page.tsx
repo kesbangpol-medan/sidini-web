@@ -233,7 +233,7 @@ const HeroSection: React.FC = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start w-full">
-              <a href="https://sidini.medan.go.id/" className="w-full sm:w-auto flex justify-center lg:justify-start">
+              <a href="/auth/login/domain" className="w-full sm:w-auto flex justify-center lg:justify-start">
                 <AppButton
                   className="bg-primary hover:bg-[var(--primary-hover)] text-white rounded-full cta-lift w-full sm:w-auto px-6 py-3"
                   label="Mulai Sekarang"
