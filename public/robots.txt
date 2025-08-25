@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sidini.medan.go.id/sitemap.xml
+
+# Disallow admin areas
+Disallow: /dashboard/
+Disallow: /auth/
+
+# Allow public pages
+Allow: /
+Allow: /doc/
+Allow: /video/
