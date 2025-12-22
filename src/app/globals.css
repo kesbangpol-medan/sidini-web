@@ -1,0 +1,232 @@
+@import "tailwindcss";
+
+/* Light Mode Defaults */
+:root {
+	--background: #f8f9fc;
+	--foreground: #2d3748;
+	--border: #e2e8f0;
+	--surface: #ffffff;
+	--input-bg: #f1f5f9;
+	--sidebar-menu-active-bg: #f3e8ff;
+	--sidebar-menu-active-foreground: #7c3aed;
+	--icon-bg: #f1f5f9;
+
+	--primary: #8b5cf6;
+	--primary-hover: #7c3aed;
+
+	--secondary: #2dd4bf;
+	--secondary-hover: #0d9488;
+
+	--success: #12d594;
+	--success-hover: #059669;
+	--danger: #e56060;
+	--danger-hover: #dc2626;
+	--warning: #f59e0b;
+	--warning-hover: #d97706;
+	--info: #3b82f6;
+	--info-hover: #2563eb;
+
+	--black: #1e293b;
+	--black-hover: #0f172a;
+	--disable: #94a3b8;
+	--disable-hover: #64748b;
+
+	--loading-background: rgba(15, 23, 42, 0.5);
+	--loading-foreground: #f8f9fc;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background: #0f172a;
+		--foreground: #e2e8f0;
+		--border: #334155;
+		--surface: #1e293b;
+		--input-bg: #1e293b;
+		--sidebar-menu-active-bg: #2f1847;
+		--sidebar-menu-active-foreground: #c4b5fd;
+		--icon-bg: #334155;
+
+		--primary: #9f7aea;
+		--primary-hover: #8b5cf6;
+		--secondary: #5eead4;
+		--secondary-hover: #2dd4bf;
+		--success: #298f6a;
+		--success-hover: #10b981;
+		--danger: #f5687d;
+		--danger-hover: #f43f5e;
+		--warning: #fcd34d;
+		--warning-hover: #fbbf24;
+		--info: #60a5fa;
+		--info-hover: #3b82f6;
+
+		--black: #f1f5f9;
+		--black-hover: #cbd5e1;
+		--disable: #475569;
+		--disable-hover: #64748b;
+
+		--loading-background: rgba(248, 249, 252, 0.5);
+		--loading-foreground: #0f172a;
+	}
+}
+
+body {
+	background-color: var(--background);
+	color: var(--foreground);
+	border-color: var(--border);
+	font-family: var(--font-roboto), sans-serif;
+}
+
+.border,
+.border-r,
+.border-l,
+.border-t,
+.border-b,
+.border-x,
+.border-y {
+	border-color: var(--border);
+}
+
+.surface {
+	background-color: var(--surface);
+}
+
+.sidebar .active {
+	background-color: var(--sidebar-menu-active-bg);
+	color: var(--sidebar-menu-active-foreground);
+}
+
+input {
+	background-color: var(--input-bg);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-poppins), sans-serif;
+}
+
+.icon-background {
+	background-color: var(--icon-bg);
+	padding: 10px;
+	border-radius: 6px;
+}
+
+.bg-primary {
+	background-color: var(--primary);
+}
+
+.bg-success {
+	background-color: var(--success);
+}
+
+.bg-danger {
+	background-color: var(--danger);
+}
+
+/* --- Custom utility classes to match landing style --- */
+.government-card {
+	background-color: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 1rem;
+	padding: 1.25rem;
+	box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.cta-lift {
+	transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.cta-lift:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.parallax-bg {
+	background-attachment: fixed;
+}
+
+/* simple reveal fallback (since useScrollReveal dihapus) */
+.scroll-reveal {
+	opacity: 1;
+	transform: translateY(0);
+	transition: opacity 500ms ease, transform 500ms ease;
+}
+
+/* Highlight styles */
+.text-gradient-primary {
+	background-image: linear-gradient(to right, var(--primary), var(--secondary));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.badge-highlight {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	border-radius: 9999px;
+	background: color-mix(in oklab, var(--primary) 12%, transparent);
+	color: var(--primary);
+	font-weight: 600;
+	font-size: 0.875rem;
+}
+
+.card-hover-highlight {
+	transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+.card-hover-highlight:hover {
+	border-color: var(--primary);
+	box-shadow: 0 16px 32px rgba(0,0,0,0.18);
+	transform: translateY(-2px);
+}
+
+.icon-bubble {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 9999px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: color-mix(in oklab, var(--secondary) 12%, transparent);
+	color: var(--secondary);
+	border: 1px solid var(--border);
+	transition: background-color 200ms ease, color 200ms ease;
+}
+.icon-bubble:hover {
+	background: color-mix(in oklab, var(--secondary) 22%, transparent);
+	color: var(--foreground);
+}
+
+/* color variants for icon bubble */
+.icon-bubble-primary { background: color-mix(in oklab, var(--primary) 12%, transparent); color: var(--primary); }
+.icon-bubble-primary:hover { background: color-mix(in oklab, var(--primary) 22%, transparent); }
+
+.icon-bubble-secondary { background: color-mix(in oklab, var(--secondary) 12%, transparent); color: var(--secondary); }
+.icon-bubble-secondary:hover { background: color-mix(in oklab, var(--secondary) 22%, transparent); }
+
+.icon-bubble-success { background: color-mix(in oklab, var(--success) 12%, transparent); color: var(--success); }
+.icon-bubble-success:hover { background: color-mix(in oklab, var(--success) 22%, transparent); }
+
+.icon-bubble-warning { background: color-mix(in oklab, var(--warning) 12%, transparent); color: var(--warning); }
+.icon-bubble-warning:hover { background: color-mix(in oklab, var(--warning) 22%, transparent); }
+
+.icon-bubble-info { background: color-mix(in oklab, var(--info) 12%, transparent); color: var(--info); }
+.icon-bubble-info:hover { background: color-mix(in oklab, var(--info) 22%, transparent); }
+
+.underline-highlight {
+	text-decoration: underline;
+	text-underline-offset: 4px;
+	text-decoration-thickness: 3px;
+	text-decoration-color: color-mix(in oklab, var(--secondary) 60%, transparent);
+}
+
+/* Solid text color helpers */
+.text-primary { color: var(--primary); }
+.text-secondary { color: var(--secondary); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-info { color: var(--info); }

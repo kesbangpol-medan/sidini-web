@@ -1,0 +1,98 @@
+/* AppButtons.css */
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.275rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s;
+}
+
+.button.text-xs {
+  font-size: 0.75rem;
+}
+
+.button.text-sm {
+  font-size: 0.875rem;
+}
+
+.button.text-base {
+  font-size: 1rem;
+}
+
+.button.text-lg {
+  font-size: 1.125rem;
+}
+
+.button.text-xl {
+  font-size: 1.25rem;
+}
+
+
+
+.button.primary {
+  background-color: var(--primary-color);
+}
+
+.button.primary:hover {
+  background-color: var(--primary-color-hover);
+}
+
+.button.secondary {
+  background-color: var(--secondary-color);
+}
+
+.button.secondary:hover {
+  background-color: var(--secondary-color-hover);
+}
+
+.button.success {
+  background-color: var(--success-color);
+}
+
+.button.success:hover {
+  background-color: var(--success-color-hover);
+}
+
+.button.danger {
+  background-color: var(--danger-color);
+}
+
+.button.danger:hover {
+  background-color: var(--danger-color-hover);
+}
+
+.button.info {
+  background-color: var(--info-color);
+}
+
+.button.info:hover {
+  background-color: var(--info-color-hover);
+}
+
+.button.warning {
+  background-color: var(--warning-color);
+}
+
+.button.warning:hover {
+  background-color: var(--warning-color-hover);
+}
+
+.button.black {
+  background-color: var(--black-color);
+}
+
+.button.black:hover {
+  background-color: var(--black-color-hover);
+}
+
+.button.disable {
+  background-color: var(--disable-color);
+}
+
+.button.disable:hover {
+  background-color: var(--disable-color-hover);
+}
