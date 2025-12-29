@@ -41,7 +41,7 @@ src/
 
 ## Teknologi yang Digunakan
 
-- **Framework**: Next.js 15.3.2
+- **Framework**: Next.js 15.3.8
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
