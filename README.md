@@ -16,7 +16,7 @@ npm run build
 npm start
 ```
 
-## 🛠️ Struktur Proyek
+## Struktur Proyek
 
 ```
 src/
