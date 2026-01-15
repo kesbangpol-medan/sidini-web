@@ -3,23 +3,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import AppButton from "@/components/buttons/AppButton";
-import {
-  ArrowRight,
-  Shield,
-  Users as UsersIcon,
-  TrendingUp,
-  Download,
-  Building2,
-  File,
-  TabletSmartphone,
-  UserCog,
-  Database,
-  Building,
-  Phone,
-  Globe,
-  Instagram,
-  Youtube,
-} from "lucide-react";
+import { ArrowRight, Shield, Users as UsersIcon, TrendingUp, Download, Building2, File, TabletSmartphone, UserCog, Database, Building, Phone, Globe, Instagram, Youtube } from "lucide-react";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -63,28 +47,22 @@ interface UserGroup {
 /**
  * Button component untuk social media links
  */
-const Button: React.FC<ButtonProps> = ({ 
-  variant = "ghost", 
-  size = "sm", 
-  className = "", 
-  children, 
-  ...props 
-}) => {
+const Button: React.FC<ButtonProps> = ({ variant = "ghost", size = "sm", className = "", children, ...props }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
-  
+
   const variantClasses = {
     ghost: "hover:bg-accent hover:text-accent-foreground",
-    default: "bg-primary text-primary-foreground hover:bg-primary/90"
+    default: "bg-primary text-primary-foreground hover:bg-primary/90",
   };
-  
+
   const sizeClasses = {
     sm: "h-9 px-3 text-sm",
     md: "h-10 px-4 py-2",
-    lg: "h-11 px-8"
+    lg: "h-11 px-8",
   };
-  
+
   const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
-  
+
   return (
     <button className={classes} {...props}>
       {children}
@@ -167,20 +145,10 @@ const HeroSection: React.FC = () => {
             {/* Header dengan logo */}
             <div className="space-y-4">
               <div className="flex items-center gap-4 justify-start lg:justify-start">
-                <Image 
-                  src="/LOGO KOTA MEDAN.png" 
-                  alt="Logo Pemko Medan" 
-                  width={64} 
-                  height={64} 
-                  className="h-12 sm:h-14 md:h-16 w-auto drop-shadow" 
-                />
+                <Image src="/LOGO KOTA MEDAN.png" alt="Logo Pemko Medan" width={64} height={64} className="h-12 sm:h-14 md:h-16 w-auto drop-shadow" />
                 <div className="text-left leading-tight">
-                  <div className="text-xs sm:text-sm text-muted-foreground">
-                    Badan Kesatuan Bangsa dan Politik
-                  </div>
-                  <div className="text-sm sm:text-base font-semibold tracking-wide">
-                    Kota Medan
-                  </div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Badan Kesatuan Bangsa dan Politik</div>
+                  <div className="text-sm sm:text-base font-semibold tracking-wide">Kota Medan</div>
                 </div>
               </div>
 
@@ -193,9 +161,7 @@ const HeroSection: React.FC = () => {
                 <span className="text-primary">Kota Medan</span>
               </h1>
 
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl text-center lg:text-left mx-auto lg:mx-0">
-                Sistem Informasi Deteksi Dini yang mengintegrasikan teknologi modern untuk meningkatkan kesiapsiagaan dan respons cepat terhadap berbagai kejadian di Kota Medan.
-              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl text-center lg:text-left mx-auto lg:mx-0">Sistem Informasi Deteksi Dini yang mengintegrasikan teknologi modern untuk meningkatkan kesiapsiagaan dan respons cepat terhadap berbagai kejadian di Kota Medan.</p>
             </div>
 
             {/* Stats cards */}
@@ -234,21 +200,11 @@ const HeroSection: React.FC = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start w-full">
               <a href="/auth/login/domain" className="w-full sm:w-auto flex justify-center lg:justify-start">
-                <AppButton
-                  className="bg-primary hover:bg-[var(--primary-hover)] text-white rounded-full cta-lift w-full sm:w-auto px-6 py-3"
-                  label="Mulai Sekarang"
-                  icon={<ArrowRight className="w-5 h-5" />}
-                />
+                <AppButton className="bg-primary hover:bg-[var(--primary-hover)] text-white rounded-full cta-lift w-full sm:w-auto px-6 py-3" label="Mulai Sekarang" icon={<ArrowRight className="w-5 h-5" />} />
               </a>
 
               <a href="/doc/Buku_Panduan_SIDINI.pdf" className="w-full sm:w-auto flex justify-center lg:justify-start">
-                <AppButton
-                  isOutline
-                  variant="secondary"
-                  className="rounded-full border-secondary text-[var(--secondary)] hover:bg-[var(--secondary-hover)] hover:text-white cta-lift w-full sm:w-auto px-6 py-3"
-                  icon={<Download className="w-5 h-5" />}
-                  label="Download Buku Panduan"
-                />
+                <AppButton isOutline variant="secondary" className="rounded-full border-secondary text-[var(--secondary)] hover:bg-[var(--secondary-hover)] hover:text-white cta-lift w-full sm:w-auto px-6 py-3" icon={<Download className="w-5 h-5" />} label="Download Buku Panduan" />
               </a>
             </div>
           </div>
@@ -256,13 +212,7 @@ const HeroSection: React.FC = () => {
           {/* Right Image */}
           <div className="relative scroll-reveal hidden lg:block" style={{ animationDelay: "200ms" }}>
             <div className="relative">
-              <Image 
-                src="/dashboard_admin.png" 
-                alt="SIDINI Dashboard Interface" 
-                width={1200} 
-                height={800} 
-                className="w-full rounded-2xl shadow-2xl border border-border" 
-              />
+              <Image src="/dashboard_admin.png" alt="SIDINI Dashboard Interface" width={1200} height={800} className="w-full rounded-2xl shadow-2xl border border-border" />
 
               {/* Floating cards */}
               <div className="absolute -top-4 -right-4 bg-card p-4 rounded-xl shadow-lg border border-border government-card">
@@ -305,36 +255,20 @@ const AboutSection: React.FC = () => {
                 Satu Aplikasi untuk <span className="text-primary">Mencegah</span> Konflik Sejak Dini
               </h2>
 
-              <p className="text-lg text-muted-foreground leading-relaxed text-center">
-                Sebelum ada SIDINI, pelaporan potensi konflik di Medan masih manual lewat WhatsApp grup sehingga lambat, menumpuk yang memakan storage besar, dan sulit direkap. Kini dengan SIDINI (Sistem Informasi Deteksi Dini), setiap laporan bisa masuk secara real-time, terstruktur, dan terdokumentasi otomatis tanpa memakan storage yang besar, sehingga pemerintah dan perangkat kelurahan/kecamatan dapat merespons lebih cepat, tepat, dan akurat demi menjaga kerukunan masyarakat multikultural.
-              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed text-center">Sebelum ada SIDINI, pelaporan potensi konflik di Medan masih manual lewat WhatsApp grup sehingga lambat, menumpuk yang memakan storage besar, dan sulit direkap. Kini dengan SIDINI (Sistem Informasi Deteksi Dini), setiap laporan bisa masuk secara real-time, terstruktur, dan terdokumentasi otomatis tanpa memakan storage yang besar, sehingga pemerintah dan perangkat kelurahan/kecamatan dapat merespons lebih cepat, tepat, dan akurat demi menjaga kerukunan masyarakat multikultural.</p>
             </div>
           </div>
 
           {/* Video Section untuk Mobile */}
           <div className="relative scroll-reveal mx-auto">
-            <iframe 
-              title="Video Inovasi" 
-              src="https://www.youtube.com/embed/9cZh0hEAsvk?autoplay=1&mute=1&rel=0&modestbranding=1" 
-              className="w-full rounded-2xl shadow-xl border border-border" 
-              style={{ border: 0, height: "280px" }}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            />
+            <iframe title="Video Inovasi" src="https://www.youtube.com/embed/9cZh0hEAsvk?autoplay=1&mute=1&rel=0&modestbranding=1" className="w-full rounded-2xl shadow-xl border border-border" style={{ border: 0, height: "280px" }} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
           </div>
         </div>
 
         {/* Desktop Layout - Video di kiri, konten di kanan */}
         <div className="hidden lg:grid lg:grid-cols-2 gap-16 items-center text-center lg:text-left">
           <div className="relative scroll-reveal mx-auto lg:mx-0">
-            <iframe 
-              title="Video Inovasi" 
-              src="https://www.youtube.com/embed/9cZh0hEAsvk?autoplay=1&mute=1&rel=0&modestbranding=1" 
-              className="w-full rounded-2xl shadow-xl border border-border" 
-              style={{ border: 0, height: "400px" }}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            />
+            <iframe title="Video Inovasi" src="https://www.youtube.com/embed/9cZh0hEAsvk?autoplay=1&mute=1&rel=0&modestbranding=1" className="w-full rounded-2xl shadow-xl border border-border" style={{ border: 0, height: "400px" }} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
           </div>
 
           <div className="space-y-8 scroll-reveal mx-auto lg:mx-0" style={{ animationDelay: "200ms" }}>
@@ -348,9 +282,7 @@ const AboutSection: React.FC = () => {
                 Satu Aplikasi untuk <span className="text-primary">Mencegah</span> Konflik Sejak Dini
               </h2>
 
-              <p className="text-lg text-muted-foreground leading-relaxed text-center lg:text-justify">
-                Sebelum ada SIDINI, pelaporan potensi konflik di Medan masih manual lewat WhatsApp grup sehingga lambat, menumpuk yang memakan storage besar, dan sulit direkap. Kini dengan SIDINI (Sistem Informasi Deteksi Dini), setiap laporan bisa masuk secara real-time, terstruktur, dan terdokumentasi otomatis tanpa memakan storage yang besar, sehingga pemerintah dan perangkat kelurahan/kecamatan dapat merespons lebih cepat, tepat, dan akurat demi menjaga kerukunan masyarakat multikultural.
-              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed text-center lg:text-justify">Sebelum ada SIDINI, pelaporan potensi konflik di Medan masih manual lewat WhatsApp grup sehingga lambat, menumpuk yang memakan storage besar, dan sulit direkap. Kini dengan SIDINI (Sistem Informasi Deteksi Dini), setiap laporan bisa masuk secara real-time, terstruktur, dan terdokumentasi otomatis tanpa memakan storage yang besar, sehingga pemerintah dan perangkat kelurahan/kecamatan dapat merespons lebih cepat, tepat, dan akurat demi menjaga kerukunan masyarakat multikultural.</p>
             </div>
           </div>
         </div>
@@ -401,9 +333,7 @@ const GoalsSection: React.FC = () => {
             Tiga Fitur Utama <span className="text-primary">Sistem Informasi Deteksi Dini</span>
           </h2>
 
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            SIDINI dirancang dengan fitur-fitur modern yang menjawab kebutuhan pelaporan cepat dan akurat.
-          </p>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">SIDINI dirancang dengan fitur-fitur modern yang menjawab kebutuhan pelaporan cepat dan akurat.</p>
         </div>
 
         {/* Goals Grid */}
@@ -411,11 +341,7 @@ const GoalsSection: React.FC = () => {
           {goals.map((goal, index) => {
             const Icon = goal.icon;
             return (
-              <div 
-                key={index} 
-                className="government-card card-hover-highlight text-center space-y-6 scroll-reveal" 
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
+              <div key={index} className="government-card card-hover-highlight text-center space-y-6 scroll-reveal" style={{ animationDelay: `${index * 100}ms` }}>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto icon-bubble-secondary">
                   <Icon className="w-8 h-8" />
                 </div>
@@ -474,9 +400,7 @@ const HowItWorksSection: React.FC = () => {
             Bagaimana <span className="text-primary">SIDINI</span> Bekerja
           </h2>
 
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Proses terintegrasi mulai dari pelaporan hingga tindakan nyata dalam empat langkah sederhana namun efektif.
-          </p>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">Proses terintegrasi mulai dari pelaporan hingga tindakan nyata dalam empat langkah sederhana namun efektif.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-stretch">
@@ -486,11 +410,7 @@ const HowItWorksSection: React.FC = () => {
               {steps.map((step, index) => {
                 const Icon = step.icon;
                 return (
-                  <div 
-                    key={index} 
-                    className="relative scroll-reveal h-full" 
-                    style={{ animationDelay: `${index * 150}ms` }}
-                  >
+                  <div key={index} className="relative scroll-reveal h-full" style={{ animationDelay: `${index * 150}ms` }}>
                     <div className="government-card card-hover-highlight text-center space-y-4 md:space-y-6 relative z-10 h-full">
                       <div className="relative">
                         <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto icon-bubble-primary">
@@ -500,9 +420,7 @@ const HowItWorksSection: React.FC = () => {
 
                       <div className="space-y-2 md:space-y-3">
                         <h3 className="text-lg md:text-xl font-bold">{step.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed text-xs md:text-sm">
-                          {step.description}
-                        </p>
+                        <p className="text-muted-foreground leading-relaxed text-xs md:text-sm">{step.description}</p>
                       </div>
                     </div>
                   </div>
@@ -510,12 +428,9 @@ const HowItWorksSection: React.FC = () => {
               })}
             </div>
           </div>
-          
+
           {/* Video Tutorial Section */}
-          <div 
-            className="scroll-reveal lg:col-span-1 col-span-full mt-8 lg:mt-0" 
-            style={{ animationDelay: "300ms" }}
-          >
+          <div className="scroll-reveal lg:col-span-1 col-span-full mt-8 lg:mt-0" style={{ animationDelay: "300ms" }}>
             <div className="government-card p-0 overflow-hidden">
               {/* Mobile Layout - Video Full Width dengan Height yang Fleksibel */}
               <div className="block lg:hidden">
@@ -528,13 +443,13 @@ const HowItWorksSection: React.FC = () => {
                   loop
                   controls
                   preload="metadata"
-                  style={{ 
-                    aspectRatio: '16/9',
-                    objectFit: 'cover'
+                  style={{
+                    aspectRatio: "16/9",
+                    objectFit: "cover",
                   }}
                 />
               </div>
-             
+
               {/* Desktop Layout - Video dengan Height Fixed */}
               <div className="hidden lg:block">
                 <video
@@ -546,10 +461,10 @@ const HowItWorksSection: React.FC = () => {
                   loop
                   controls
                   preload="metadata"
-                  style={{ 
-                    maxHeight: '100%',
-                    aspectRatio: '16/9',
-                    objectFit: 'cover'
+                  style={{
+                    maxHeight: "100%",
+                    aspectRatio: "16/9",
+                    objectFit: "cover",
                   }}
                 />
               </div>
@@ -606,9 +521,7 @@ const UsersSection: React.FC = () => {
             Siapa yang <span className="text-primary">Menggunakan</span> SIDINI
           </h2>
 
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            SIDINI dirancang untuk melayani berbagai pemangku kepentingan dalam ekosistem keamanan dan kesiapsiagaan Kota Medan dengan antarmuka yang disesuaikan untuk setiap peran.
-          </p>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">SIDINI dirancang untuk melayani berbagai pemangku kepentingan dalam ekosistem keamanan dan kesiapsiagaan Kota Medan dengan antarmuka yang disesuaikan untuk setiap peran.</p>
         </div>
 
         {/* User Groups Grid */}
@@ -616,11 +529,7 @@ const UsersSection: React.FC = () => {
           {userGroups.map((group, index) => {
             const Icon = group.icon;
             return (
-              <div 
-                key={index} 
-                className="government-card card-hover-highlight p-6 hover:scale-105 transition-all duration-300 hover:shadow-lg scroll-reveal" 
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
+              <div key={index} className="government-card card-hover-highlight p-6 hover:scale-105 transition-all duration-300 hover:shadow-lg scroll-reveal" style={{ animationDelay: `${index * 150}ms` }}>
                 <div className="text-center space-y-4">
                   <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto transform hover:rotate-12 transition-transform duration-300 icon-bubble-secondary">
                     <Icon className="w-8 h-8" />
@@ -628,17 +537,12 @@ const UsersSection: React.FC = () => {
 
                   <div className="space-y-3">
                     <h3 className="text-xl font-semibold">{group.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed text-sm">
-                      {group.description}
-                    </p>
+                    <p className="text-muted-foreground leading-relaxed text-sm">{group.description}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 justify-center">
                     {group.users.map((user, userIndex) => (
-                      <span 
-                        key={userIndex} 
-                        className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
-                      >
+                      <span key={userIndex} className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs hover:bg-primary hover:text-primary-foreground transition-colors duration-200">
                         {user}
                       </span>
                     ))}
@@ -664,9 +568,9 @@ const FooterSection: React.FC = () => {
     const id = hash.replace("#", "");
     const el = document.getElementById(id);
     if (!el) return;
-    
+
     el.scrollIntoView({ behavior: "smooth", block: "start" });
-    
+
     if (window.history && window.history.replaceState) {
       window.history.replaceState(null, "", hash);
     }
@@ -680,58 +584,34 @@ const FooterSection: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center">
-                <Image 
-                  src="/icon.png" 
-                  className="w-50 h-24" 
-                  alt="SIDINI Icon" 
-                  width={66} 
-                  height={66} 
-                />
+                <Image src="/icon.png" className="w-50 h-24" alt="SIDINI Icon" width={66} height={66} />
               </div>
             </div>
 
-            <p className="text-black leading-relaxed">
-              Sistem Informasi Deteksi Dini untuk meningkatkan keamanan dan kesiapsiagaan Kota Medan melalui teknologi modern dan kolaborasi lintas sektor.
-            </p>
+            <p className="text-black leading-relaxed">Sistem Informasi Deteksi Dini untuk meningkatkan keamanan dan kesiapsiagaan Kota Medan melalui teknologi modern dan kolaborasi lintas sektor.</p>
 
             {/* Social Media Links */}
             <div className="flex gap-3">
               <a href="https://wa.me/6289522232085">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10"
-                >
+                <Button variant="ghost" size="sm" className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10">
                   <Phone className="w-4 h-4" />
                 </Button>
               </a>
 
               <a href="https://sidini.medan.go.id/">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10"
-                >
+                <Button variant="ghost" size="sm" className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10">
                   <Globe className="w-4 h-4" />
                 </Button>
               </a>
 
               <a href="https://www.instagram.com/kesbangpolmedan/">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10"
-                >
+                <Button variant="ghost" size="sm" className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10">
                   <Instagram className="w-4 h-4" />
                 </Button>
               </a>
 
               <a href="https://www.youtube.com/@kesbangpolmedan">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10"
-                >
+                <Button variant="ghost" size="sm" className="w-10 h-10 p-0 text-background/70 hover:text-primary hover:bg-background/10">
                   <Youtube className="w-4 h-4" />
                 </Button>
               </a>
@@ -743,32 +623,16 @@ const FooterSection: React.FC = () => {
             <div className="space-y-6">
               <h4 className="text-lg font-semibold text-black">Navigasi</h4>
               <nav className="space-y-3">
-                <a 
-                  href="#tentang" 
-                  onClick={(e) => handleNavClick(e, "#tentang")} 
-                  className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200"
-                >
+                <a href="#tentang" onClick={(e) => handleNavClick(e, "#tentang")} className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200">
                   Tentang SIDINI
                 </a>
-                <a 
-                  href="#tujuan" 
-                  onClick={(e) => handleNavClick(e, "#tujuan")} 
-                  className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200"
-                >
+                <a href="#tujuan" onClick={(e) => handleNavClick(e, "#tujuan")} className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200">
                   Fitur Sidini
                 </a>
-                <a 
-                  href="#cara-kerja" 
-                  onClick={(e) => handleNavClick(e, "#cara-kerja")} 
-                  className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200"
-                >
+                <a href="#cara-kerja" onClick={(e) => handleNavClick(e, "#cara-kerja")} className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200">
                   Cara Kerja
                 </a>
-                <a 
-                  href="#pengguna" 
-                  onClick={(e) => handleNavClick(e, "#pengguna")} 
-                  className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200"
-                >
+                <a href="#pengguna" onClick={(e) => handleNavClick(e, "#pengguna")} className="block text-black hover:text-purple-600 hover:translate-x-1 transition-all duration-200">
                   Pengguna
                 </a>
               </nav>
@@ -779,24 +643,14 @@ const FooterSection: React.FC = () => {
           <div className="space-y-2">
             <h4 className="text-lg font-semibold text-black">Lokasi</h4>
             <div className="relative scroll-reveal">
-              <iframe 
-                title="Monitoring Kota Medan" 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d94465.81594932565!2d98.66584721754033!3d3.5819366137356603!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30313139110e1f25%3A0xd1f0aff6684b1928!2sBADAN%20KESBANGPOL%20KOTA%20MEDAN!5e0!3m2!1sid!2sid!4v1755604204263!5m2!1sid!2sid" 
-                className="w-full rounded-2xl shadow-xl border border-border" 
-                style={{ border: 0, height: "250px" }} 
-                allowFullScreen={true} 
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              <iframe title="Monitoring Kota Medan" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d94465.81594932565!2d98.66584721754033!3d3.5819366137356603!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30313139110e1f25%3A0xd1f0aff6684b1928!2sBADAN%20KESBANGPOL%20KOTA%20MEDAN!5e0!3m2!1sid!2sid!4v1755604204263!5m2!1sid!2sid" className="w-full rounded-2xl shadow-xl border border-border" style={{ border: 0, height: "250px" }} allowFullScreen={true} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             </div>
           </div>
         </div>
 
         {/* Copyright */}
         <div className="border-t border-border pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-black text-sm">
-            © {currentYear} SIDINI - Pemerintah Kota Medan. All rights reserved.
-          </p>
+          <p className="text-black text-sm">© {currentYear} SIDINI - Pemerintah Kota Medan. All rights reserved.</p>
         </div>
       </div>
     </footer>

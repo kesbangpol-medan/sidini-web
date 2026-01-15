@@ -5,15 +5,12 @@ Sistem Informasi Deteksi Dini untuk Kota Medan - Aplikasi web modern yang mengin
 ## 🚀 Cara Menjalankan Aplikasi
 
 ### Development Mode
-
 ```bash
 npm run dev
 ```
-
 Aplikasi akan berjalan di `http://localhost:3000`
 
 ### Production Build
-
 ```bash
 npm run build
 npm start
@@ -22,39 +19,33 @@ npm start
 ## 📱 Halaman yang Tersedia
 
 ### 🏠 Halaman Utama (Landing Page)
-
 - **URL**: `/` (root)
 - **File**: `src/app/page.tsx`
 - **Deskripsi**: Halaman landing page utama SIDINI dengan informasi lengkap tentang sistem
 - **Fitur**: Button "Mulai Sekarang" mengarah ke halaman login
 
 ### 🔐 Halaman Login
-
 - **URL**: `/auth/login/domain`
 - **File**: `src/app/auth/login/domain/page.tsx`
 - **Deskripsi**: Halaman login untuk akses dashboard
 - **Fitur**: Form login dengan nomor telepon dan password
 
 ### 📊 Dashboard
-
 - **URL**: `/dashboard`
 - **File**: `src/app/dashboard/page.tsx`
 - **Deskripsi**: Dashboard utama aplikasi
 
 ### 📋 Modul Laporan
-
 - **URL**: `/dashboard/report`
 - **File**: `src/app/dashboard/report/page.tsx`
 - **Deskripsi**: Halaman laporan dengan grafik dan statistik
 
 ### 👥 Manajemen User
-
 - **URL**: `/dashboard/user`
 - **File**: `src/app/dashboard/user/page.tsx`
 - **Deskripsi**: Manajemen pengguna sistem
 
 ### 🏘️ Manajemen Wilayah
-
 - **URL**: `/dashboard/village`, `/dashboard/subvillage`, `/dashboard/district`, `/dashboard/department`
 - **Deskripsi**: Manajemen data wilayah administratif
 
@@ -111,7 +102,6 @@ src/
 ## 🌐 Akses Aplikasi
 
 Setelah menjalankan `npm run dev`, buka browser dan akses:
-
 - **Halaman Utama**: `http://localhost:3000/` (akan menampilkan landing page SIDINI)
 - **Login**: `http://localhost:3000/auth/login/domain` (dari button "Mulai Sekarang")
 - **Dashboard**: `http://localhost:3000/dashboard`
@@ -125,7 +115,6 @@ Setelah menjalankan `npm run dev`, buka browser dan akses:
 ## 📞 Kontak
 
 Untuk informasi lebih lanjut, silakan hubungi:
-
 - **Website**: https://sidini.medan.go.id/
 - **Instagram**: @kesbangpolmedan
 - **YouTube**: @kesbangpolmedan

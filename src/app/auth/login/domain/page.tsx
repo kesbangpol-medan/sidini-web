@@ -12,151 +12,110 @@ import AppAlert from "@/components/alert/AppAlert";
 const usecase = new AuthUsecaseImpl(new AuthRepositoryImpl());
 
 const LoginPage = () => {
-	const router = useRouter();
-	const [isLoading, setIsloading] = useState<boolean>(false);
-	const [showPassword, setShowPassword] = useState(false);
-	const [errorMessage, setErrorMessage] = useState<string>("");
-	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [successMessage, setSuccessMessage] = useState<string>("");
-	const [showSuccessAlert, setShowSuccessAlert] = useState<boolean>(false);
-	const [formData, setFormData] = useState({
-		phone: "",
-		password: "",
-		remember: false,
-	});
+  const router = useRouter();
+  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [showSuccessAlert, setShowSuccessAlert] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    phone: "",
+    password: "",
+    remember: false,
+  });
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		setIsloading(true);
-		e.preventDefault();
-		setShowAlert(false);
-		setShowSuccessAlert(false);
-		setErrorMessage("");
-		setSuccessMessage("");
-		try {
-			const res = await usecase.login(formData.phone, formData.password);
-			localStorage.setItem("token", res.token);
-			setSuccessMessage("Autentikasi berhasil");
-			setShowSuccessAlert(true);
-			// Delay redirect sedikit agar user bisa melihat alert success
-			setTimeout(() => {
-				router.push("/dashboard/report");
-			}, 1500);
-		} catch (error: any) {
-			setErrorMessage("Autentikasi gagal");
-			setShowAlert(true);
-		} finally {
-			setIsloading(false);
-		}
-	};
+  const handleSubmit = async (e: React.FormEvent) => {
+    setIsloading(true);
+    e.preventDefault();
+    setShowAlert(false);
+    setShowSuccessAlert(false);
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      const res = await usecase.login(formData.phone, formData.password);
+      localStorage.setItem("token", res.token);
+      setSuccessMessage("Autentikasi berhasil");
+      setShowSuccessAlert(true);
+      // Delay redirect sedikit agar user bisa melihat alert success
+      setTimeout(() => {
+        router.push("/dashboard/report");
+      }, 1500);
+    } catch (error: any) {
+      setErrorMessage("Autentikasi gagal");
+      setShowAlert(true);
+    } finally {
+      setIsloading(false);
+    }
+  };
 
-	// Animation variants
-	const containerVariants = {
-		hidden: { opacity: 0, y: 20 },
-		visible: { opacity: 1, y: 0 },
-	};
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
 
-	useEffect(() => {
-		const token = localStorage.getItem("token");
-		if (token) {
-			router.push("/dashboard/report");
-		}
-	}, [router]);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/dashboard/report");
+    }
+  }, [router]);
 
-	return (
-		<div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#f8f5ff] to-[#f0ebff] dark:from-[#0a0612] dark:to-[#1a0f2d]">
-			<AppAlert
-				message={errorMessage}
-				type="error"
-				isOpen={showAlert}
-				onClose={() => setShowAlert(false)}
-				duration={5000}
-			/>
-			<AppAlert
-				message={successMessage}
-				type="success"
-				isOpen={showSuccessAlert}
-				onClose={() => setShowSuccessAlert(false)}
-				duration={3000}
-			/>
-			{isLoading && <AppLoading />}
-			<motion.div
-				initial="hidden"
-				animate="visible"
-				variants={containerVariants}
-				transition={{ duration: 0.3 }}
-				className="surface rounded-2xl p-8 w-full max-w-md shadow-2xl backdrop-blur-lg border border-[var(--border)] relative overflow-hidden"
-			>
-				<div className="absolute -top-20 -right-20 w-48 h-48 bg-[var(--primary)]/20 rounded-full blur-3xl" />
-				<div className="absolute -bottom-20 -left-20 w-48 h-48 bg-[var(--secondary)]/20 rounded-full blur-3xl" />
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#f8f5ff] to-[#f0ebff] dark:from-[#0a0612] dark:to-[#1a0f2d]">
+      <AppAlert message={errorMessage} type="error" isOpen={showAlert} onClose={() => setShowAlert(false)} duration={5000} />
+      <AppAlert message={successMessage} type="success" isOpen={showSuccessAlert} onClose={() => setShowSuccessAlert(false)} duration={3000} />
+      {isLoading && <AppLoading />}
+      <motion.div initial="hidden" animate="visible" variants={containerVariants} transition={{ duration: 0.3 }} className="surface rounded-2xl p-8 w-full max-w-md shadow-2xl backdrop-blur-lg border border-[var(--border)] relative overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-48 h-48 bg-[var(--primary)]/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-[var(--secondary)]/20 rounded-full blur-3xl" />
 
-				<div className="text-center mb-8 relative z-10">
-					<h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent">
-						Selamat Datang
-					</h1>
-					<p className="text-sm text-[var(--disable)] mt-2">Silahkan login untuk melanjutkan</p>
-				</div>
+        <div className="text-center mb-8 relative z-10">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent">Selamat Datang</h1>
+          <p className="text-sm text-[var(--disable)] mt-2">Silahkan login untuk melanjutkan</p>
+        </div>
 
-				<form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-					<AppInput
-						label="Nomor Telepon"
-						type="number"
-						placeHolder="0813xxxxxxxx"
-						value={formData.phone}
-						onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-					/>
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+          <AppInput label="Nomor Telepon" type="number" placeHolder="0813xxxxxxxx" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
 
-					<AppInput
-						label="Password"
-						type={showPassword ? "text" : "password"}
-						placeHolder="••••••••"
-						value={formData.password}
-						onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-						icon={
-							<button
-								type="button"
-								onClick={() => setShowPassword(!showPassword)}
-								className="text-[var(--disable)] hover:text-[var(--primary)] transition-colors"
-							>
-								{showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
-							</button>
-						}
-					/>
+          <AppInput
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            placeHolder="••••••••"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            icon={
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-[var(--disable)] hover:text-[var(--primary)] transition-colors">
+                {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+              </button>
+            }
+          />
 
-					<div className="flex items-center justify-between">
-						<label className="flex items-center space-x-2 text-sm cursor-pointer">
-							<input
-								type="checkbox"
-								checked={formData.remember}
-								onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
-								className="w-4 h-4 rounded border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)] transition-all"
-							/>
-							<span className="hover:text-[var(--primary)] transition-colors">Remember me</span>
-						</label>
-						<a href="#" className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors underline underline-offset-4">
-							Forgot Password?
-						</a>
-					</div>
+          <div className="flex items-center justify-between">
+            <label className="flex items-center space-x-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={formData.remember} onChange={(e) => setFormData({ ...formData, remember: e.target.checked })} className="w-4 h-4 rounded border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)] transition-all" />
+              <span className="hover:text-[var(--primary)] transition-colors">Remember me</span>
+            </label>
+            <a href="#" className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors underline underline-offset-4">
+              Forgot Password?
+            </a>
+          </div>
 
-					<motion.button
-						whileHover={{ scale: 1.02 }}
-						whileTap={{ scale: 0.98 }}
-						type="submit"
-						className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all font-semibold relative overflow-hidden"
-					>
-						<span className="relative z-10">Sign In</span>
-						<div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-20 transition-opacity" />
-					</motion.button>
-				</form>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all font-semibold relative overflow-hidden">
+            <span className="relative z-10">Sign In</span>
+            <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-20 transition-opacity" />
+          </motion.button>
+        </form>
 
-				<p className="mt-8 text-center text-sm text-[var(--disable)] relative z-10">
-					Copyright 2025 By{" "}
-					<a href="#" className="text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors font-medium">
-						Dinas Kesbangpol
-					</a>
-				</p>
-			</motion.div>
-		</div>
-	);
+        <p className="mt-8 text-center text-sm text-[var(--disable)] relative z-10">
+          Copyright 2025 By{" "}
+          <a href="#" className="text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors font-medium">
+            Dinas Kesbangpol
+          </a>
+        </p>
+      </motion.div>
+    </div>
+  );
 };
-
 export default LoginPage;
