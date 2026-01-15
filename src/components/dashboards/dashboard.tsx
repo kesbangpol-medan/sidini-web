@@ -28,6 +28,7 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [searchValue, setSearchValue] = useState("");
 	const [user, setUser] = useState<UserEntity>();
+	const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
 	const handleSearchChange = (value: string) => {
 		setSearchValue(value);
@@ -37,20 +38,47 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
 	};
 
 	const getMe = useCallback(async () => {
+		// Check token terlebih dahulu sebelum render
+		const token = localStorage.getItem("token");
+		if (!token) {
+			// Jika tidak ada token, langsung redirect tanpa render
+			if (typeof window !== "undefined") {
+				window.location.href = "/auth/login/domain";
+			}
+			return;
+		}
+
 		try {
 			const res = await authUsecase.getMe();
 			setUser(res);
 			if (res.role < 2) {
 				localStorage.clear();
-				router.push("/");
+				if (typeof window !== "undefined") {
+					window.location.href = "/auth/login/domain";
+				}
+				return;
 			}
+			setIsCheckingAuth(false);
 		} catch {
+			// Jika getMe gagal (401 atau error lain), interceptor akan handle redirect
+			// Tapi kita juga handle di sini untuk memastikan redirect terjadi
 			localStorage.clear();
-			router.push("/");
+			if (typeof window !== "undefined") {
+				window.location.href = "/auth/login/domain";
+			}
 		}
 	}, [router]);
 
 	useEffect(() => {
+		// Check token secara synchronous di awal untuk menghindari flash
+		const token = localStorage.getItem("token");
+		if (!token) {
+			if (typeof window !== "undefined") {
+				window.location.href = "/auth/login/domain";
+			}
+			return;
+		}
+
 		getMe();
 		const mediaQuery = window.matchMedia("(min-width: 768px)");
 		setSidebarOpen(mediaQuery.matches);
@@ -59,6 +87,11 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
 		mediaQuery.addEventListener("change", handler);
 		return () => mediaQuery.removeEventListener("change", handler);
 	}, [getMe]);
+
+	// Jangan render dashboard sampai auth check selesai
+	if (isCheckingAuth) {
+		return <AppLoading />;
+	}
 
 	return (
 		<div className="flex min-h-screen bg-gradient-to-br from-[var(--background)] to-[var(--surface)/50]">

@@ -3,27 +3,33 @@ import { AuthRepository } from "../auth_repository";
 import { UserEntity } from "@/app/dashboard/user/domain/entity/user_entity";
 
 export class AuthRepositoryImpl implements AuthRepository {
-	async getMe(): Promise<UserEntity> {
-		const response = await http.get("/users/me");
-		if (response.status === 200) {
-			return response.data.user;
-		} else {
-			throw new Error("Gagal memuat user...");
-		}
-	}
-    
-	async login(phone: string, password: string): Promise<{ token: string }> {
-		const data = {
-			phone: phone,
-			password: password,
-		};
-		const response = await http.post(`/users/login`, data);
-		if (response.status === 200) {
-			return {
-				token: response.data.token,
-			};
-		} else {
-			throw new Error("Gagal membuat user...");
-		}
-	}
+  async getMe(): Promise<UserEntity> {
+    const response = await http.get("/users/me");
+    if (response.status === 200) {
+      return response.data.user;
+    } else {
+      throw new Error("Gagal memuat user...");
+    }
+  }
+
+  async login(phone: string, password: string): Promise<{ token: string }> {
+    const data = {
+      phone: phone,
+      password: password,
+    };
+    try {
+      const response = await http.post(`/users/login`, data);
+      if (response.status === 200) {
+        return {
+          token: response.data.token,
+        };
+      } else {
+        throw new Error("Gagal login");
+      }
+    } catch (error: any) {
+      // Extract error message from axios response
+      const errorMessage = error?.response?.data?.message || error?.response?.data?.error || error?.message || "Autentikasi gagal. Periksa kembali nomor telepon dan password Anda.";
+      throw new Error(errorMessage);
+    }
+  }
 }

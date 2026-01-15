@@ -7,6 +7,7 @@ import { AuthUsecaseImpl } from "./usecase/implementation/auth_usecase_implement
 import { AuthRepositoryImpl } from "./repository/implementation/auth_repository_implementation";
 import { useRouter } from "next/navigation";
 import AppLoading from "@/components/loading/AppLoading";
+import AppAlert from "@/components/alert/AppAlert";
 
 const usecase = new AuthUsecaseImpl(new AuthRepositoryImpl());
 
@@ -14,6 +15,10 @@ const LoginPage = () => {
 	const router = useRouter();
 	const [isLoading, setIsloading] = useState<boolean>(false);
 	const [showPassword, setShowPassword] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string>("");
+	const [showAlert, setShowAlert] = useState<boolean>(false);
+	const [successMessage, setSuccessMessage] = useState<string>("");
+	const [showSuccessAlert, setShowSuccessAlert] = useState<boolean>(false);
 	const [formData, setFormData] = useState({
 		phone: "",
 		password: "",
@@ -23,12 +28,22 @@ const LoginPage = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		setIsloading(true);
 		e.preventDefault();
+		setShowAlert(false);
+		setShowSuccessAlert(false);
+		setErrorMessage("");
+		setSuccessMessage("");
 		try {
 			const res = await usecase.login(formData.phone, formData.password);
 			localStorage.setItem("token", res.token);
-			router.push("/dashboard/report");
-		} catch (error) {
-			console.log("Terjadi kesalahan " + error);
+			setSuccessMessage("Autentikasi berhasil");
+			setShowSuccessAlert(true);
+			// Delay redirect sedikit agar user bisa melihat alert success
+			setTimeout(() => {
+				router.push("/dashboard/report");
+			}, 1500);
+		} catch (error: any) {
+			setErrorMessage("Autentikasi gagal");
+			setShowAlert(true);
 		} finally {
 			setIsloading(false);
 		}
@@ -49,6 +64,20 @@ const LoginPage = () => {
 
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#f8f5ff] to-[#f0ebff] dark:from-[#0a0612] dark:to-[#1a0f2d]">
+			<AppAlert
+				message={errorMessage}
+				type="error"
+				isOpen={showAlert}
+				onClose={() => setShowAlert(false)}
+				duration={5000}
+			/>
+			<AppAlert
+				message={successMessage}
+				type="success"
+				isOpen={showSuccessAlert}
+				onClose={() => setShowSuccessAlert(false)}
+				duration={3000}
+			/>
 			{isLoading && <AppLoading />}
 			<motion.div
 				initial="hidden"
