@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO="celpung/sidini_web"
+REPO="kesbangpol-medan/sidini-web"
 ENVIRONMENT="main"
 
 echo "🚀 Uploading secrets to GitHub repo: $REPO"
