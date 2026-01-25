@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FaList } from "react-icons/fa";
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { AuthUsecaseImpl } from "@/app/auth/login/domain/usecase/implementation/auth_usecase_implementation";
 import { AuthRepositoryImpl } from "@/app/auth/login/domain/repository/implementation/auth_repository_implementation";
@@ -24,7 +24,7 @@ interface AppDashboardProps {
 <Sidebar isOpen={true} onClose={() => {}} activeMenu="report" />;
 
 const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearchChange, isLoading }) => {
-  const router = useRouter();
+  // const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [user, setUser] = useState<UserEntity>();
@@ -67,7 +67,7 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
         window.location.href = "/auth/login/domain";
       }
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     // Check token secara synchronous di awal untuk menghindari flash

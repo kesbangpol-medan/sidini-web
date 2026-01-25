@@ -41,7 +41,7 @@ const LoginPage = () => {
       setTimeout(() => {
         router.push("/dashboard/report");
       }, 1500);
-    } catch (error: any) {
+    } catch {
       setErrorMessage("Autentikasi gagal");
       setShowAlert(true);
     } finally {

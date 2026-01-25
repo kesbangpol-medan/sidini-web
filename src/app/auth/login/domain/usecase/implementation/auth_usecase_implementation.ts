@@ -9,7 +9,7 @@ export class AuthUsecaseImpl implements AuthUsecase {
     try {
       const res = await this.repo.getMe();
       return res;
-    } catch (error) {
+    } catch {
       throw new Error("Autentikasi gagal");
     }
   }
@@ -18,9 +18,9 @@ export class AuthUsecaseImpl implements AuthUsecase {
     try {
       const res = await this.repo.login(phone, password);
       return res;
-    } catch (error: any) {
+    } catch {
       // Pass through the error message from repository
-      throw error instanceof Error ? error : new Error(error?.message || "Autentikasi gagal");
+      throw new Error("Autentikasi gagal");
     }
   }
 }

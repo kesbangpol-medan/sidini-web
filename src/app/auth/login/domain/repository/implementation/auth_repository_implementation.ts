@@ -26,10 +26,8 @@ export class AuthRepositoryImpl implements AuthRepository {
       } else {
         throw new Error("Gagal login");
       }
-    } catch (error: any) {
-      // Extract error message from axios response
-      const errorMessage = error?.response?.data?.message || error?.response?.data?.error || error?.message || "Autentikasi gagal. Periksa kembali nomor telepon dan password Anda.";
-      throw new Error(errorMessage);
+    } catch {
+      throw new Error("Autentikasi gagal. Periksa kembali nomor telepon dan password Anda.");
     }
   }
 }
