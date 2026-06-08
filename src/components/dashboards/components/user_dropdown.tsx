@@ -31,14 +31,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
 			<motion.button
 				whileHover={{ scale: 1.05 }}
 				onClick={() => setIsOpen((prev) => !prev)}
-				className="text-xl focus:outline-none flex items-center gap-2"
+				className="text-xl focus:outline-none flex items-center gap-2 transition-all duration-200"
 			>
 				<Image
 					src={userImg && user?.image ? `${userImg}/${user.image}` : "/avatar.jpg"}
 					alt="User Avatar"
 					width={45}
 					height={45}
-					className="rounded-full object-cover aspect-square border-2 border-primary"
+					className="rounded-full object-cover aspect-square ring-2 ring-purple-500/50 border border-[var(--border-accent)]"
 				/>
 				<div className="hidden sm:block text-start">
 					{user ? (
@@ -59,16 +59,16 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
 						initial={{ opacity: 0, y: -10 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -10 }}
-						className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-xl shadow-xl z-40"
+						className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-xl shadow-xl z-40 overflow-hidden"
 					>
 						<ul className="text-sm text-popover-foreground">
-							<li className="px-4 py-3 hover:bg-accent cursor-pointer transition-colors rounded-t-xl">Profile</li>
+							<li className="px-4 py-3 hover:bg-white/5 cursor-pointer transition-all duration-200">Profile</li>
 							<li
 								onClick={() => {
 									localStorage.clear();
 									router.push("/");
 								}}
-								className="px-4 py-3 hover:bg-accent cursor-pointer transition-colors text-danger rounded-b-xl"
+								className="px-4 py-3 hover:bg-red-500/10 cursor-pointer transition-all duration-200 text-danger"
 							>
 								Logout
 							</li>

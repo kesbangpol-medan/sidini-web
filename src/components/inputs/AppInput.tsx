@@ -37,7 +37,7 @@ const AppInput: React.FC<AppInputProps> = (props) => {
 						value={props.value}
 						onChange={props.onChange}
 						maxLength={props.maxLength}
-						className="border border-border appearance-none rounded w-full py-2 px-3 h-28 text-foreground leading-tight focus:outline-none focus:shadow-outline bg-input-bg placeholder:text-muted-foreground"
+						className="border border-border appearance-none rounded-lg w-full py-2 px-3 h-28 text-foreground leading-tight focus:outline-none focus:border-[var(--accent-purple)] focus:shadow-[0_0_0_3px_var(--accent-purple-glow)] bg-input-bg placeholder:text-[var(--text-muted)] transition-all duration-200"
 						placeholder={props.placeHolder}
 					/>
 				) : (
@@ -50,7 +50,7 @@ const AppInput: React.FC<AppInputProps> = (props) => {
 						maxLength={props.maxLength}
 						className={`w-full ${
 							props.type === "search" ? "pl-8" : "pl-2"
-						} pr-2 py-2 border rounded-lg bg-input-bg text-foreground border-border focus:outline-none focus:ring-1 focus:ring-primary transition-shadow placeholder:text-muted-foreground`}
+						} pr-2 py-2 border rounded-lg bg-input-bg text-foreground border-border focus:outline-none focus:border-[var(--accent-purple)] focus:shadow-[0_0_0_3px_var(--accent-purple-glow)] transition-all duration-200 placeholder:text-[var(--text-muted)]`}
 						placeholder={props.placeHolder}
 					/>
 				)}

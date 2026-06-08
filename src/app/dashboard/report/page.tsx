@@ -9,6 +9,7 @@ import { FaDownload, FaFileAlt, FaImage, FaCalendarAlt, FaMapMarkerAlt } from "r
 // import { FaCheckCircle, FaTimesCircle } from "react-icons/fa"; // TODO: uncomment saat dibutuhkan
 import AppTable, { ColumnProps } from "@/components/tables/table";
 import AppModal from "@/components/modal/app_modal";
+import AppAlert from "@/components/alert/AppAlert";
 import { motion } from "framer-motion";
 import { ReportEntity } from "./entity/report_entity";
 import AppButton from "@/components/buttons/AppButton";
@@ -53,10 +54,20 @@ export default function ReportsPage() {
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [lineChartData, setLineChartData] = useState([]);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "error" | "success" | "warning" | "info";
+    isOpen: boolean;
+  }>({ message: "", type: "info", isOpen: false });
+
+  const showToast = useCallback((message: string, type: "error" | "success" | "warning" | "info" = "info") => {
+    setToast({ message, type, isOpen: true });
+  }, []);
 
   const handleExportPDF = async () => {
     if (!reportRef.current) return;
 
+    showToast("Menyiapkan export PDF...", "info");
     const html2pdf = (await import("html2pdf.js")).default;
 
     // Simpan style lama
@@ -137,8 +148,10 @@ export default function ReportsPage() {
 
     try {
       await html2pdf().set(opt).from(reportRef.current).save();
+      showToast("PDF berhasil diexport.", "success");
     } catch (error) {
       console.error("Gagal export PDF:", error);
+      showToast("Gagal export PDF.", "error");
     } finally {
       // Restore style
       reportRef.current.style.backgroundColor = originalBackground;
@@ -217,20 +230,22 @@ export default function ReportsPage() {
     },
   ];
 
-  const countReport = async () => {
+  const countReport = useCallback(async () => {
     try {
       const res = await reportUseCase.count<{ count?: number; total?: number }>();
       setTotalReport(res.count ?? res.total ?? 0);
     } catch (error) {
       console.log(error);
+      showToast("Gagal mengambil total laporan.", "error");
     }
-  };
+  }, [showToast]);
 
   // Fungsi untuk mengambil semua laporan berdasarkan halaman
   const getAllReports = useCallback(async (page: number) => {
     // Jika halaman pertama, tampilkan loading
     if (page == 1) {
       setIsLoading(true);
+      showToast("Memuat data laporan...", "info");
     }
     try {
       // Ambil data laporan dari API dengan relasi-relasi yang dibutuhkan
@@ -238,36 +253,41 @@ export default function ReportsPage() {
       // Tambahkan data baru ke daftar laporan yang sudah ada
       if (page === 1) {
         setReports(res);
+        showToast("Data laporan berhasil dimuat.", "success");
       } else {
         setReports((prev) => [...prev, ...res]);
+        showToast("Data laporan tambahan berhasil dimuat.", "success");
       }
     } catch (error) {
       // Tampilkan error jika gagal mengambil data
       console.error("Error fetching reports:", error);
+      showToast("Gagal mengambil data laporan.", "error");
     } finally {
       // Matikan loading spinner
       setIsLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   // const exportreport = async () => {}
-  const getAllDistricts = async () => {
+  const getAllDistricts = useCallback(async () => {
     try {
       const res = await districUseCase.read();
       setDistricts(res);
     } catch (error) {
       console.error("Error fetching reports:", error);
+      showToast("Gagal mengambil data kecamatan.", "error");
     }
-  };
+  }, [showToast]);
 
-  const getAllCategorie = async () => {
+  const getAllCategorie = useCallback(async () => {
     try {
       const res = await departmentUseCase.read();
       setDepartments(res);
     } catch (error) {
       console.log(error);
+      showToast("Gagal mengambil data kategori.", "error");
     }
-  };
+  }, [showToast]);
 
   // Generate chart data dari laporan API berdasarkan tahun yang dipilih (Jan-Des)
   useEffect(() => {
@@ -292,14 +312,18 @@ export default function ReportsPage() {
   }, [departments, reports, selectedYear]);
 
   const renderYearFilter = () => {
+    const startYear = 2025;
     const currentYear = new Date().getFullYear();
-    const years = [currentYear - 1, currentYear, currentYear + 1];
+    const years = Array.from(
+      { length: currentYear - startYear + 1 },
+      (_, index) => startYear + index
+    );
     return (
       <select
         id="annual-chart-year-filter"
         value={selectedYear}
         onChange={(e) => setSelectedYear(Number(e.target.value))}
-        className="text-sm border border-[var(--border)] rounded-lg px-3 py-1.5 bg-[var(--surface)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] cursor-pointer transition-all hover:border-[var(--primary)]"
+        className="text-sm border border-[var(--border-accent)] rounded-lg px-3 py-1.5 bg-[#1e293b] text-white focus:outline-none focus:shadow-[0_0_0_3px_var(--accent-purple-glow)] cursor-pointer transition-all duration-200 hover:border-[var(--accent-purple)]"
       >
         {years.map((y) => (
           <option key={y} value={y}>
@@ -322,7 +346,7 @@ export default function ReportsPage() {
     getAllDistricts();
     getAllCategorie();
     countReport();
-  }, [currentPage, getAllReports, searchTerm]);
+  }, [countReport, currentPage, getAllCategorie, getAllDistricts, getAllReports, searchTerm]);
 
   // Fungsi untuk melakukan pencarian laporan berdasarkan kata kunci
   const handleSearch = useCallback(async (query: string) => {
@@ -334,11 +358,13 @@ export default function ReportsPage() {
         `reports/search?q=${encodeURIComponent(query)}&include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images`
       );
       setReports(res);
+      showToast(`Pencarian selesai. ${res.length} laporan ditemukan.`, "success");
     } catch (err) {
       // Tampilkan error jika gagal
       console.error("Gagal mengambil data:", err);
+      showToast("Gagal mencari data laporan.", "error");
     }
-  }, []);
+  }, [showToast]);
 
   // Gunakan debounce saat user mengetik input pencarian
   useEffect(() => {
@@ -398,11 +424,12 @@ export default function ReportsPage() {
     const url = queryString ? `/reporting/filter?${queryString}` : `/reporting/filter`;
 
     try {
+      showToast("Menyiapkan export Excel...", "info");
       const res = await http.get(url);
       const jsonData = res.data.data;
 
       if (!jsonData || jsonData.length === 0) {
-        alert("Data tidak ditemukan untuk diekspor.");
+        showToast("Data tidak ditemukan untuk diexport.", "warning");
         return;
       }
 
@@ -449,8 +476,10 @@ export default function ReportsPage() {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       saveAs(blob, "laporan-export.xlsx");
+      showToast("Excel berhasil diexport.", "success");
     } catch (error) {
       console.error("Gagal mengekspor data:", error);
+      showToast("Gagal export Excel.", "error");
     }
   };
 
@@ -463,6 +492,22 @@ export default function ReportsPage() {
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   });
   const totalLaporanBulanIni = laporanBulanIni.length;
+
+  const previousMonthDate = new Date(currentYear, currentMonth - 1, 1);
+  const previousMonth = previousMonthDate.getMonth();
+  const previousMonthYear = previousMonthDate.getFullYear();
+  const totalLaporanBulanLalu = reports.filter((l) => {
+    const d = new Date(l.date_time);
+    return d.getMonth() === previousMonth && d.getFullYear() === previousMonthYear;
+  }).length;
+  const monthlyTrendPercent =
+    totalLaporanBulanLalu === 0
+      ? totalLaporanBulanIni > 0
+        ? 100
+        : 0
+      : Math.round(((totalLaporanBulanIni - totalLaporanBulanLalu) / totalLaporanBulanLalu) * 100);
+  const monthlyTrendLabel = monthlyTrendPercent > 0 ? "naik dari bulan lalu" : monthlyTrendPercent < 0 ? "turun dari bulan lalu" : "sama dengan bulan lalu";
+  const monthlyTrendClass = monthlyTrendPercent >= 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400";
 
   const kecamatanUploadSet = new Set(
     laporanBulanIni
@@ -479,6 +524,14 @@ export default function ReportsPage() {
       onSearchChange={(data) => setSearchTerm(data)}
       content={
         <div className="w-full h-full flex flex-col gap-4">
+          <AppAlert
+            message={toast.message}
+            type={toast.type}
+            isOpen={toast.isOpen}
+            onClose={() => setToast((prev) => ({ ...prev, isOpen: false }))}
+            duration={3000}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <IconCard 
               featured
@@ -487,8 +540,7 @@ export default function ReportsPage() {
               value={totalReport} 
               info={
                 <div className="flex items-center gap-1.5 mt-2">
-                  <span className="flex items-center px-1.5 py-0.5 rounded bg-white/20 text-white font-medium">+12%</span>
-                  <span className="text-white/70">dari bulan lalu</span>
+                  <span className="text-white/70">akumulasi seluruh laporan</span>
                 </div>
               } 
             />
@@ -498,8 +550,11 @@ export default function ReportsPage() {
               value={totalLaporanBulanIni} 
               info={
                 <div className="flex items-center gap-1.5 mt-2">
-                  <span className="flex items-center px-1.5 py-0.5 rounded bg-success-muted text-success font-medium">+5%</span>
-                  <span className="text-muted-foreground">tren peningkatan</span>
+                  <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${monthlyTrendClass}`}>
+                    {monthlyTrendPercent > 0 ? "+" : ""}
+                    {monthlyTrendPercent}%
+                  </span>
+                  <span className="text-muted-foreground">{monthlyTrendLabel}</span>
                 </div>
               } 
             />
@@ -507,6 +562,8 @@ export default function ReportsPage() {
               icon={<FaMapMarkerAlt size={18} />} 
               title="Kecamatan Upload" 
               value={totalKecamatanUpload} 
+              actionHref="/dashboard/rekap-kecamatan?tab=uploaded"
+              actionLabel="Lihat kecamatan yang sudah upload"
               info={
                 <div className="flex items-center gap-1.5 mt-2">
                   <span className="text-muted-foreground">sudah mengunggah laporan</span>
@@ -517,9 +574,11 @@ export default function ReportsPage() {
               icon={<FaMapMarkerAlt size={18} />} 
               title="Kecamatan Belum Upload" 
               value={totalKecamatanBelumUpload} 
+              actionHref="/dashboard/rekap-kecamatan?tab=notUploaded"
+              actionLabel="Lihat kecamatan yang belum upload"
               info={
                 <div className="flex items-center gap-1.5 mt-2">
-                  <span className="flex items-center px-1.5 py-0.5 rounded bg-danger-muted text-danger font-medium">Perhatian</span>
+                  <span className="flex items-center px-2 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-medium">Perhatian</span>
                   <span className="text-muted-foreground">kecamatan belum aktif</span>
                 </div>
               } 

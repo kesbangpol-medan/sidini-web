@@ -95,7 +95,7 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-background to-surface/50">
+    <div className="flex min-h-screen bg-background">
       {isLoading && <AppLoading />}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeMenu={activeKey} />
 
@@ -104,8 +104,8 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
           "md:ml-64": sidebarOpen,
         })}
       >
-        <header className="sticky top-0 z-10 bg-surface/80 backdrop-blur-lg border-b border-border h-20 flex items-center gap-4 px-6">
-          <motion.button whileHover={{ scale: 1.05 }} onClick={() => setSidebarOpen(!sidebarOpen)} className="p-3 border border-border rounded-xl shadow-sm hover:shadow-md transition-all text-foreground">
+        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-lg border-b border-border h-20 flex items-center gap-4 px-6">
+          <motion.button whileHover={{ scale: 1.05 }} onClick={() => setSidebarOpen(!sidebarOpen)} className="p-3 border border-border rounded-xl shadow-sm hover:shadow-md transition-all duration-200 text-foreground bg-card hover:border-[var(--border-accent)]">
             <FaList />
           </motion.button>
 

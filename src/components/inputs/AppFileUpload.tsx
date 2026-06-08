@@ -39,7 +39,7 @@ const AppFileUpload: React.FC<AppFileUploadProps> = ({ label, onFileSelect }) =>
 		<div>
 			{label && <label className="text-xs font-semibold text-foreground">{label.toUpperCase()}</label>}
 			<div
-				className="border-2 border-border border-dashed rounded w-full p-2 text-foreground bg-input-bg flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors"
+				className="border-2 border-border border-dashed rounded-lg w-full p-2 text-foreground bg-input-bg flex flex-col items-center justify-center cursor-pointer hover:border-[var(--border-accent)] hover:shadow-[0_0_0_3px_var(--accent-purple-glow)] transition-all duration-200"
 				onClick={() => fileInputRef.current?.click()}
 				onDragOver={(e) => e.preventDefault()}
 				onDrop={handleDrop}

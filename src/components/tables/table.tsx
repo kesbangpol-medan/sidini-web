@@ -70,8 +70,8 @@ const AppTable = <T,>({
     <div
       style={{
         width: "100%",
-        backgroundColor: "var(--surface)",
-        border: "1px solid var(--border)",
+        backgroundColor: "var(--bg-card)",
+        border: "1px solid var(--border-subtle)",
         borderRadius: "0.75rem",
         boxShadow:
           "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
@@ -87,8 +87,8 @@ const AppTable = <T,>({
           justifyContent: "space-between",
           alignItems: "center",
           padding: "1rem 1.25rem",
-          borderBottom: "1px solid var(--border)",
-          backgroundColor: "var(--surface)",
+          borderBottom: "1px solid var(--border-subtle)",
+          backgroundColor: "var(--bg-card)",
           gap: "0.75rem",
           flexWrap: "wrap",
         }}
@@ -106,7 +106,7 @@ const AppTable = <T,>({
                   borderRadius: "0.375rem",
                   backgroundColor:
                     "color-mix(in oklab, var(--primary) 12%, transparent)",
-                  color: "var(--primary)",
+                  color: "var(--accent-purple-light)",
                   flexShrink: 0,
                 }}
               >
@@ -116,7 +116,7 @@ const AppTable = <T,>({
                 style={{
                   fontSize: "0.9375rem",
                   fontWeight: 600,
-                  color: "var(--foreground)",
+                  color: "var(--text-primary)",
                   margin: 0,
                   letterSpacing: "-0.01em",
                 }}
@@ -157,9 +157,8 @@ const AppTable = <T,>({
                 position: "sticky",
                 top: 0,
                 zIndex: 10,
-                backgroundColor:
-                  "color-mix(in oklab, var(--foreground) 4%, var(--surface))",
-                borderBottom: "1px solid var(--border)",
+                backgroundColor: "var(--bg-secondary)",
+                borderBottom: "1px solid var(--border-subtle)",
               }}
             >
               {columns.map((column, index) => (
@@ -171,14 +170,13 @@ const AppTable = <T,>({
                     fontWeight: 700,
                     letterSpacing: "0.06em",
                     textTransform: "uppercase",
-                    color:
-                      "color-mix(in oklab, var(--foreground) 55%, transparent)",
+                    color: "var(--text-secondary)",
                     textAlign: column.textAlign ?? "left",
                     whiteSpace: column.wrap ? "normal" : "nowrap",
                     width: column.width,
                     borderRight:
                       index < columns.length - 1
-                        ? "1px solid var(--border)"
+                        ? "1px solid var(--border-subtle)"
                         : undefined,
                   }}
                 >
@@ -208,7 +206,7 @@ const AppTable = <T,>({
             style={{
               padding: "3.5rem 1rem",
               textAlign: "center",
-              color: "var(--disable)",
+              color: "var(--text-muted)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -236,7 +234,7 @@ const AppTable = <T,>({
                 fontSize: "0.9rem",
                 fontWeight: 600,
                 margin: 0,
-                color: "var(--foreground)",
+                color: "var(--text-primary)",
                 opacity: 0.55,
               }}
             >
@@ -246,7 +244,7 @@ const AppTable = <T,>({
               style={{
                 fontSize: "0.78rem",
                 margin: 0,
-                color: "var(--disable)",
+                color: "var(--text-muted)",
               }}
             >
               Data belum tersedia atau tidak ditemukan
@@ -284,9 +282,8 @@ const AppTable = <T,>({
             justifyContent: "space-between",
             gap: "0.75rem",
             padding: "0.75rem 1.25rem",
-            borderTop: "1px solid var(--border)",
-            backgroundColor:
-              "color-mix(in oklab, var(--foreground) 2%, var(--surface))",
+            borderTop: "1px solid var(--border-subtle)",
+            backgroundColor: "var(--bg-secondary)",
           }}
         >
           {/* Per-page selector */}
@@ -298,17 +295,17 @@ const AppTable = <T,>({
               fontSize: "0.8125rem",
             }}
           >
-            <span style={{ color: "var(--disable)" }}>Tampilkan</span>
+            <span style={{ color: "var(--text-secondary)" }}>Tampilkan</span>
             <select
               value={pageSize}
               onChange={handlePageSizeChange}
               style={{
-                border: "1px solid var(--border)",
+                border: "1px solid var(--border-subtle)",
                 borderRadius: "0.375rem",
                 padding: "0.2rem 0.5rem",
                 fontSize: "0.8125rem",
-                backgroundColor: "var(--surface)",
-                color: "var(--foreground)",
+                backgroundColor: "var(--bg-card)",
+                color: "var(--text-primary)",
                 outline: "none",
                 cursor: "pointer",
               }}
@@ -319,7 +316,7 @@ const AppTable = <T,>({
                 </option>
               ))}
             </select>
-            <span style={{ color: "var(--disable)" }}>/ halaman</span>
+            <span style={{ color: "var(--text-secondary)" }}>/ halaman</span>
           </div>
 
           {/* Info + navigation */}
@@ -327,7 +324,7 @@ const AppTable = <T,>({
             <span
               style={{
                 fontSize: "0.75rem",
-                color: "var(--disable)",
+                color: "var(--text-secondary)",
                 marginRight: "0.5rem",
                 whiteSpace: "nowrap",
               }}
@@ -357,7 +354,7 @@ const AppTable = <T,>({
                   <span
                     style={{
                       padding: "0 0.125rem",
-                      color: "var(--disable)",
+                      color: "var(--text-secondary)",
                       fontSize: "0.8125rem",
                     }}
                   >
@@ -385,7 +382,7 @@ const AppTable = <T,>({
                   <span
                     style={{
                       padding: "0 0.125rem",
-                      color: "var(--disable)",
+                      color: "var(--text-secondary)",
                       fontSize: "0.8125rem",
                     }}
                   >
@@ -439,13 +436,13 @@ function ShadcnRow<T>({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        borderBottom: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border-subtle)",
         backgroundColor: hovered
-          ? "color-mix(in oklab, var(--primary) 5%, var(--surface))"
+          ? "rgba(255,255,255,0.05)"
           : rowIndex % 2 === 0
-          ? "var(--surface)"
-          : "color-mix(in oklab, var(--foreground) 2%, var(--surface))",
-        transition: "background-color 100ms ease",
+          ? "var(--bg-card)"
+          : "color-mix(in oklab, var(--text-primary) 2%, var(--bg-card))",
+        transition: "background-color 200ms ease",
         cursor: "default",
       }}
     >
@@ -455,14 +452,14 @@ function ShadcnRow<T>({
           style={{
             padding: "0.6875rem 1rem",
             fontSize: "0.875rem",
-            color: "var(--foreground)",
+            color: "var(--text-primary)",
             textAlign: column.textAlign ?? "left",
             whiteSpace: column.wrap ? "normal" : "nowrap",
             verticalAlign: "middle",
             lineHeight: 1.5,
             borderRight:
               colIndex < totalCols - 1
-                ? "1px solid var(--border)"
+                ? "1px solid var(--border-subtle)"
                 : undefined,
           }}
         >
@@ -505,21 +502,21 @@ function PaginationBtn({
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.38 : 1,
     transition:
-      "background-color 120ms ease, color 120ms ease, border-color 120ms ease",
+      "background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease",
     outline: "none",
     backgroundColor: active
-      ? "var(--primary)"
+      ? "var(--accent-purple)"
       : hovered && !disabled
-      ? "color-mix(in oklab, var(--primary) 9%, var(--surface))"
-      : "var(--surface)",
+      ? "color-mix(in oklab, var(--accent-purple) 12%, var(--bg-card))"
+      : "var(--bg-card)",
     borderColor: active
-      ? "var(--primary)"
+      ? "var(--accent-purple)"
       : hovered && !disabled
-      ? "var(--primary)"
-      : "var(--border)",
-    color: active ? "#ffffff" : "var(--foreground)",
+      ? "var(--border-accent)"
+      : "var(--border-subtle)",
+    color: active ? "#ffffff" : "var(--text-primary)",
     boxShadow: active
-      ? "0 1px 3px color-mix(in oklab, var(--primary) 35%, transparent)"
+      ? "0 4px 20px var(--accent-purple-glow)"
       : "none",
   };
 

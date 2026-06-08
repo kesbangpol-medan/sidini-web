@@ -12,7 +12,7 @@ const DashboardButton: React.FC<DashboardButtonProps> = ({ onClick, icon, label,
 		<div
 			id={id}
 			onClick={onClick}
-			className="cursor-pointer text-xs bg-muted text-foreground p-1 rounded flex gap-1 items-center hover:bg-muted/80 transition-colors"
+			className="cursor-pointer text-xs bg-card text-foreground p-1 rounded-lg flex gap-1 items-center border border-border hover:border-[var(--border-accent)] hover:bg-white/5 transition-all duration-200"
 		>
 			{icon}
 			{label ? <h5 className="font-semibold text-xs">{label}</h5> : null}

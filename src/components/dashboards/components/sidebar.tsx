@@ -16,18 +16,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu = "" }) =
 		<>
 			<aside
 				className={clsx(
-					"fixed inset-y-0 left-0 w-64 border-r border-sidebar-border p-4 z-30 transition-transform duration-300 bg-sidebar text-sidebar-foreground backdrop-blur-lg",
+					"sidebar fixed inset-y-0 left-0 w-64 border-r border-sidebar-border p-4 z-30 transition-transform duration-300 bg-sidebar text-sidebar-foreground backdrop-blur-lg",
 					{
 						"-translate-x-full": !isOpen,
 						"translate-x-0": isOpen,
 					}
 				)}
 			>
-				<div className="flex justify-center items-center mb-8">
+				<div className="flex justify-center items-center mb-8 pb-6 border-b border-[#7c3aed22]">
 					<Image src="/icon.png" alt="sidini icon" width={120} height={60} className="object-cover" />
 				</div>
 
-				<div className="mb-4 text-sm font-medium text-muted-foreground">
+				<div className="mb-4 text-sm font-medium text-slate-400">
 					<span>Menu</span>
 				</div>
 
@@ -42,9 +42,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu = "" }) =
 									router.push(path);
 									// onClose();
 								}}
-								className={clsx("flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all", {
-									"bg-sidebar-active text-sidebar-active-foreground shadow-sm": activeMenu === item.key,
-									"hover:bg-sidebar-active/20": activeMenu !== item.key,
+								className={clsx("sidebar-menu-item flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium", {
+									"active text-white shadow-sm": activeMenu === item.key,
+									"text-slate-600 hover:bg-purple-100 hover:text-purple-700 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white": activeMenu !== item.key,
 								})}
 							>
 								<span className="text-lg">{item.icon}</span>

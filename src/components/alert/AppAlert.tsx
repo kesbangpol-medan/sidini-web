@@ -31,10 +31,10 @@ const AppAlert: React.FC<AppAlertProps> = ({
 	if (!isOpen) return null;
 
 	const typeStyles = {
-		error: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200",
-		success: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200",
-		warning: "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200",
-		info: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200",
+		error: "bg-red-500/20 border-red-500/30 text-red-400",
+		success: "bg-emerald-500/20 border-emerald-500/30 text-emerald-400",
+		warning: "bg-yellow-500/20 border-yellow-500/30 text-yellow-400",
+		info: "bg-blue-500/20 border-blue-500/30 text-blue-400",
 	};
 
 	const typeIcons = {
@@ -54,7 +54,7 @@ const AppAlert: React.FC<AppAlertProps> = ({
 					animate={{ opacity: 1, y: 0, scale: 1 }}
 					exit={{ opacity: 0, y: -20, scale: 0.95 }}
 					transition={{ duration: 0.2 }}
-					className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4 ${typeStyles[type]} border rounded-lg shadow-lg p-4 flex items-start gap-3`}
+					className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4 ${typeStyles[type]} border rounded-2xl shadow-lg p-4 flex items-start gap-3 backdrop-blur-md`}
 				>
 					<Icon className="w-5 h-5 flex-shrink-0 mt-0.5" />
 					<div className="flex-1 min-w-0">

@@ -18,15 +18,7 @@ type LineReportChartProps = {
 	action?: React.ReactNode;
 };
 
-// Fungsi untuk menghasilkan warna unik dan kontras dari string
-function stringToColor(name: string) {
-	let hash = 0;
-	for (let i = 0; i < name.length; i++) {
-		hash = name.charCodeAt(i) + ((hash << 5) - hash);
-	}
-	const hue = Math.abs(hash) % 360; // 0-359 derajat warna
-	return `hsl(${hue}, 70%, 50%)`; // Saturasi & lightness tetap agar kontras
-}
+const DATASET_COLORS = ["#2dd4bf", "#f97316", "#ef4444", "#eab308", "#8b5cf6", "#06b6d4"];
 
 export default function LineReportChart({ data, title, action }: LineReportChartProps) {
 	// Ambil semua key kategori dari item pertama (kecuali "month")
@@ -38,18 +30,18 @@ export default function LineReportChart({ data, title, action }: LineReportChart
 	// Generate warna dari nama kategori secara konsisten
 	const colorMap = useMemo(() => {
 		const map: Record<string, string> = {};
-		categories.forEach((cat) => {
-			map[cat] = stringToColor(cat);
+		categories.forEach((cat, index) => {
+			map[cat] = DATASET_COLORS[index % DATASET_COLORS.length];
 		});
 		return map;
 	}, [categories]);
 
 	return (
-		<div className="w-full h-[450px] flex flex-col surface p-4 rounded-lg border">
+		<div className="w-full h-[450px] flex flex-col surface p-5 rounded-2xl border border-[var(--border-subtle)]">
 			<div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
 				<div className="flex gap-2 items-center">
-					<FaChartArea className="text-[var(--primary)]" />
-					{title && <h2 className="text-lg font-semibold">{title}</h2>}
+					<FaChartArea className="text-[var(--accent-purple-light)]" />
+					{title && <h2 className="text-lg font-semibold text-foreground">{title}</h2>}
 				</div>
 				{action && <div>{action}</div>}
 			</div>
@@ -57,10 +49,18 @@ export default function LineReportChart({ data, title, action }: LineReportChart
 			<div className="flex-1 w-full min-h-0">
 				<ResponsiveContainer width="100%" height="100%">
 					<LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-						<CartesianGrid strokeDasharray="4 4" stroke={`var(--border)`} />
-						<XAxis dataKey="month" />
-						<YAxis />
-						<Tooltip />
+						<CartesianGrid strokeDasharray="4 4" stroke="#1e293b" />
+						<XAxis dataKey="month" tick={{ fill: "#475569", fontSize: 12 }} axisLine={{ stroke: "#475569" }} tickLine={{ stroke: "#475569" }} />
+						<YAxis tick={{ fill: "#475569", fontSize: 12 }} axisLine={{ stroke: "#475569" }} tickLine={{ stroke: "#475569" }} />
+						<Tooltip
+							contentStyle={{
+								background: "var(--bg-card)",
+								border: "1px solid var(--border-subtle)",
+								borderRadius: "8px",
+								color: "var(--text-primary)",
+								fontSize: "12px",
+							}}
+						/>
 						<Legend
 							layout="horizontal"
 							align="center"
@@ -70,10 +70,20 @@ export default function LineReportChart({ data, title, action }: LineReportChart
 								whiteSpace: "nowrap",
 								overflowX: "auto",
 								width: "100%",
+								color: "var(--text-secondary)",
 							}}
 						/>
 						{categories.map((cat) => (
-							<Line key={cat} type="monotone" dataKey={cat} stroke={colorMap[cat]} name={cat} />
+							<Line
+								key={cat}
+								type="monotone"
+								dataKey={cat}
+								stroke={colorMap[cat]}
+								name={cat}
+								dot={{ r: 4, strokeWidth: 1, fill: "var(--bg-card)" }}
+								activeDot={{ r: 6 }}
+								strokeWidth={2}
+							/>
 						))}
 					</LineChart>
 				</ResponsiveContainer>

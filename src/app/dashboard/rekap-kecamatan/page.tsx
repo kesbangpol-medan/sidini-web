@@ -70,6 +70,13 @@ export default function RekapKecamatanPage() {
     getAllData();
   }, []);
 
+  useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    if (tab === "uploaded" || tab === "notUploaded") {
+      setActiveTab(tab);
+    }
+  }, []);
+
   // Filter laporan bulan ini
   const laporanBulanIni = useMemo(() => {
     return reports.filter((l) => {
@@ -155,8 +162,8 @@ export default function RekapKecamatanPage() {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Card Sudah Upload */}
-            <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-5 shadow-sm">
-              <div className="w-16 h-16 rounded-2xl bg-success-muted flex items-center justify-center shrink-0">
+            <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:border-[var(--border-accent)] hover:shadow-[0_4px_20px_var(--accent-purple-glow)] transition-all duration-200">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
                 <FaFileCircleCheck className="text-success text-3xl" />
               </div>
               <div className="flex flex-col">
@@ -170,8 +177,8 @@ export default function RekapKecamatanPage() {
             </div>
 
             {/* Card Belum Upload */}
-            <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-5 shadow-sm">
-              <div className="w-16 h-16 rounded-2xl bg-danger-muted flex items-center justify-center shrink-0">
+            <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:border-[var(--border-accent)] hover:shadow-[0_4px_20px_var(--accent-purple-glow)] transition-all duration-200">
+              <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
                 <FaFileCircleXmark className="text-danger text-3xl" />
               </div>
               <div className="flex flex-col">
@@ -186,7 +193,7 @@ export default function RekapKecamatanPage() {
           </div>
 
           {/* Main Table Container */}
-          <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg flex flex-col">
+          <div className="bg-card rounded-xl border border-border overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08)] flex flex-col">
             
             {/* Tabs */}
             <div className="flex w-full border-b border-border">
@@ -230,14 +237,14 @@ export default function RekapKecamatanPage() {
               {activeTab === "uploaded" ? (
                 <table className="w-full text-left border-collapse min-w-[800px]">
                   <thead>
-                    <tr className="border-b border-border">
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">NO</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">KECAMATAN</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">TOTAL LAPORAN</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">KATEGORI TERBANYAK</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">TERAKHIR UPLOAD</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider text-center">STATUS</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider text-right">AKSI</th>
+                    <tr className="border-b border-border bg-[var(--bg-secondary)]">
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">NO</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">KECAMATAN</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">TOTAL LAPORAN</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">KATEGORI TERBANYAK</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">TERAKHIR UPLOAD</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">STATUS</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider text-right">AKSI</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -248,7 +255,7 @@ export default function RekapKecamatanPage() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: idx * 0.05 }}
-                          className="border-b border-border/50 hover:bg-muted/30 transition-colors group"
+                          className="border-b border-border hover:bg-white/5 transition-all duration-200 group"
                         >
                           <td className="px-6 py-4 text-muted-foreground font-semibold">{idx + 1}</td>
                           <td className="px-6 py-4">
@@ -270,7 +277,7 @@ export default function RekapKecamatanPage() {
                           </td>
                           <td className="px-6 py-4 text-center">
                             <span 
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success-muted text-success border border-success/20 font-bold text-xs"
+                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs"
                             >
                               <FaCheckCircle className="text-[10px]" /> Uploaded
                             </span>
@@ -278,7 +285,7 @@ export default function RekapKecamatanPage() {
                           <td className="px-6 py-4 text-right">
                             <button 
                               onClick={() => handleLihat(kec)}
-                              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 font-bold text-sm transition-colors cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 font-bold text-sm transition-all duration-200 cursor-pointer"
                             >
                               <FaEye className="text-xs" /> Lihat
                             </button>
@@ -298,11 +305,11 @@ export default function RekapKecamatanPage() {
               ) : (
                 <table className="w-full text-left border-collapse min-w-[600px]">
                   <thead>
-                    <tr className="border-b border-border">
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider w-20">NO</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">KECAMATAN</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">STATUS</th>
-                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground tracking-wider">KETERANGAN</th>
+                    <tr className="border-b border-border bg-[var(--bg-secondary)]">
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider w-20">NO</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">KECAMATAN</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">STATUS</th>
+                      <th className="px-6 py-5 text-xs font-bold text-muted-foreground uppercase tracking-wider">KETERANGAN</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -313,14 +320,14 @@ export default function RekapKecamatanPage() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: idx * 0.05 }}
-                          className="border-b border-border/50 hover:bg-muted/30 transition-colors"
+                          className="border-b border-border hover:bg-white/5 transition-all duration-200"
                         >
                           <td className="px-6 py-4 text-muted-foreground font-semibold">{idx + 1}</td>
                           <td className="px-6 py-4">
                             <span className="text-foreground font-bold text-base">{kec}</span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-danger-muted text-danger border border-danger/30 font-bold text-xs">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 text-red-400 font-bold text-xs">
                               <FaTimesCircle /> Belum
                             </span>
                           </td>
@@ -359,7 +366,7 @@ export default function RekapKecamatanPage() {
                 {/* Modal Header */}
                 <div className="flex items-center gap-3">
                   <h2 className="text-2xl font-bold">{selectedKecamatan.nama}</h2>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-success-muted text-success text-xs font-bold">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">
                     <FaCheckCircle /> Sudah Upload
                   </span>
                 </div>

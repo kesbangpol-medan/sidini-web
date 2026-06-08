@@ -46,7 +46,7 @@ const ThemeToggle: React.FC = () => {
     <button
       id="theme-toggle"
       onClick={toggleTheme}
-      className="relative w-14 h-8 rounded-full border border-border bg-muted dark:bg-slate-950 flex items-center justify-between p-1 transition-colors duration-300 cursor-pointer shadow-inner focus:outline-none focus:ring-2 focus:ring-primary/40"
+      className="relative w-14 h-8 rounded-full border border-border bg-card flex items-center justify-between p-1 transition-all duration-200 cursor-pointer shadow-inner focus:outline-none focus:shadow-[0_0_0_3px_var(--accent-purple-glow)]"
       aria-label={isDark ? "Aktifkan light mode" : "Aktifkan dark mode"}
       title={isDark ? "Light Mode" : "Dark Mode"}
     >
@@ -60,7 +60,7 @@ const ThemeToggle: React.FC = () => {
       <motion.div
         animate={{ x: isDark ? 24 : 0 }}
         transition={{ type: "spring", stiffness: 500, damping: 28 }}
-        className="w-6 h-6 rounded-full bg-surface dark:bg-card border border-border/10 dark:border-border/60 shadow-sm hover:shadow-md flex items-center justify-center z-10"
+        className="w-6 h-6 rounded-full bg-surface dark:bg-[#0f1117] border border-border shadow-sm hover:shadow-md flex items-center justify-center z-10"
       >
         {isDark ? (
           <FaMoon className="text-amber-300 text-[11px]" />
