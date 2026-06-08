@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu = "" }) =
 									router.push(path);
 									// onClose();
 								}}
-								className={clsx("sidebar-menu-item flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium", {
+								className={clsx("flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium", {
 									"active text-white shadow-sm": activeMenu === item.key,
 									"text-slate-600 hover:bg-purple-100 hover:text-purple-700 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white": activeMenu !== item.key,
 								})}

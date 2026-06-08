@@ -289,25 +289,6 @@ body {
 	box-shadow: inset 0 0 20px #7c3aed22;
 }
 
-.sidebar .sidebar-menu-item:not(.active) {
-	background-color: transparent;
-	color: #475569;
-}
-
-.sidebar .sidebar-menu-item:not(.active):hover {
-	background-color: #ede9fe !important;
-	color: #6d28d9 !important;
-}
-
-.dark .sidebar .sidebar-menu-item:not(.active) {
-	color: #94a3b8;
-}
-
-.dark .sidebar .sidebar-menu-item:not(.active):hover {
-	background-color: rgba(255, 255, 255, 0.06) !important;
-	color: #ffffff !important;
-}
-
 input {
 	background-color: var(--input-bg);
 }
