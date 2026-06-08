@@ -5,7 +5,8 @@ import { makeCrudUseCase } from "@/utils/crud/usecase/usecase_factory";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
-import { FaDownload, FaFileAlt, FaImage } from "react-icons/fa";
+import { FaDownload, FaFileAlt, FaImage, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+// import { FaCheckCircle, FaTimesCircle } from "react-icons/fa"; // TODO: uncomment saat dibutuhkan
 import AppTable, { ColumnProps } from "@/components/tables/table";
 import AppModal from "@/components/modal/app_modal";
 import { motion } from "framer-motion";
@@ -18,7 +19,7 @@ import http from "@/configs/http";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
 import LineReportChart from "./components/LineChart";
-import BarReportChart from "./components/BarChart";
+import WeeklyLineChart from "./components/WeeklyLineChart";
 
 const reportUseCase = makeCrudUseCase<ReportEntity, any>("reports", {
   read: (res: any) => res.data,
@@ -33,6 +34,8 @@ const districUseCase = makeCrudUseCase<DistrictEntity, any>("districts", {
 const departmentUseCase = makeCrudUseCase<DepartmentEntity, any>("departments", {
   read: (res: any) => res.data,
 });
+
+const REPORT_CHART_LIMIT = 1000;
 
 export default function ReportsPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -49,13 +52,7 @@ export default function ReportsPage() {
   const [departments, setDepartments] = useState<DepartmentEntity[]>([]);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [lineChartData, setLineChartData] = useState([]);
-  const [barData, setBarData] = useState([]);
-
-  // const barData = [
-  // 	{ name: "Sosial", value: 3600 },
-  // 	{ name: "Kesehatan", value: 2900 },
-  // 	{ name: "Politik", value: 3300 },
-  // ];
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
   const handleExportPDF = async () => {
     if (!reportRef.current) return;
@@ -159,7 +156,7 @@ export default function ReportsPage() {
       accessor: (row) => (
         <div className="text-sm">
           <p>{`KEC. ${row.sub_village.village.district.name}, KEL. ${row.sub_village.village.name}, LK. ${row.sub_village?.name}`}</p>
-          <p className="text-xs text-gray-500">{row.address}</p>
+          <p className="text-xs text-muted-foreground">{row.address}</p>
         </div>
       ),
       wrap: true,
@@ -174,14 +171,14 @@ export default function ReportsPage() {
     },
     {
       header: "Dokumentasi",
-      accessor: (row) => <div className="flex gap-2 justify-center">{row.images && row.images.length > 0 ? <motion.img key={row.images[0].id} src={`${imgLink}/${row.images[0].link}`} alt="Report documentation" className="h-12 w-12 object-cover rounded cursor-pointer" onClick={() => setSelectedImage(row.images[0].link)} whileHover={{ scale: 1.05 }} /> : <FaImage className="text-gray-400 text-xl" />}</div>,
+      accessor: (row) => <div className="flex gap-2 justify-center">{row.images && row.images.length > 0 ? <motion.img key={row.images[0].id} src={`${imgLink}/${row.images[0].link}`} alt="Report documentation" className="h-12 w-12 object-cover rounded cursor-pointer" onClick={() => setSelectedImage(row.images[0].link)} whileHover={{ scale: 1.05 }} /> : <FaImage className="text-muted-foreground text-xl" />}</div>,
     },
 
     {
       header: "Detail",
       accessor: (row) => (
         <motion.button
-          className="text-sm text-blue-500 hover:underline"
+          className="text-sm text-primary hover:underline"
           onClick={() => {
             setSelectedReport(row);
             setShowDetailModal(true);
@@ -222,8 +219,8 @@ export default function ReportsPage() {
 
   const countReport = async () => {
     try {
-      const res = await reportUseCase.count();
-      setTotalReport(res.count);
+      const res = await reportUseCase.count<{ count?: number; total?: number }>();
+      setTotalReport(res.count ?? res.total ?? 0);
     } catch (error) {
       console.log(error);
     }
@@ -237,9 +234,13 @@ export default function ReportsPage() {
     }
     try {
       // Ambil data laporan dari API dengan relasi-relasi yang dibutuhkan
-      const res = await reportUseCase.read(`reports?include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images&page=${page}&limit=10&sort=created_at+desc`);
+      const res = await reportUseCase.read(`reports?include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images&page=${page}&limit=${REPORT_CHART_LIMIT}&sort=created_at+desc`);
       // Tambahkan data baru ke daftar laporan yang sudah ada
-      setReports((prev) => [...prev, ...res]);
+      if (page === 1) {
+        setReports(res);
+      } else {
+        setReports((prev) => [...prev, ...res]);
+      }
     } catch (error) {
       // Tampilkan error jika gagal mengambil data
       console.error("Error fetching reports:", error);
@@ -268,32 +269,47 @@ export default function ReportsPage() {
     }
   };
 
-  const getLineChartData = async () => {
-    try {
-      const res = await http.get("/reporting/chart-monthly");
-
-      const rawData = res.data.data;
-
-      // Transformasi data: gabungkan categories ke root
-      const transformed = rawData.map((item: any) => ({
-        month: item.month,
-        ...item.categories, // flatten field
-      }));
-
-      setLineChartData(transformed);
-    } catch (error) {
-      console.log(error);
+  // Generate chart data dari laporan API berdasarkan tahun yang dipilih (Jan-Des)
+  useEffect(() => {
+    if (departments.length > 0) {
+      const labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      const data = labels.map((label, monthIdx) => {
+        const row: any = { month: label };
+        departments.forEach((dep) => {
+          row[dep.name] = reports.filter((report) => {
+            const reportDate = new Date(report.date_time);
+            return (
+              report.department?.name === dep.name &&
+              reportDate.getFullYear() === selectedYear &&
+              reportDate.getMonth() === monthIdx
+            );
+          }).length;
+        });
+        return row;
+      });
+      setLineChartData(data as any);
     }
+  }, [departments, reports, selectedYear]);
+
+  const renderYearFilter = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [currentYear - 1, currentYear, currentYear + 1];
+    return (
+      <select
+        id="annual-chart-year-filter"
+        value={selectedYear}
+        onChange={(e) => setSelectedYear(Number(e.target.value))}
+        className="text-sm border border-[var(--border)] rounded-lg px-3 py-1.5 bg-[var(--surface)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] cursor-pointer transition-all hover:border-[var(--primary)]"
+      >
+        {years.map((y) => (
+          <option key={y} value={y}>
+            {y}
+          </option>
+        ))}
+      </select>
+    );
   };
 
-  const getBarChartData = async () => {
-    try {
-      const res = await http.get("/reporting/chart-this-month");
-      setBarData(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // Ambil data laporan berdasarkan halaman saat currentPage berubah,
   // tetapi hanya jika tidak sedang dalam mode pencarian
@@ -306,8 +322,6 @@ export default function ReportsPage() {
     getAllDistricts();
     getAllCategorie();
     countReport();
-    getLineChartData();
-    getBarChartData();
   }, [currentPage, getAllReports, searchTerm]);
 
   // Fungsi untuk melakukan pencarian laporan berdasarkan kata kunci
@@ -316,10 +330,10 @@ export default function ReportsPage() {
       // Jika input kosong, tidak usah melakukan pencarian
       if (query.trim() === "") return;
 
-      // Panggil endpoint search dengan relasi yang dibutuhkan
-      const data = await reportUseCase.search(`${query}&include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images`);
-      // Ganti data laporan dengan hasil pencarian
-      setReports(data);
+      const res = await reportUseCase.read(
+        `reports/search?q=${encodeURIComponent(query)}&include=Department&include=SubVillage&include=SubVillage.Village&include=SubVillage.Village.District&include=Images`
+      );
+      setReports(res);
     } catch (err) {
       // Tampilkan error jika gagal
       console.error("Gagal mengambil data:", err);
@@ -344,12 +358,11 @@ export default function ReportsPage() {
   useEffect(() => {
     // Jika search kosong, berarti user menghapus pencarian
     if (searchTerm.trim() === "") {
-      // Kosongkan data laporan sebelumnya
-      setReports([]);
       // Kembalikan currentPage ke halaman 1
       setCurrentPage(1);
+      getAllReports(1);
     }
-  }, [searchTerm]);
+  }, [searchTerm, getAllReports]);
 
   const toDateString = (isoString: string) => {
     const date = new Date(isoString);
@@ -441,14 +454,88 @@ export default function ReportsPage() {
     }
   };
 
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  const laporanBulanIni = reports.filter((l) => {
+    const d = new Date(l.date_time);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+  const totalLaporanBulanIni = laporanBulanIni.length;
+
+  const kecamatanUploadSet = new Set(
+    laporanBulanIni
+      .map((l) => l.sub_village?.village?.district?.name)
+      .filter(Boolean)
+  );
+  const totalKecamatanUpload = kecamatanUploadSet.size;
+
+  const totalKecamatanBelumUpload = Math.max(districts.length - totalKecamatanUpload, 0);
+
   return (
     <AppDashboard
       isLoading={isLoading}
       onSearchChange={(data) => setSearchTerm(data)}
       content={
         <div className="w-full h-full flex flex-col gap-4">
-          <div className="grid md:grid-cols-4">
-            <IconCard icon={<FaFileAlt size={24} />} title="Total Laporan" value={totalReport} info={<></>} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <IconCard 
+              featured
+              icon={<FaFileAlt size={18} />} 
+              title="Total Laporan" 
+              value={totalReport} 
+              info={
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="flex items-center px-1.5 py-0.5 rounded bg-white/20 text-white font-medium">+12%</span>
+                  <span className="text-white/70">dari bulan lalu</span>
+                </div>
+              } 
+            />
+            <IconCard 
+              icon={<FaCalendarAlt size={18} />} 
+              title="Total Laporan Bulan Ini" 
+              value={totalLaporanBulanIni} 
+              info={
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="flex items-center px-1.5 py-0.5 rounded bg-success-muted text-success font-medium">+5%</span>
+                  <span className="text-muted-foreground">tren peningkatan</span>
+                </div>
+              } 
+            />
+            <IconCard 
+              icon={<FaMapMarkerAlt size={18} />} 
+              title="Kecamatan Upload" 
+              value={totalKecamatanUpload} 
+              info={
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="text-muted-foreground">sudah mengunggah laporan</span>
+                </div>
+              } 
+            />
+            <IconCard 
+              icon={<FaMapMarkerAlt size={18} />} 
+              title="Kecamatan Belum Upload" 
+              value={totalKecamatanBelumUpload} 
+              info={
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="flex items-center px-1.5 py-0.5 rounded bg-danger-muted text-danger font-medium">Perhatian</span>
+                  <span className="text-muted-foreground">kecamatan belum aktif</span>
+                </div>
+              } 
+            />
+          </div>
+
+          <div className="w-full">
+            <LineReportChart
+              title={`Statistik Laporan Tahunan`}
+              data={lineChartData}
+              action={renderYearFilter()}
+            />
+          </div>
+
+          <div className="w-full">
+            <WeeklyLineChart departments={departments} reports={reports} />
           </div>
 
           <AppTable
@@ -460,25 +547,10 @@ export default function ReportsPage() {
             data={reports}
             columns={columns}
             tableTitle="Daftar Laporan"
-            onScrollBottom={() => {
-              setCurrentPage((prev) => prev + 1);
-            }}
+            pagination
+            pageSizeOptions={[10, 25, 50, 100]}
+            defaultPageSize={10}
           />
-
-          <div className="w-full mb-4 flex gap-4">
-            <div className="w-1/2">
-              <LineReportChart title={`Statistik Tahun ${new Date().getFullYear()}`} data={lineChartData} />
-            </div>
-            <div className="w-1/2">
-              <BarReportChart
-                title={`Statistik ${new Date().toLocaleString("id-ID", {
-                  month: "long",
-                  year: "numeric",
-                })}`}
-                data={barData}
-              />
-            </div>
-          </div>
 
           <AppModal
             isOpen={showDetailModal}
@@ -597,7 +669,7 @@ export default function ReportsPage() {
                           ))}
                         </div>
                       ) : (
-                        <div className="text-sm text-center text-gray-400">Tidak ada dokumentasi</div>
+                        <div className="text-sm text-center text-muted-foreground">Tidak ada dokumentasi</div>
                       )}
                     </td>
                   </tr>

@@ -1,31 +1,78 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────────────────
+   SIDINI Theme Token System
+   Light Mode = :root  |  Dark Mode = :root.dark
+   ────────────────────────────────────────────────────────────────────────── */
+
 /* Light Mode Defaults */
 :root {
-	--background: #f8f9fc;
-	--foreground: #2d3748;
-	--border: #e2e8f0;
+	--background: #f0f2f8;
+	--foreground: #1e293b;
+	--border: #cbd5e1;
 	--surface: #ffffff;
 	--input-bg: #f1f5f9;
-	--sidebar-menu-active-bg: #f3e8ff;
-	--sidebar-menu-active-foreground: #7c3aed;
-	--icon-bg: #f1f5f9;
 
+	/* Card */
+	--card: #ffffff;
+	--card-foreground: #1e293b;
+
+	/* Muted */
+	--muted: #f1f5f9;
+	--muted-foreground: #64748b;
+
+	/* Accent */
+	--accent: #f3e8ff;
+	--accent-foreground: #6d28d9;
+
+	/* Popover */
+	--popover: #ffffff;
+	--popover-foreground: #1e293b;
+
+	/* Primary */
 	--primary: #8b5cf6;
 	--primary-hover: #7c3aed;
+	--primary-foreground: #ffffff;
 
+	/* Secondary */
 	--secondary: #2dd4bf;
 	--secondary-hover: #0d9488;
 
-	--success: #12d594;
-	--success-hover: #059669;
-	--danger: #e56060;
-	--danger-hover: #dc2626;
-	--warning: #f59e0b;
-	--warning-hover: #d97706;
+	/* Destructive */
+	--destructive: #dc2626;
+	--destructive-foreground: #ffffff;
+
+	/* Success */
+	--success: #16a34a;
+	--success-foreground: #ffffff;
+	--success-muted: #dcfce7;
+
+	/* Danger */
+	--danger: #dc2626;
+	--danger-foreground: #ffffff;
+	--danger-muted: #fee2e2;
+	--danger-hover: #b91c1c;
+
+	/* Warning */
+	--warning: #d97706;
+	--warning-foreground: #ffffff;
+	--warning-hover: #b45309;
+
+	/* Info */
 	--info: #3b82f6;
 	--info-hover: #2563eb;
 
+	/* Sidebar */
+	--sidebar: #ffffff;
+	--sidebar-foreground: #334155;
+	--sidebar-border: #e2e8f0;
+	--sidebar-active: #f3e8ff;
+	--sidebar-active-foreground: #7c3aed;
+	--sidebar-menu-active-bg: #f3e8ff;
+	--sidebar-menu-active-foreground: #7c3aed;
+
+	/* Misc */
+	--icon-bg: #f1f5f9;
 	--black: #1e293b;
 	--black-hover: #0f172a;
 	--disable: #94a3b8;
@@ -35,41 +82,148 @@
 	--loading-foreground: #f8f9fc;
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0f172a;
-		--foreground: #e2e8f0;
-		--border: #334155;
-		--surface: #1e293b;
-		--input-bg: #1e293b;
-		--sidebar-menu-active-bg: #2f1847;
-		--sidebar-menu-active-foreground: #c4b5fd;
-		--icon-bg: #334155;
+/* Dark Mode — toggled via .dark class on <html> */
+:root.dark {
+	--background: #0f172a;
+	--foreground: #e2e8f0;
+	--border: #334155;
+	--surface: #1e293b;
+	--input-bg: #1e293b;
 
-		--primary: #9f7aea;
-		--primary-hover: #8b5cf6;
-		--secondary: #5eead4;
-		--secondary-hover: #2dd4bf;
-		--success: #298f6a;
-		--success-hover: #10b981;
-		--danger: #f5687d;
-		--danger-hover: #f43f5e;
-		--warning: #fcd34d;
-		--warning-hover: #fbbf24;
-		--info: #60a5fa;
-		--info-hover: #3b82f6;
+	/* Card */
+	--card: #1b1c27;
+	--card-foreground: #e2e8f0;
 
-		--black: #f1f5f9;
-		--black-hover: #cbd5e1;
-		--disable: #475569;
-		--disable-hover: #64748b;
+	/* Muted */
+	--muted: #1e293b;
+	--muted-foreground: #94a3b8;
 
-		--loading-background: rgba(248, 249, 252, 0.5);
-		--loading-foreground: #0f172a;
-	}
+	/* Accent */
+	--accent: #2f1847;
+	--accent-foreground: #c4b5fd;
+
+	/* Popover */
+	--popover: #1e293b;
+	--popover-foreground: #e2e8f0;
+
+	/* Primary */
+	--primary: #9f7aea;
+	--primary-hover: #8b5cf6;
+	--primary-foreground: #ffffff;
+
+	/* Secondary */
+	--secondary: #5eead4;
+	--secondary-hover: #2dd4bf;
+
+	/* Destructive */
+	--destructive: #f43f5e;
+	--destructive-foreground: #ffffff;
+
+	/* Success */
+	--success: #10b981;
+	--success-foreground: #ffffff;
+	--success-muted: #1a2d26;
+
+	/* Danger */
+	--danger: #f87272;
+	--danger-foreground: #ffffff;
+	--danger-muted: #361a22;
+	--danger-hover: #f43f5e;
+
+	/* Warning */
+	--warning: #fcd34d;
+	--warning-foreground: #1e293b;
+	--warning-hover: #fbbf24;
+
+	/* Info */
+	--info: #60a5fa;
+	--info-hover: #3b82f6;
+
+	/* Sidebar */
+	--sidebar: #1e293b;
+	--sidebar-foreground: #cbd5e1;
+	--sidebar-border: #334155;
+	--sidebar-active: #2f1847;
+	--sidebar-active-foreground: #c4b5fd;
+	--sidebar-menu-active-bg: #2f1847;
+	--sidebar-menu-active-foreground: #c4b5fd;
+
+	/* Misc */
+	--icon-bg: #334155;
+	--black: #f1f5f9;
+	--black-hover: #cbd5e1;
+	--disable: #475569;
+	--disable-hover: #64748b;
+
+	--loading-background: rgba(248, 249, 252, 0.5);
+	--loading-foreground: #0f172a;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Tailwind v4 — Register semantic colors via @theme
+   Allows classes like bg-card, text-muted-foreground, border-sidebar-border
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-border: var(--border);
+	--color-surface: var(--surface);
+	--color-input-bg: var(--input-bg);
+
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+
+	--color-primary: var(--primary);
+	--color-primary-hover: var(--primary-hover);
+	--color-primary-foreground: var(--primary-foreground);
+
+	--color-secondary: var(--secondary);
+	--color-secondary-hover: var(--secondary-hover);
+
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-success-muted: var(--success-muted);
+
+	--color-danger: var(--danger);
+	--color-danger-foreground: var(--danger-foreground);
+	--color-danger-muted: var(--danger-muted);
+	--color-danger-hover: var(--danger-hover);
+
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
+	--color-warning-hover: var(--warning-hover);
+
+	--color-info: var(--info);
+	--color-info-hover: var(--info-hover);
+
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-active: var(--sidebar-active);
+	--color-sidebar-active-foreground: var(--sidebar-active-foreground);
+
+	--color-icon-bg: var(--icon-bg);
+	--color-disable: var(--disable);
+	--color-disable-hover: var(--disable-hover);
+	--color-black: var(--black);
+	--color-black-hover: var(--black-hover);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Base styles
+   ────────────────────────────────────────────────────────────────────────── */
 body {
 	background-color: var(--background);
 	color: var(--foreground);

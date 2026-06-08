@@ -11,6 +11,7 @@ import AppLoading from "../loading/AppLoading";
 import Sidebar from "./components/sidebar";
 import UserDropdown from "./components/user_dropdown";
 import SearchBar from "./components/search_bar";
+import ThemeToggle from "./components/theme_toggle";
 
 const authUsecase = new AuthUsecaseImpl(new AuthRepositoryImpl());
 
@@ -94,7 +95,7 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-[var(--background)] to-[var(--surface)/50]">
+    <div className="flex min-h-screen bg-gradient-to-br from-background to-surface/50">
       {isLoading && <AppLoading />}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeMenu={activeKey} />
 
@@ -103,14 +104,15 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ content, activeKey, onSearc
           "md:ml-64": sidebarOpen,
         })}
       >
-        <header className="sticky top-0 z-10 bg-[var(--surface)/80] backdrop-blur-lg border-b border-[var(--border)] h-20 flex items-center gap-4 px-6">
-          <motion.button whileHover={{ scale: 1.05 }} onClick={() => setSidebarOpen(!sidebarOpen)} className="p-3 border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition-all">
-            <FaList className="text-[var(--foreground)]" />
+        <header className="sticky top-0 z-10 bg-surface/80 backdrop-blur-lg border-b border-border h-20 flex items-center gap-4 px-6">
+          <motion.button whileHover={{ scale: 1.05 }} onClick={() => setSidebarOpen(!sidebarOpen)} className="p-3 border border-border rounded-xl shadow-sm hover:shadow-md transition-all text-foreground">
+            <FaList />
           </motion.button>
 
           <SearchBar value={searchValue} onChange={handleSearchChange} />
 
-          <div className="flex-1 flex justify-end">
+          <div className="flex-1 flex justify-end items-center gap-3">
+            <ThemeToggle />
             <UserDropdown user={user} />
           </div>
         </header>

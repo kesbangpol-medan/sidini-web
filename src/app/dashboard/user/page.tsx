@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { CreateUserEntity, UserDistrictEntity, UserEntity, UserVillageEntity } from "./domain/entity/user_entity";
 import { UserUsecaseImpl } from "./domain/usecase/implementation/user_usecase_implementation";
 import { UserRepositoryImpl } from "./domain/repository/implementation/user_repository_implementation";
-import { FaCog, FaMobile, FaPlus, FaTrash, FaUsers } from "react-icons/fa";
+import { FaMobile, FaPencilAlt, FaPlus, FaTrash, FaUsers } from "react-icons/fa";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
 import IconCard from "@/components/cards/icon_card";
 import AppModal from "@/components/modal/app_modal";
@@ -100,7 +100,7 @@ export default function User() {
 						transition={{ type: "spring", stiffness: 300 }}
 					>
 						<motion.span whileHover={{ rotate: 15 }}>
-							<FaCog className="text-[var(--primary)]" />
+							<FaPencilAlt className="text-[var(--primary)] text-xs" />
 						</motion.span>
 						<h5 className="text-xs">Edit</h5>
 					</motion.div>

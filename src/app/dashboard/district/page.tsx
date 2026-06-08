@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { CreateDistrictEntity, DistrictEntity } from "./entity/district_entity";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
-import { FaCog, FaListOl, FaPlus, FaTrash } from "react-icons/fa";
+import { FaListOl, FaPencilAlt, FaPlus, FaTrash } from "react-icons/fa";
 import AppTable, { ColumnProps } from "@/components/tables/table";
 import { motion } from "framer-motion";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
@@ -46,7 +46,7 @@ export default function District() {
 						transition={{ type: "spring", stiffness: 300 }}
 					>
 						<motion.span whileHover={{ rotate: 15 }}>
-							<FaCog className="text-[var(--primary)]" />
+							<FaPencilAlt className="text-[var(--primary)] text-xs" />
 						</motion.span>
 						<h5 className="text-xs">Edit</h5>
 					</motion.div>

@@ -38,6 +38,7 @@ const palette = [
 export default function BarReportChart({ data, title }: BarReportChartProps) {
 	// Buat map dari nama ke warna, konsisten dan otomatis
 	const colorMap = useMemo(() => {
+		if (!data) return {};
 		const uniqueNames = Array.from(new Set(data.map((d) => d.name)));
 		const map: Record<string, string> = {};
 		uniqueNames.forEach((name, idx) => {
@@ -45,6 +46,14 @@ export default function BarReportChart({ data, title }: BarReportChartProps) {
 		});
 		return map;
 	}, [data]);
+
+	if (!data || data.length === 0) {
+		return (
+			<div className="w-full h-[400px] rounded-xl border surface p-4 flex items-center justify-center">
+				<p className="text-sm text-muted-foreground">Tidak ada data untuk ditampilkan.</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="w-full h-[400px] rounded-xl border surface p-4">

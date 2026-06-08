@@ -15,11 +15,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => {
 		<div className="relative w-full max-w-sm">
 			<AppInput
 				type="search"
-				icon={<FaSearch className="text-[var(--disable)]" />}
+				icon={<FaSearch className="text-muted-foreground" />}
 				value={value}
 				onChange={handleChange}
 				placeHolder="Search..."
-				// inputClassName="pl-10 hover:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
 			/>
 		</div>
 	);

@@ -39,13 +39,13 @@ const AppModal: React.FC<AppModalProps> = ({
 			}}
 		>
 			<div
-				className={clsx("relative w-full bg-[var(--surface)] text-[var(--foreground)] rounded-lg shadow-lg", width)}
+				className={clsx("relative w-full bg-popover text-popover-foreground rounded-lg shadow-lg border border-border", width)}
 				onClick={(e) => e.stopPropagation()}
 			>
 				{/* Header */}
-				<div className="flex justify-between items-center p-4 border-b">
+				<div className="flex justify-between items-center p-4 border-b border-border">
 					<h3 className="text-lg font-semibold">{title}</h3>
-					<button onClick={onClose} className="text-[var(--danger)] hover:opacity-70">
+					<button onClick={onClose} className="text-danger hover:opacity-70 transition-opacity">
 						<FaTimes />
 					</button>
 				</div>
@@ -56,15 +56,15 @@ const AppModal: React.FC<AppModalProps> = ({
 				}}>{children}</div>
 
 				{/* Footer */}
-				<div className="flex justify-end gap-2 p-4 border-t">
+				<div className="flex justify-end gap-2 p-4 border-t border-border">
 					{cancelLabel && (
-						<button className="px-4 py-2 rounded bg-gray-200 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600" onClick={onClose}>
+						<button className="px-4 py-2 rounded bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors" onClick={onClose}>
 							{cancelLabel}
 						</button>
 					)}
 
 					{onConfirm && (
-						<button className="px-4 py-2 rounded bg-[var(--primary)] text-white text-sm hover:opacity-90" onClick={onConfirm}>
+						<button className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm hover:opacity-90 transition-opacity" onClick={onConfirm}>
 							{confirmLabel}
 						</button>
 					)}

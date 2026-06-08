@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu = "" }) =
 		<>
 			<aside
 				className={clsx(
-					"fixed inset-y-0 left-0 w-64 border-r p-4 z-30 transition-transform duration-300 bg-[var(--surface)] text-[var(--foreground)] backdrop-blur-lg",
+					"fixed inset-y-0 left-0 w-64 border-r border-sidebar-border p-4 z-30 transition-transform duration-300 bg-sidebar text-sidebar-foreground backdrop-blur-lg",
 					{
 						"-translate-x-full": !isOpen,
 						"translate-x-0": isOpen,
@@ -27,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu = "" }) =
 					<Image src="/icon.png" alt="sidini icon" width={120} height={60} className="object-cover" />
 				</div>
 
-				<div className="mb-4 text-sm font-medium text-[var(--disable)]">
+				<div className="mb-4 text-sm font-medium text-muted-foreground">
 					<span>Menu</span>
 				</div>
 
@@ -43,8 +43,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu = "" }) =
 									// onClose();
 								}}
 								className={clsx("flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all", {
-									"bg-[var(--sidebar-menu-active-bg)] text-[var(--sidebar-menu-active-foreground)] shadow-sm": activeMenu === item.key,
-									"hover:bg-[var(--sidebar-menu-active-bg)/20]": activeMenu !== item.key,
+									"bg-sidebar-active text-sidebar-active-foreground shadow-sm": activeMenu === item.key,
+									"hover:bg-sidebar-active/20": activeMenu !== item.key,
 								})}
 							>
 								<span className="text-lg">{item.icon}</span>

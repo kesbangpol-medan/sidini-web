@@ -14,13 +14,13 @@ interface AppDropdownProps {
 const AppDropdown: React.FC<AppDropdownProps> = ({ label, options, value, placeholder, onChange, canCreate, onCreate }) => {
 	return (
 		<div>
-			{label && <label className="text-xs font-semibold">{label.toUpperCase()}</label>}
+			{label && <label className="text-xs font-semibold text-foreground">{label.toUpperCase()}</label>}
 			<div className="flex gap-1 items-center">
 				<div className="relative w-full">
 					<select
 						value={value}
 						onChange={onChange}
-						className="border border-gray-300 rounded w-full py-2 px-3 h-10 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-[var(--primary)] transition-shadow"
+						className="border border-border rounded w-full py-2 px-3 h-10 text-foreground bg-input-bg leading-tight focus:outline-none focus:ring-1 focus:ring-primary transition-shadow"
 					>
 						{placeholder && (
 							<option value="" disabled>
@@ -35,7 +35,7 @@ const AppDropdown: React.FC<AppDropdownProps> = ({ label, options, value, placeh
 					</select>
 				</div>
 				{canCreate && (
-					<div className="cursor-pointer p-2 bg-secondary border rounded border-gray-300" onClick={onCreate}>
+					<div className="cursor-pointer p-2 bg-secondary border rounded border-border text-foreground" onClick={onCreate}>
 						<FaPlus className="text-xs" />
 					</div>
 				)}

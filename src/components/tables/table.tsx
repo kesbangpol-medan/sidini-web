@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { FaTable } from "react-icons/fa";
+import React, { useState, useMemo } from "react";
+import { FaTable, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export type ColumnProps<T> = {
   header: string;
@@ -14,10 +14,17 @@ export type ColumnProps<T> = {
 type AppTableProps<T> = {
   columns: ColumnProps<T>[];
   data: T[];
-  onScrollBottom?: () => void;
   tableTitle?: string;
   tools?: React.ReactNode;
   loading?: boolean;
+  /** Aktifkan pagination built-in */
+  pagination?: boolean;
+  /** Pilihan jumlah row per halaman */
+  pageSizeOptions?: number[];
+  /** Default jumlah row per halaman */
+  defaultPageSize?: number;
+  /** Callback dipanggil saat user scroll mendekati bagian bawah tabel (infinite scroll) */
+  onScrollBottom?: () => void;
 };
 
 const AppTable = <T,>({
@@ -25,127 +32,508 @@ const AppTable = <T,>({
   data,
   tableTitle,
   tools,
-  onScrollBottom,
   loading,
+  pagination = false,
+  pageSizeOptions = [10, 25, 50, 100],
+  defaultPageSize = 10,
+  onScrollBottom,
 }: AppTableProps<T>) => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isFetchingRef = useRef(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(defaultPageSize);
 
-  useEffect(() => {
-    if (!onScrollBottom) return;
+  const paginatedData = useMemo(() => {
+    if (!pagination) return data;
+    const start = (currentPage - 1) * pageSize;
+    return data.slice(start, start + pageSize);
+  }, [data, currentPage, pageSize, pagination]);
 
-    const handleScroll = () => {
-      const el = scrollContainerRef.current;
-      if (!el) return;
+  const totalPages = useMemo(
+    () => (pagination ? Math.max(1, Math.ceil(data.length / pageSize)) : 1),
+    [data.length, pageSize, pagination]
+  );
 
-      const { scrollTop, scrollHeight, clientHeight } = el;
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageSize(Number(e.target.value));
+    setCurrentPage(1);
+  };
 
-      const nearBottom = scrollTop + clientHeight >= scrollHeight - 100;
-
-      if (nearBottom && !isFetchingRef.current) {
-        isFetchingRef.current = true;
-        onScrollBottom();
-      }
-
-      // Reset trigger if user scrolls up a bit
-      if (!nearBottom) {
-        isFetchingRef.current = false;
-      }
-    };
-
-    const el = scrollContainerRef.current;
-    el?.addEventListener("scroll", handleScroll);
-
-    return () => {
-      el?.removeEventListener("scroll", handleScroll);
-    };
-  }, [onScrollBottom]);
+  const pageNumbers = useMemo(() => {
+    const delta = 2;
+    const range: number[] = [];
+    const left = Math.max(1, currentPage - delta);
+    const right = Math.min(totalPages, currentPage + delta);
+    for (let i = left; i <= right; i++) range.push(i);
+    return range;
+  }, [currentPage, totalPages]);
 
   return (
-    <div className="surface rounded-xl border border-[var(--border)] p-4 shadow-sm max-h-[500px] flex flex-col">
-      {/* Header Section */}
-      <div className="flex justify-between items-center pb-3 mb-3">
-        <div className="flex items-center gap-2">
+    <div
+      style={{
+        width: "100%",
+        backgroundColor: "var(--surface)",
+        border: "1px solid var(--border)",
+        borderRadius: "0.75rem",
+        boxShadow:
+          "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
+      {/* ── Card Header ────────────────────────────────────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "1rem 1.25rem",
+          borderBottom: "1px solid var(--border)",
+          backgroundColor: "var(--surface)",
+          gap: "0.75rem",
+          flexWrap: "wrap",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           {tableTitle && (
             <>
-              <FaTable className="text-[var(--primary)]" />
-              <h1 className="text-lg font-semibold">{tableTitle}</h1>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "1.75rem",
+                  height: "1.75rem",
+                  borderRadius: "0.375rem",
+                  backgroundColor:
+                    "color-mix(in oklab, var(--primary) 12%, transparent)",
+                  color: "var(--primary)",
+                  flexShrink: 0,
+                }}
+              >
+                <FaTable size={12} />
+              </span>
+              <h2
+                style={{
+                  fontSize: "0.9375rem",
+                  fontWeight: 600,
+                  color: "var(--foreground)",
+                  margin: 0,
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {tableTitle}
+              </h2>
             </>
           )}
         </div>
-        <div className="flex items-center gap-2">{tools}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          {tools}
+        </div>
       </div>
 
-      {/* Table Container */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-auto relative">
-        <table className="w-full">
+      {/* ── Table Scroll Container ──────────────────────────────────────── */}
+      <div
+        style={{ overflowX: "auto", overflowY: "auto", maxHeight: "520px" }}
+        onScroll={(e) => {
+          if (!onScrollBottom) return;
+          const el = e.currentTarget;
+          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 80) {
+            onScrollBottom();
+          }
+        }}
+      >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            fontSize: "0.875rem",
+            tableLayout: "auto",
+          }}
+        >
+          {/* thead */}
           <thead>
-            <tr className="border-b border-[var(--border)] sticky top-0 bg-[var(--surface)] z-10">
+            <tr
+              style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 10,
+                backgroundColor:
+                  "color-mix(in oklab, var(--foreground) 4%, var(--surface))",
+                borderBottom: "1px solid var(--border)",
+              }}
+            >
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className={`
-                    py-3 px-4 text-sm font-medium
-                    ${column.wrap ? "break-words" : "whitespace-nowrap"}
-                    ${
-                      column.textAlign === "center"
-                        ? "text-center"
-                        : column.textAlign === "right"
-                        ? "text-right"
-                        : "text-left"
-                    }
-                  `}
-                  style={{ width: column.width }}
+                  style={{
+                    padding: "0.625rem 1rem",
+                    fontSize: "0.6875rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    color:
+                      "color-mix(in oklab, var(--foreground) 55%, transparent)",
+                    textAlign: column.textAlign ?? "left",
+                    whiteSpace: column.wrap ? "normal" : "nowrap",
+                    width: column.width,
+                    borderRight:
+                      index < columns.length - 1
+                        ? "1px solid var(--border)"
+                        : undefined,
+                  }}
                 >
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
+
+          {/* tbody */}
           <tbody>
-            {data.map((row, rowIndex) => (
-              <tr key={rowIndex} className="hover:bg-[var(--surface)] transition-colors">
-                {columns.map((column, colIndex) => {
-                  const cellValue = column.accessor(row);
-                  return (
-                    <td
-                      key={colIndex}
-                      className={`
-                        py-2 px-4 text-sm
-                        ${column.wrap ? "break-words" : "whitespace-nowrap"}
-                        ${
-                          column.textAlign === "center"
-                            ? "text-center"
-                            : column.textAlign === "right"
-                            ? "text-right"
-                            : "text-left"
-                        }
-                        border-t border-[var(--border)]
-                      `}
-                    >
-                      {cellValue}
-                    </td>
-                  );
-                })}
-              </tr>
+            {paginatedData.map((row, rowIndex) => (
+              <ShadcnRow
+                key={rowIndex}
+                row={row}
+                columns={columns}
+                rowIndex={rowIndex}
+                totalCols={columns.length}
+              />
             ))}
           </tbody>
         </table>
 
-        {data.length === 0 && (
-          <div className="py-8 text-center text-[var(--disable)]">
-            <p className="text-sm">No data available</p>
+        {/* ── Empty state ────────────────────────────────────────────── */}
+        {data.length === 0 && !loading && (
+          <div
+            style={{
+              padding: "3.5rem 1rem",
+              textAlign: "center",
+              color: "var(--disable)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.625rem",
+            }}
+          >
+            <svg
+              width="44"
+              height="44"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ opacity: 0.45 }}
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="9" y1="13" x2="15" y2="13" />
+              <line x1="9" y1="17" x2="11" y2="17" />
+            </svg>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                fontWeight: 600,
+                margin: 0,
+                color: "var(--foreground)",
+                opacity: 0.55,
+              }}
+            >
+              Tidak ada data
+            </p>
+            <p
+              style={{
+                fontSize: "0.78rem",
+                margin: 0,
+                color: "var(--disable)",
+              }}
+            >
+              Data belum tersedia atau tidak ditemukan
+            </p>
           </div>
         )}
 
+        {/* ── Loading skeleton ───────────────────────────────────────── */}
         {loading && (
-          <div className="flex justify-center py-4">
-            <div className="w-6 h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+          <div style={{ padding: "1.25rem 1.25rem 0.75rem" }}>
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                style={{
+                  height: "2.25rem",
+                  backgroundColor:
+                    "color-mix(in oklab, var(--foreground) 6%, transparent)",
+                  borderRadius: "0.375rem",
+                  marginBottom: "0.5rem",
+                  opacity: 1.1 - i * 0.2,
+                }}
+              />
+            ))}
           </div>
         )}
       </div>
+
+      {/* ── Pagination Footer ───────────────────────────────────────────── */}
+      {pagination && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.75rem",
+            padding: "0.75rem 1.25rem",
+            borderTop: "1px solid var(--border)",
+            backgroundColor:
+              "color-mix(in oklab, var(--foreground) 2%, var(--surface))",
+          }}
+        >
+          {/* Per-page selector */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              fontSize: "0.8125rem",
+            }}
+          >
+            <span style={{ color: "var(--disable)" }}>Tampilkan</span>
+            <select
+              value={pageSize}
+              onChange={handlePageSizeChange}
+              style={{
+                border: "1px solid var(--border)",
+                borderRadius: "0.375rem",
+                padding: "0.2rem 0.5rem",
+                fontSize: "0.8125rem",
+                backgroundColor: "var(--surface)",
+                color: "var(--foreground)",
+                outline: "none",
+                cursor: "pointer",
+              }}
+            >
+              {pageSizeOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <span style={{ color: "var(--disable)" }}>/ halaman</span>
+          </div>
+
+          {/* Info + navigation */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+            <span
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--disable)",
+                marginRight: "0.5rem",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {data.length === 0
+                ? "0 data"
+                : `${(currentPage - 1) * pageSize + 1}–${Math.min(
+                    currentPage * pageSize,
+                    data.length
+                  )} dari ${data.length}`}
+            </span>
+
+            {/* Prev */}
+            <PaginationBtn
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              aria-label="Halaman sebelumnya"
+            >
+              <FaChevronLeft size={10} />
+            </PaginationBtn>
+
+            {/* First page + ellipsis */}
+            {pageNumbers[0] > 1 && (
+              <>
+                <PaginationBtn onClick={() => setCurrentPage(1)}>1</PaginationBtn>
+                {pageNumbers[0] > 2 && (
+                  <span
+                    style={{
+                      padding: "0 0.125rem",
+                      color: "var(--disable)",
+                      fontSize: "0.8125rem",
+                    }}
+                  >
+                    …
+                  </span>
+                )}
+              </>
+            )}
+
+            {/* Numbered pages */}
+            {pageNumbers.map((page) => (
+              <PaginationBtn
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                active={page === currentPage}
+              >
+                {page}
+              </PaginationBtn>
+            ))}
+
+            {/* Last page + ellipsis */}
+            {pageNumbers[pageNumbers.length - 1] < totalPages && (
+              <>
+                {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
+                  <span
+                    style={{
+                      padding: "0 0.125rem",
+                      color: "var(--disable)",
+                      fontSize: "0.8125rem",
+                    }}
+                  >
+                    …
+                  </span>
+                )}
+                <PaginationBtn onClick={() => setCurrentPage(totalPages)}>
+                  {totalPages}
+                </PaginationBtn>
+              </>
+            )}
+
+            {/* Next */}
+            <PaginationBtn
+              onClick={() =>
+                setCurrentPage((p) => Math.min(totalPages, p + 1))
+              }
+              disabled={currentPage === totalPages}
+              aria-label="Halaman berikutnya"
+            >
+              <FaChevronRight size={10} />
+            </PaginationBtn>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+// ── Sub-components ────────────────────────────────────────────────────
+
+/**
+ * Row dengan zebra-stripe + hover via React state
+ * (Inline style tidak mendukung pseudo-class :hover, jadi kita pakai state)
+ */
+function ShadcnRow<T>({
+  row,
+  columns,
+  rowIndex,
+  totalCols,
+}: {
+  row: T;
+  columns: ColumnProps<T>[];
+  rowIndex: number;
+  totalCols: number;
+}) {
+  const [hovered, setHovered] = React.useState(false);
+
+  return (
+    <tr
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        borderBottom: "1px solid var(--border)",
+        backgroundColor: hovered
+          ? "color-mix(in oklab, var(--primary) 5%, var(--surface))"
+          : rowIndex % 2 === 0
+          ? "var(--surface)"
+          : "color-mix(in oklab, var(--foreground) 2%, var(--surface))",
+        transition: "background-color 100ms ease",
+        cursor: "default",
+      }}
+    >
+      {columns.map((column, colIndex) => (
+        <td
+          key={colIndex}
+          style={{
+            padding: "0.6875rem 1rem",
+            fontSize: "0.875rem",
+            color: "var(--foreground)",
+            textAlign: column.textAlign ?? "left",
+            whiteSpace: column.wrap ? "normal" : "nowrap",
+            verticalAlign: "middle",
+            lineHeight: 1.5,
+            borderRight:
+              colIndex < totalCols - 1
+                ? "1px solid var(--border)"
+                : undefined,
+          }}
+        >
+          {column.accessor(row)}
+        </td>
+      ))}
+    </tr>
+  );
+}
+
+/**
+ * Tombol pagination dengan hover effect via React state
+ */
+function PaginationBtn({
+  children,
+  onClick,
+  disabled,
+  active,
+  ...rest
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  active?: boolean;
+  [key: string]: unknown;
+}) {
+  const [hovered, setHovered] = React.useState(false);
+
+  const style: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: "2rem",
+    height: "2rem",
+    padding: "0 0.375rem",
+    borderRadius: "0.375rem",
+    border: "1px solid",
+    fontSize: "0.8125rem",
+    fontWeight: 500,
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.38 : 1,
+    transition:
+      "background-color 120ms ease, color 120ms ease, border-color 120ms ease",
+    outline: "none",
+    backgroundColor: active
+      ? "var(--primary)"
+      : hovered && !disabled
+      ? "color-mix(in oklab, var(--primary) 9%, var(--surface))"
+      : "var(--surface)",
+    borderColor: active
+      ? "var(--primary)"
+      : hovered && !disabled
+      ? "var(--primary)"
+      : "var(--border)",
+    color: active ? "#ffffff" : "var(--foreground)",
+    boxShadow: active
+      ? "0 1px 3px color-mix(in oklab, var(--primary) 35%, transparent)"
+      : "none",
+  };
+
+  return (
+    <button
+      onClick={disabled ? undefined : onClick}
+      onMouseEnter={() => !disabled && setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={style}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
 
 export default AppTable;

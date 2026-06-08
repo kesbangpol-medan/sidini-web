@@ -15,6 +15,7 @@ import { useMemo } from "react";
 type LineReportChartProps = {
 	data: any[];
 	title?: string;
+	action?: React.ReactNode;
 };
 
 // Fungsi untuk menghasilkan warna unik dan kontras dari string
@@ -27,7 +28,7 @@ function stringToColor(name: string) {
 	return `hsl(${hue}, 70%, 50%)`; // Saturasi & lightness tetap agar kontras
 }
 
-export default function LineReportChart({ data, title }: LineReportChartProps) {
+export default function LineReportChart({ data, title, action }: LineReportChartProps) {
 	// Ambil semua key kategori dari item pertama (kecuali "month")
 	const categories = useMemo(() => {
 		if (!data || data.length === 0) return [];
@@ -44,34 +45,39 @@ export default function LineReportChart({ data, title }: LineReportChartProps) {
 	}, [categories]);
 
 	return (
-		<div className="w-full h-[400px] surface p-4 rounded-lg border">
-			<div className="flex gap-2 items-center mb-4">
-				<FaChartArea className="text-[var(--primary)]" />
-				{title && <h2 className="text-lg font-semibold">{title}</h2>}
+		<div className="w-full h-[450px] flex flex-col surface p-4 rounded-lg border">
+			<div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+				<div className="flex gap-2 items-center">
+					<FaChartArea className="text-[var(--primary)]" />
+					{title && <h2 className="text-lg font-semibold">{title}</h2>}
+				</div>
+				{action && <div>{action}</div>}
 			</div>
 
-			<ResponsiveContainer width="100%" height="100%">
-				<LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-					<CartesianGrid strokeDasharray="4 4" stroke={`var(--border)`} />
-					<XAxis dataKey="month" />
-					<YAxis />
-					<Tooltip />
-					<Legend
-						layout="horizontal"
-						align="center"
-						verticalAlign="bottom"
-						wrapperStyle={{
-							// paddingTop: 0,
-							whiteSpace: "nowrap",
-							overflowX: "auto",
-							width: "100%",
-						}}
-					/>
-					{categories.map((cat) => (
-						<Line key={cat} type="monotone" dataKey={cat} stroke={colorMap[cat]} name={cat} />
-					))}
-				</LineChart>
-			</ResponsiveContainer>
+			<div className="flex-1 w-full min-h-0">
+				<ResponsiveContainer width="100%" height="100%">
+					<LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+						<CartesianGrid strokeDasharray="4 4" stroke={`var(--border)`} />
+						<XAxis dataKey="month" />
+						<YAxis />
+						<Tooltip />
+						<Legend
+							layout="horizontal"
+							align="center"
+							verticalAlign="bottom"
+							wrapperStyle={{
+								paddingTop: "10px",
+								whiteSpace: "nowrap",
+								overflowX: "auto",
+								width: "100%",
+							}}
+						/>
+						{categories.map((cat) => (
+							<Line key={cat} type="monotone" dataKey={cat} stroke={colorMap[cat]} name={cat} />
+						))}
+					</LineChart>
+				</ResponsiveContainer>
+			</div>
 		</div>
 	);
 }

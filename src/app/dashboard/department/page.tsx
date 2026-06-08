@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { CreateDepartmentEntity, DepartmentEntity } from "./entity/department_entity";
 import AppDashboard from "@/components/dashboards/dashboard";
 import IconCard from "@/components/cards/icon_card";
-import { FaCog, FaListOl, FaPlus, FaTrash } from "react-icons/fa";
+import { FaListOl, FaPencilAlt, FaPlus, FaTrash } from "react-icons/fa";
 import AppTable, { ColumnProps } from "@/components/tables/table";
 import { motion } from "framer-motion";
 import AppForm, { FormField } from "@/components/inputs/AppForm";
@@ -46,7 +46,7 @@ export default function Department() {
 						transition={{ type: "spring", stiffness: 300 }}
 					>
 						<motion.span whileHover={{ rotate: 15 }}>
-							<FaCog className="text-[var(--primary)]" />
+							<FaPencilAlt className="text-[var(--primary)] text-xs" />
 						</motion.span>
 						<h5 className="text-xs">Edit</h5>
 					</motion.div>
@@ -72,7 +72,7 @@ export default function Department() {
 		},
 	];
 
-	const formFields: FormField[] = [{ name: "name", label: "Nama", type: "text", placeholder: "Nama Departemen / Kategori" }];
+	const formFields: FormField[] = [{ name: "name", label: "Nama", type: "text", placeholder: "Nama Kategori" }];
 
 	const handleCreateNewDepartment = async (data: any) => {
 		setIsLoading(true);
@@ -159,13 +159,13 @@ export default function Department() {
 			content={
 				<div className="w-full h-full flex flex-col gap-4">
 					<div className="grid md:grid-cols-4">
-						<IconCard icon={<FaListOl size={24} />} title="Total Departemen / Kategori" value={departments.length} info={<></>} />
+						<IconCard icon={<FaListOl size={24} />} title="Total Kategori" value={departments.length} info={<></>} />
 					</div>
 
 					<AppTable
 						data={departments}
 						columns={columns}
-						tableTitle="Tabel Departemen / Kategori"
+						tableTitle="Tabel Kategori"
 						tools={
 							<motion.div
 								className="icon-background cursor-pointer"
@@ -187,7 +187,7 @@ export default function Department() {
 						asModal
 						isOpen={showCreateModal}
 						onClose={() => setShowCreateModal(false)}
-						modalTitle="Tambah Departemen / Kategori"
+						modalTitle="Tambah Kategori"
 						modalConfirmLabel="Simpan"
 						modalCancelLabel="Batal"
 						fields={formFields}
@@ -201,7 +201,7 @@ export default function Department() {
 						asModal
 						isOpen={showEditModal}
 						onClose={() => setShowEditModal(false)}
-						modalTitle="Edit Departemen / Kategori"
+						modalTitle="Edit Kategori"
 						modalConfirmLabel="Simpan"
 						modalCancelLabel="Batal"
 						fields={formFields}

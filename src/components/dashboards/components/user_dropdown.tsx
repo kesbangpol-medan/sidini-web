@@ -38,19 +38,19 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
 					alt="User Avatar"
 					width={45}
 					height={45}
-					className="rounded-full object-cover aspect-square border-2 border-[var(--primary)]"
+					className="rounded-full object-cover aspect-square border-2 border-primary"
 				/>
 				<div className="hidden sm:block text-start">
 					{user ? (
 						<>
-							<h4 className="text-sm font-semibold">{user.name}</h4>
-							<span className="text-xs text-[var(--disable)]">{user.role === 3 ? "Super Admin" : user.role === 2 ? "Admin" : "User"}</span>
+							<h4 className="text-sm font-semibold text-foreground">{user.name}</h4>
+							<span className="text-xs text-muted-foreground">{user.role === 3 ? "Super Admin" : user.role === 2 ? "Admin" : "User"}</span>
 						</>
 					) : (
-						<h4 className="text-sm font-semibold italic text-gray-400">Loading...</h4>
+						<h4 className="text-sm font-semibold italic text-muted-foreground">Loading...</h4>
 					)}
 				</div>
-				<FaChevronDown className={`text-xs transition-transform ${isOpen ? "rotate-180" : ""}`} />
+				<FaChevronDown className={`text-xs text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
 			</motion.button>
 
 			<AnimatePresence>
@@ -59,16 +59,16 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
 						initial={{ opacity: 0, y: -10 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -10 }}
-						className="absolute right-0 mt-2 w-48 bg-[var(--surface)] border border-[var(--border)] rounded-xl shadow-xl z-40"
+						className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-xl shadow-xl z-40"
 					>
-						<ul className="text-sm text-[var(--foreground)]">
-							<li className="px-4 py-3 hover:bg-[var(--sidebar-menu-active-bg)] cursor-pointer transition-colors">Profile</li>
+						<ul className="text-sm text-popover-foreground">
+							<li className="px-4 py-3 hover:bg-accent cursor-pointer transition-colors rounded-t-xl">Profile</li>
 							<li
 								onClick={() => {
 									localStorage.clear();
 									router.push("/");
 								}}
-								className="px-4 py-3 hover:bg-[var(--sidebar-menu-active-bg)] cursor-pointer transition-colors text-[var(--danger)]"
+								className="px-4 py-3 hover:bg-accent cursor-pointer transition-colors text-danger rounded-b-xl"
 							>
 								Logout
 							</li>

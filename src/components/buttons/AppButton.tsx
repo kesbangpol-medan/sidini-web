@@ -21,7 +21,7 @@ const variantColors: Record<string, string> = {
 	warning: "bg-[var(--warning)] text-black hover:bg-[var(--warning-hover)]",
 	info: "bg-[var(--info)] text-white hover:bg-[var(--info-hover)]",
 	black: "bg-[var(--black)] text-white hover:bg-[var(--black-hover)]",
-	disable: "bg-[var(--disable)] text-gray-600 cursor-not-allowed",
+	disable: "bg-[var(--disable)] text-muted-foreground cursor-not-allowed",
 };
 
 const outlineColors: Record<string, string> = {
